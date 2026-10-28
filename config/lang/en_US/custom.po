@@ -1,0 +1,321 @@
+# Automatisch erzeugt von helfer/build-translations.py - nicht von Hand bearbeiten.
+# Eigene zusätzliche Anpassungen gehören in helfer/lang/en_US.po
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: en_US\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "%s confirmed for angel type %s."
+msgstr "%s confirmed for helper type %s."
+
+msgid "Active angels"
+msgstr "Active helpers"
+
+msgid "Add more angels"
+msgstr "Add more helpers"
+
+msgid "Add user to angel type"
+msgstr "Add user to helper type"
+
+msgid "All Angels"
+msgstr "All Helpers"
+
+msgid "Angel got a goodie."
+msgstr "Helper got a goodie."
+
+msgid "Angel got no goodie."
+msgstr "Helper got no goodie."
+
+msgid "Angel has been marked as active."
+msgstr "Helper has been marked as active."
+
+msgid "Angel has been marked as arrived."
+msgstr "Helper has been marked as arrived."
+
+msgid "Angel has been marked as not active."
+msgstr "Helper has been marked as not active."
+
+msgid "Angel has no valid T-shirt size. T-shirt was not set."
+msgstr "Helper has no valid T-shirt size. T-shirt was not set."
+
+msgid "Angel not found."
+msgstr "Helper not found."
+
+msgid "Angel type"
+msgstr "Helper type"
+
+msgid "Angel type %s deleted."
+msgstr "Helper type %s deleted."
+
+msgid "Angel type saved."
+msgstr "Helper type saved."
+
+msgid "Angel:"
+msgstr "Helper:"
+
+msgid "Angels currently working"
+msgstr "Helpers currently working"
+
+msgid "Angels needed for nightshifts"
+msgstr "Helpers needed for nightshifts"
+
+msgid "Angels needed in the next 3 hrs"
+msgstr "Helpers needed in the next 3 hrs"
+
+msgid "Arrive angels"
+msgstr "Arrive helpers"
+
+msgid "At least %s angels are forced to be active. The number has to be greater."
+msgstr "At least %s helpers are forced to be active. The number has to be greater."
+
+msgid "Confirm angel type for user"
+msgstr "Confirm helper type for user"
+
+msgid "Confirmed all users for angel type %s."
+msgstr "Confirmed all users for helper type %s."
+
+msgid "Copy needed angels from location settings"
+msgstr "Copy needed helpers from location settings"
+
+msgid "Copy needed angels from shift type settings"
+msgstr "Copy needed helpers from shift type settings"
+
+msgid "Create angel type"
+msgstr "Create helper type"
+
+msgid "Denied all users for angel type %s."
+msgstr "Denied all users for helper type %s."
+
+msgid "Do you really want to delete the angel type %s?"
+msgstr "Do you really want to delete the helper type %s?"
+
+msgid "Free angels"
+msgstr "Free helpers"
+
+msgid "Here you can change the user entry. Under the item 'Arrived' the angel is marked as present, a yes at Active means that the angel was active."
+msgstr "Here you can change the user entry. Under the item 'Arrived' the helper is marked as present, a yes at Active means that the helper was active."
+
+msgid "Here you can define the user groups of the angel:"
+msgstr "Here you can define the user groups of the helper:"
+
+msgid "Here you can reset the password of this angel:"
+msgstr "Here you can reset the password of this helper:"
+
+msgid "How many angels should be active?"
+msgstr "How many helpers should be active?"
+
+msgid "If the angel is active, it can claim a goodie. If goodie is set to 'Yes', the angel already got their goodie."
+msgstr "If the helper is active, it can claim a goodie. If goodie is set to 'Yes', the helper already got their goodie."
+
+msgid "Leave angel type"
+msgstr "Leave helper type"
+
+msgid "Marked angels."
+msgstr "Marked helpers."
+
+msgid "Needed angels"
+msgstr "Needed helpers"
+
+msgid "Needed angels:"
+msgstr "Needed helpers:"
+
+msgid "Other angel type needed/collides with my shifts"
+msgstr "Other helper type needed/collides with my shifts"
+
+msgid "Please check the needed angels for team %s."
+msgstr "Please check the needed helpers for team %s."
+
+msgid "Please check your input for needed angels of type %s."
+msgstr "Please check your input for needed helpers of type %s."
+
+msgid "Please enter a number of angels to be marked as active."
+msgstr "Please enter a number of helpers to be marked as active."
+
+msgid "Please select a mode for needed angels."
+msgstr "Please select a mode for needed helpers."
+
+msgid "Please select needed angels."
+msgstr "Please select needed helpers."
+
+msgid "Reset done. Angel has not arrived."
+msgstr "Reset done. Helper has not arrived."
+
+msgid "Search angel:"
+msgstr "Search helper:"
+
+msgid "The administration has not configured any angel types yet - or you are not subscribed to any angel type."
+msgstr "The administration has not configured any helper types yet - or you are not subscribed to any helper type."
+
+msgid "The following angels are needed"
+msgstr "The following helpers are needed"
+
+msgid "The tasks shown here are influenced by the angel types you joined already!"
+msgstr "The tasks shown here are influenced by the helper types you joined already!"
+
+msgid "There are 0 angels needed. Please enter the amounts of needed angels."
+msgstr "There are 0 helpers needed. Please enter the amounts of needed helpers."
+
+msgid "There are unconfirmed angels in %d angel type. Angel type that needs approval:"
+msgid_plural "There are unconfirmed angels in %d angel types. Angel types that need approval:"
+msgstr[0] "There are unconfirmed helpers in %d helper type. Helper type that needs approval:"
+msgstr[1] "There are unconfirmed helpers in %d helper types. Helper types that need approval:"
+
+msgid "This Angel has no valid T-shirt size, therefore it's not possible to hand out a T-shirt."
+msgstr "This Helper has no valid T-shirt size, therefore it's not possible to hand out a T-shirt."
+
+msgid "This angel type requires a driver license. Please enter your driver license information!"
+msgstr "This helper type requires a driver license. Please enter your driver license information!"
+
+msgid "User is not in angel type."
+msgstr "User is not in helper type."
+
+msgid "You are not allowed to confirm all users for this angel type."
+msgstr "You are not allowed to confirm all users for this helper type."
+
+msgid "You are not allowed to confirm this users angel type."
+msgstr "You are not allowed to confirm this users helper type."
+
+msgid "You are not allowed to delete all users for this angel type."
+msgstr "You are not allowed to delete all users for this helper type."
+
+msgid "You are not allowed to delete this users angel type."
+msgstr "You are not allowed to delete this users helper type."
+
+msgid "You are not marked as arrived. Please go to heaven, get your angel badge and/or tell them that you arrived already."
+msgstr "You are not marked as arrived. Please go to heaven, get your helper badge and/or tell them that you arrived already."
+
+msgid "You are unconfirmed for this angel type. Please go to the introduction for %s to get confirmed."
+msgstr "You are unconfirmed for this helper type. Please go to the introduction for %s to get confirmed."
+
+msgid "You cannot edit angels with more rights."
+msgstr "You cannot edit helpers with more rights."
+
+msgid "You need be accepted member of the angel type."
+msgstr "You need be accepted member of the helper type."
+
+msgid "admin_shifts.no_angeltypes"
+msgstr "No helper type has been created yet. Shifts cannot be created without one."
+
+msgid "angel"
+msgstr "Helper"
+
+msgid "angeltype.add.success"
+msgstr "Successfully joined helper type"
+
+msgid "angeltype.angeltypes"
+msgstr "Helper types"
+
+msgid "angeltype.create.title"
+msgstr "Create helper type"
+
+msgid "angeltype.delete.success"
+msgstr "Helper type successfully deleted."
+
+msgid "angeltype.delete.title"
+msgstr "Delete helper type \"%s\""
+
+msgid "angeltype.driving_license.required.info.here"
+msgstr "You joined a helper type which requires a driving license. Please edit your driving license information here: %s."
+
+msgid "angeltype.driving_license.required.info.preview"
+msgstr "This helper type requires a driver's license."
+
+msgid "angeltype.edit.success"
+msgstr "Helper type edited successfully."
+
+msgid "angeltype.edit.title"
+msgstr "Edit helper type"
+
+msgid "angeltype.hide_on_shift_view.info"
+msgstr "If checked, only admins and members of the helper type can see the filter option for this helper type on the shifts page."
+
+msgid "angeltype.ifsg.required.info"
+msgstr "This helper type requires a health instruction. Please enter your health instruction information!"
+
+msgid "angeltype.ifsg.required.info.here"
+msgstr "You joined a helper type which requires a health instruction. Please edit your health instruction information here: %s."
+
+msgid "angeltype.ifsg.required.info.preview"
+msgstr "This helper type requires a health instruction."
+
+msgid "angeltype.qr"
+msgstr "Join helper type \"%s\" QR code"
+
+msgid "angeltype.restricted.hint"
+msgstr "This helper type requires attendance at an introduction meeting. You might find additional information in the description."
+
+msgid "angeltype.restricted.info"
+msgstr "Helper types that require introduction can only be joined by Helpers after being enabled by a supporter (double opt-in)."
+
+msgid "angeltype.shift.self_signup.info"
+msgstr "Helper types with shift self-signup enabled allow Helpers to sign up for their own shifts. If shift self-signup is disabled, only supporters and admins can assign Helpers to shifts for these helper types."
+
+msgid "config.api_key.info"
+msgstr "The API key is used to protect access to the Helfersystem /metrics endpoint. It has no restrictions on length or character classes and must be included in the HTTP request as the request parameter api_key."
+
+msgid "config.app_key.info"
+msgstr "Random, long (at least 32 characters) alphanumeric or base64 encoded key, used for signing i.e. JWT tokens to join helper types by link."
+
+msgid "config.enable_dect.info"
+msgstr "Enables DECT numbers for users, locations and helper types"
+
+msgid "config.join_qr_code.info"
+msgstr "Allow joining a helper type via generated QR code, requires app_key"
+
+msgid "config.jwt_expiration_time.info"
+msgstr "Number of minutes after a JWT must expire, for example max helper type join time"
+
+msgid "config.maintenance.info"
+msgstr "If enabled it takes the Helfersystem offline for maintenance and shows a static page to all requests"
+
+msgid "config.supporters_can_promote.info"
+msgstr "Supporters of a helper type (team) can promote other users of the helper type to supporter"
+
+msgid "freeload.freeloaded.info"
+msgstr "The Helper was not present for a shift. If %s shifts are freeloaded, shift registration is blocked for the Helper."
+
+msgid "freeload.freeloaded.info.goodie"
+msgstr "If an Helper was not present for a shift, double the shift length is deducted from the %s. If %s shifts are freeloaded, shift registration is blocked for the Helper."
+
+msgid "general.angel"
+msgstr "Helper"
+
+msgid "location.required_angels"
+msgstr "Required helpers (on schedule import or copy)"
+
+msgid "message.choose_angel"
+msgstr "Choose a helper"
+
+msgid "registration.title"
+msgstr "Helper registration"
+
+msgid "schedule.needed-from-shift-type"
+msgstr "Load helper types from shift type (else from location)"
+
+msgid "settings.profile.angeltypes.info"
+msgstr "You can manage your helper types <a href=\"%s\">here</a>."
+
+msgid "settings.profile.email_by_human_allowed"
+msgstr "Allow Heaven Helpers to contact me by e-mail."
+
+msgid "settings.profile.pronoun.info"
+msgstr "Will be shown on your profile page and in helper lists."
+
+msgid "shift.angeltype_source"
+msgstr "Needed helpers from: %s"
+
+msgid "shifttype.required_angels"
+msgstr "Required helpers (on schedule import or copy)"
+
+msgid "user.goodie.reserved"
+msgstr "A goodie is reserved for this helper."
+
+msgid "user.info.hint"
+msgstr "Is displayed for shift coordinators and admins in the user view. If an Helper is not marked as arrived, a user info removes the not-arrived notification in the Helper's system menu."
+
+msgid "voucher.eligible"
+msgstr "Helper can receive another %d vouchers."
+
+msgid "voucher.eligible.force"
+msgstr "Helper can receive <s>&thinsp;%d&thinsp;</s> unlimited vouchers."
