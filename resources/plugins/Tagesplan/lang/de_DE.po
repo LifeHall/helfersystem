@@ -72,3 +72,12 @@ msgstr "Dieser Helfertyp wird in dieser Schicht nicht benötigt."
 
 msgid "tagesplan.not_allowed"
 msgstr "Dazu fehlt dir die Berechtigung."
+
+msgid "tagesplan.confirmation_required"
+msgstr "Für diesen Bereich brauchst du eine Freigabe. Nach der Bestätigung kannst du dich selbst eintragen."
+
+msgid "tagesplan.request_confirmation"
+msgstr "Freigabe beantragen"
+
+msgid "tagesplan.confirmation_pending"
+msgstr "Deine Freigabe für diesen Bereich ist beantragt und wartet auf Bestätigung."

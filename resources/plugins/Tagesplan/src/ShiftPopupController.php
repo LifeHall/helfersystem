@@ -50,6 +50,15 @@ class ShiftPopupController extends BaseController
             $selfSignedUp = $entries->contains(fn(ShiftEntry $entry) => $entry->user_id == $user->id);
             $state = $selfSignedUp ? null : $this->selfSignupState($user, $shift, $angelType);
 
+            // Angel types requiring confirmation: offer to request it or show that it is pending
+            $membership = null;
+            if ($state?->getState() === ShiftSignupStatus::ANGELTYPE && $angelType->restricted) {
+                $userAngelType = UserAngelType::whereUserId($user->id)
+                    ->where('angel_type_id', $angelType->id)
+                    ->first();
+                $membership = $userAngelType ? 'pending' : 'none';
+            }
+
             $types[] = [
                 'angel_type' => $angelType,
                 'count' => (int) $need['count'],
@@ -61,6 +70,7 @@ class ShiftPopupController extends BaseController
                 'self_signed_up' => $selfSignedUp,
                 'self_allowed' => $state?->isSignupAllowed() ?? false,
                 'self_reason' => $state && !$state->isSignupAllowed() ? $this->stateMessage($state) : null,
+                'membership' => $membership,
                 'users' => $this->selectableUsers($angelType, $entries->pluck('user_id')->all()),
             ];
         }
