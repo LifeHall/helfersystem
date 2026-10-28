@@ -12,7 +12,13 @@
         .tagesplan td { min-width: 9rem; }
         .tagesplan tbody.tp-group { border-top: 3px solid var(--tp-border); }
         .tagesplan tbody.tp-group tr > * { color: #212529; }
-        .tagesplan tr.tp-location th { font-weight: 700; padding-top: .3rem; }
+        {# Header row of a location: darker shade of the location color #}
+        .tagesplan tr.tp-location > th {
+            background-image: linear-gradient(rgba(0, 0, 0, .5), rgba(0, 0, 0, .5));
+            color: #fff; font-weight: 700; font-size: 1.05em; letter-spacing: .03em; text-transform: uppercase;
+            padding-top: .35rem; padding-bottom: .35rem; border-bottom: 2px solid var(--tp-border);
+        }
+        .tagesplan tbody.tp-group tr.tp-location > * { color: #fff; }
         .tagesplan tr.tp-type-start > * { border-top: 2px solid var(--tp-border); }
         .tagesplan td.tp-none { background-color: #7f7f7f; }
         .tagesplan .tp-open a, .tagesplan .tp-filled a { display: block; color: #212529; text-decoration: none; }
