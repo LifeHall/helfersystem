@@ -39,7 +39,40 @@
                 {{ type.entries|length }} / {{ type.count }}
             </span>
         </h6>
-        <ul class="list-group mb-2">
+        {% if type.self_signed_up %}
+            <p class="text-success small">{{ m.icon('check-lg') }} {{ __('tagesplan.self_signed_up') }}</p>
+        {% elseif type.self_allowed %}
+            <form method="post" action="{{ url('/tagesplan/eintragen') }}" class="mb-2">
+                {{ csrf() }}
+                <input type="hidden" name="shift_id" value="{{ shift.id }}">
+                <input type="hidden" name="angel_type_id" value="{{ type.angel_type.id }}">
+                <button type="submit" class="btn btn-primary">{{ m.icon('plus-lg') }} {{ __('tagesplan.signup_self') }}</button>
+            </form>
+        {% elseif type.self_reason %}
+            <p class="text-muted small">{{ m.icon('info-circle') }} {{ type.self_reason }}</p>
+        {% endif %}
+
+        {% if type.users is not empty %}
+            <form method="post" action="{{ url('/tagesplan/eintragen') }}" class="row g-2 align-items-center mb-2">
+                {{ csrf() }}
+                <input type="hidden" name="shift_id" value="{{ shift.id }}">
+                <input type="hidden" name="angel_type_id" value="{{ type.angel_type.id }}">
+                <div class="col">
+                    <label class="visually-hidden" for="tp-user-{{ type.angel_type.id }}">{{ __('tagesplan.signup_other') }}</label>
+                    <select name="user_id" id="tp-user-{{ type.angel_type.id }}" class="form-select form-select-sm" required>
+                        <option value="">{{ __('tagesplan.choose_person') }}</option>
+                        {% for id, name in type.users %}
+                            <option value="{{ id }}">{{ name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-auto">
+                    <button type="submit" class="btn btn-sm btn-secondary">{{ m.icon('person-plus-fill') }} {{ __('tagesplan.signup_other') }}</button>
+                </div>
+            </form>
+        {% endif %}
+
+        <ul class="list-group mb-3">
             {% for item in type.entries %}
                 <li class="list-group-item d-flex justify-content-between align-items-center py-1">
                     <span>{{ m.icon('person-fill') }} {{ item.entry.user.displayName }}</span>
@@ -60,38 +93,5 @@
                 {% endfor %}
             {% endif %}
         </ul>
-
-        {% if type.self_signed_up %}
-            <p class="text-success small">{{ m.icon('check-lg') }} {{ __('tagesplan.self_signed_up') }}</p>
-        {% elseif type.self_allowed %}
-            <form method="post" action="{{ url('/tagesplan/eintragen') }}" class="mb-2">
-                {{ csrf() }}
-                <input type="hidden" name="shift_id" value="{{ shift.id }}">
-                <input type="hidden" name="angel_type_id" value="{{ type.angel_type.id }}">
-                <button type="submit" class="btn btn-primary">{{ m.icon('plus-lg') }} {{ __('tagesplan.signup_self') }}</button>
-            </form>
-        {% elseif type.self_reason %}
-            <p class="text-muted small">{{ m.icon('info-circle') }} {{ type.self_reason }}</p>
-        {% endif %}
-
-        {% if type.users is not empty %}
-            <form method="post" action="{{ url('/tagesplan/eintragen') }}" class="row g-2 align-items-center mb-3">
-                {{ csrf() }}
-                <input type="hidden" name="shift_id" value="{{ shift.id }}">
-                <input type="hidden" name="angel_type_id" value="{{ type.angel_type.id }}">
-                <div class="col">
-                    <label class="visually-hidden" for="tp-user-{{ type.angel_type.id }}">{{ __('tagesplan.signup_other') }}</label>
-                    <select name="user_id" id="tp-user-{{ type.angel_type.id }}" class="form-select form-select-sm" required>
-                        <option value="">{{ __('tagesplan.choose_person') }}</option>
-                        {% for id, name in type.users %}
-                            <option value="{{ id }}">{{ name }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div class="col-auto">
-                    <button type="submit" class="btn btn-sm btn-secondary">{{ m.icon('person-plus-fill') }} {{ __('tagesplan.signup_other') }}</button>
-                </div>
-            </form>
-        {% endif %}
     {% endfor %}
 </div>
