@@ -203,12 +203,16 @@
         data-url="{{ url('/tagesplan/schicht') }}" data-title="{{ __('tagesplan.shift') }}"
         data-error="{{ __('tagesplan.loading_error') }}" {% if open_shift %}data-open-shift="{{ open_shift }}" data-open-type="{{ open_type }}"{% endif %}>
         <div class="modal-dialog modal-dialog-scrollable">
-            <div class="modal-content">
+            <div class="modal-content {{ m.type_bg_class() }}">
                 <div class="modal-header">
                     <h5 class="modal-title" id="tp-modal-title">{{ __('tagesplan.shift') }}</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('form.close')|default('Close') }}"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('tagesplan.close') }}"></button>
                 </div>
                 <div class="modal-body"></div>
+                {# Also on small screens, where the popup fills the screen #}
+                <div class="modal-footer py-2">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('tagesplan.close') }}</button>
+                </div>
             </div>
         </div>
     </div>

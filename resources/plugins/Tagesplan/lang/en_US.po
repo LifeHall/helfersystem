@@ -58,6 +58,9 @@ msgstr "Go to shift"
 msgid "tagesplan.show_all_types"
 msgstr "Show all angel types at this location (%s more)"
 
+msgid "tagesplan.close"
+msgstr "Close"
+
 msgid "config.tagesplan_order"
 msgstr "Order of locations"
 
