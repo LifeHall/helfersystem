@@ -6,9 +6,6 @@ msgstr "Frag den Admin"
 msgid "faq.questions_link"
 msgstr "Wenn deine Frage hier nicht beantwortet wurde, <a href=\"%s\">frag den Admin</a>."
 
-msgid "shifts.event_range"
-msgstr "Eventzeitraum"
-
 # Im Original fehlt die Übersetzung (Code hat Leerzeichen um "/")
 msgid "Other angel type needed / collides with my shifts"
 msgstr "Anderer Helfertyp benötigt / kollidiert mit meinen Schichten"

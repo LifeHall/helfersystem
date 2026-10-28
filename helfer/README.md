@@ -89,14 +89,9 @@ weiterhin erreichbar; nur der Menüpunkt ist ausgeblendet.
 
 ## Geänderte Original-Dateien
 
-Diese Dateien des Originals sind angepasst (Stellen mit `Helfersystem` markiert).
-Bei Merge-Konflikten nach einem upstream-Update hier zuerst nachsehen:
-
-| Datei | Änderung |
-|---|---|
-| `includes/pages/user_shifts.php` | Knopf „Eventzeitraum“: Template-Variablen + Funktion `shifts_event_range()` am Dateiende |
-| `resources/views/pages/user-shifts.html` | Knopf „Eventzeitraum“ im Schichtfilter |
-| `resources/assets/js/forms.js` | Klick-Handler `.set-range` |
+Keine. Der Grundcode entspricht upstream; alle Anpassungen liegen in `helfer/` und in den Plugins.
+Bei upstream-Merges trotzdem die Plugins prüfen: sie nutzen Funktionen und Vorlagen des Kerns
+(z. B. `Shift_signup_allowed()`, `pages/news/index.twig`, kopierte `pages/login.twig`).
 
 ## Orte und Helfertypen wie im Live-System
 

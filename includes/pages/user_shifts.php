@@ -304,7 +304,6 @@ function view_user_shifts()
     $start_time = $shiftsFilter->getStart()->format('H:i');
     $end_day = $shiftsFilter->getEnd()->format('Y-m-d');
     $end_time = $shiftsFilter->getEnd()->format('H:i');
-    $eventRange = shifts_event_range($days);
 
     $canSignUpForShifts = true;
     if (config('signup_requires_arrival') && !$user->state->arrived) {
@@ -386,10 +385,6 @@ function view_user_shifts()
                 'filter'        => __('Filter shifts'),
                 'filter_toggle' => __('shifts.filter.toggle'),
                 'expand_toggle_title' => __('shifts.toggle.title'),
-                // Helfersystem: Knopf für den Eventzeitraum
-                'set_event'     => __('shifts.event_range'),
-                'event_from'    => $eventRange[0],
-                'event_to'      => $eventRange[1],
                 'set_yesterday' => __('Yesterday'),
                 'set_today'     => __('Today'),
                 'set_tomorrow'  => __('Tomorrow'),
@@ -455,58 +450,4 @@ function make_select($items, $selected, $name, $title = null, $ownSelect = [], $
     $html .= buttons($buttons);
 
     return $html;
-}
-
-/**
- * Helfersystem: Eventzeitraum (event_start bis event_end) für den Schichtfilter,
- * begrenzt auf Tage mit Schichten. Ohne Konfiguration: erster bis letzter Schichttag.
- *
- * @param string[] $days Sortierte Tage (Y-m-d) mit Schichten
- * @return string[] [von, bis] im Format "Y-m-d H:i"
- */
-function shifts_event_range(array $days): array
-{
-    $firstDay = reset($days);
-    $lastDay = end($days);
-    $from = $firstDay . ' 00:00';
-    $to = $lastDay . ' 23:59';
-
-    /** @var Carbon|null $eventStart */
-    $eventStart = config('event_start');
-    /** @var Carbon|null $eventEnd */
-    $eventEnd = config('event_end');
-
-    if ($eventStart) {
-        $startDay = $eventStart->format('Y-m-d');
-        if (in_array($startDay, $days)) {
-            $from = $eventStart->format('Y-m-d H:i');
-        } else {
-            foreach ($days as $day) {
-                if ($day > $startDay) {
-                    $from = $day . ' 00:00';
-                    break;
-                }
-            }
-        }
-    }
-
-    if ($eventEnd) {
-        $endDay = $eventEnd->format('Y-m-d');
-        if (in_array($endDay, $days)) {
-            $to = $eventEnd->format('Y-m-d H:i');
-        } else {
-            foreach (array_reverse($days) as $day) {
-                if ($day < $endDay) {
-                    $to = $day . ' 23:59';
-                    break;
-                }
-            }
-        }
-    }
-
-    if ($from > $to) {
-        return [$firstDay . ' 00:00', $lastDay . ' 23:59'];
-    }
-
-    return [$from, $to];
 }

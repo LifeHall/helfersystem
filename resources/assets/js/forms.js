@@ -113,27 +113,8 @@ ready(() => {
     }
   };
 
-  /**
-   * Helfersystem: sets a fixed range from data-from/data-to ("YYYY-MM-DD HH:MM")
-   *
-   * @param {MouseEvent} event
-   */
-  const onClickRange = (event) => {
-    const parse = (value) => {
-      const [day, time] = value.split(' ');
-      const [year, month, date] = day.split('-').map(Number);
-      const [hours, minutes] = time.split(':').map(Number);
-      return new Date(year, month - 1, date, hours, minutes);
-    };
-
-    setInput(parse(event.currentTarget.dataset.from), parse(event.currentTarget.dataset.to));
-  };
-
   document.querySelectorAll('.set-date').forEach((element) => {
     element.addEventListener('click', onClickDate);
-  });
-  document.querySelectorAll('.set-range').forEach((element) => {
-    element.addEventListener('click', onClickRange);
   });
   document.querySelectorAll('.set-time').forEach((element) => {
     element.addEventListener('click', onClickTime);
