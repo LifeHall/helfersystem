@@ -24,7 +24,8 @@ Den Anwendungsnamen setzt `APP_NAME` in der Server-`.env`.
 
 `resources/plugins/Tagesplan/` – neuer Menüpunkt „Tagesplan“ (`/tagesplan`): Tagesansicht der
 Schichten, gruppiert nach Ort, eine Zeile pro benötigtem Platz, eine Spalte pro Zeitfenster.
-Überlappende Schichten am selben Ort bekommen eigene Zeilen. Berechtigung: `user_shifts`.
+Überlappende Schichten am selben Ort bekommen eigene Zeilen; kurze Überlappungen (bis 60 Min.,
+nicht gleiche Zeiten) erscheinen als schmale „Übergabe“-Spalte in derselben Zeile (oben geht, unten kommt).
 Reihenfolge der Orte unter **Admin → Einstellungen → Tagesplan** (ein Ort pro Zeile);
 die Farbe ergibt sich aus der Position in dieser Liste.
 Eigene Berechtigung `tagesplan.view` (Plugin-Migration, bekommt alle Gruppen mit `user_shifts`).
