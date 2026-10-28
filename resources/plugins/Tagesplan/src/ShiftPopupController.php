@@ -81,6 +81,12 @@ class ShiftPopupController extends BaseController
             ];
         }
 
+        // Same order as in the day plan
+        usort($types, fn($a, $b) => strnatcasecmp(
+            Controller::sortKey($a['angel_type']->name),
+            Controller::sortKey($b['angel_type']->name)
+        ));
+
         return $this->response->withView('tagesplan/shift', [
             'shift' => $shift,
             'location' => $shift->location,

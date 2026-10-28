@@ -26,7 +26,8 @@ Den Anwendungsnamen setzt `APP_NAME` in der Server-`.env`.
 Schichten, gruppiert nach Ort, eine Zeile pro benötigtem Platz, eine Spalte pro Zeitfenster.
 Überlappende Schichten am selben Ort bekommen eigene Zeilen; kurze Überlappungen (bis 60 Min.,
 nicht gleiche Zeiten) erscheinen als schmale „Übergabe“-Spalte in derselben Zeile (oben geht, unten kommt).
-Reihenfolge der Orte unter **Admin → Einstellungen → Tagesplan** (ein Ort pro Zeile);
+Pro Ort eine Kopfzeile, darunter die Helfertypen (je eigene Zeilen). Reihenfolge der Orte und
+Helfertypen unter **Admin → Einstellungen → Tagesplan** (ein Name pro Zeile, Einrückung egal);
 die Farbe ergibt sich aus der Position in dieser Liste.
 Eigene Berechtigung `tagesplan.view` (Plugin-Migration, bekommt alle Gruppen mit `user_shifts`).
 Klick auf ein Feld öffnet ein Popup mit Orts- und Schichtinfos zum Ein-/Austragen
@@ -57,3 +58,11 @@ Bei Merge-Konflikten nach einem upstream-Update hier zuerst nachsehen:
 | `includes/pages/user_shifts.php` | Knopf „Eventzeitraum“: Template-Variablen + Funktion `shifts_event_range()` am Dateiende |
 | `resources/views/pages/user-shifts.html` | Knopf „Eventzeitraum“ im Schichtfilter |
 | `resources/assets/js/forms.js` | Klick-Handler `.set-range` |
+
+## Orte und Helfertypen wie im Live-System
+
+`helfer/setup/orte-mit-helfertypen.php` baut die früheren Einzel-Orte (ein Ort pro Helfertyp) um
+auf 8 Orte mit mehreren Helfertypen (Atelier, Aussenbereich, Bistro, Kasse, Kerzenziehen,
+Parkplatz, Wachsküche, Wachsschalen). Gleichzeitige Schichten eines Ortes werden zu einer Schicht
+mit mehreren Helfertypen zusammengelegt; setzt auch die Reihenfolge im Tagesplan.
+Aufruf siehe Kopf des Skripts (`--dry-run` für einen Testlauf).

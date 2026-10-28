@@ -174,7 +174,7 @@ class Controller extends BaseController
         // Fixed position per location across all days, used for sorting and colors
         $positions = $this->location->newQuery()
             ->get()
-            ->sortBy(fn(Location $location) => $this->sortKey($location))
+            ->sortBy(fn(Location $location) => static::sortKey($location->name))
             ->pluck('id')
             ->flip();
 
@@ -184,8 +184,6 @@ class Controller extends BaseController
 
         foreach ($byLocation as $locationShifts) {
             $location = $locationShifts->first()->location;
-            $lanes = $this->lanes($locationShifts);
-            $this->markHandovers($lanes, $columns);
 
             $types = [];
             foreach ($locationShifts as $shift) {
@@ -193,16 +191,23 @@ class Controller extends BaseController
                     $types[$typeId] = $need['name'];
                 }
             }
-            natcasesort($types);
+            uasort($types, fn($a, $b) => strnatcasecmp(static::sortKey($a), static::sortKey($b)));
+
+            // The location is shown as header row above its angel types, if they are not named like it
+            $header = count($types) > 1 || mb_strtolower(reset($types)) != mb_strtolower($location->name);
 
             $rows = [];
             foreach ($types as $typeId => $typeName) {
+                // Lanes per angel type: shifts of other types at this location do not take any rows
+                $lanes = $this->lanes($locationShifts->filter(fn(Shift $shift) => isset($needs[$shift->id][$typeId])));
+                $this->markHandovers($lanes, $columns);
+
                 $typeRows = [];
                 foreach ($lanes as $lane) {
                     $slots = 0;
                     foreach ($lane as $shift) {
-                        $need = $needs[$shift->id][$typeId] ?? null;
-                        $slots = max($slots, $need ? max($need['count'], count($need['entries'])) : 0);
+                        $need = $needs[$shift->id][$typeId];
+                        $slots = max($slots, max($need['count'], count($need['entries'])));
                     }
 
                     for ($slot = 0; $slot < $slots; $slot++) {
@@ -210,12 +215,13 @@ class Controller extends BaseController
                     }
                 }
 
-                $label = count($types) > 1 ? $location->name . ' – ' . $typeName : $location->name;
+                $label = $header ? $typeName : $location->name;
                 foreach ($typeRows as $number => $cells) {
                     $rows[] = [
                         // Only number the positions if there is more than one
                         'label' => count($typeRows) > 1 ? $label . ' ' . ($number + 1) : $label,
                         'cells' => $cells,
+                        'type_start' => $number == 0 && $rows,
                     ];
                 }
             }
@@ -223,6 +229,7 @@ class Controller extends BaseController
             if ($rows) {
                 $groups[] = [
                     'location' => $location,
+                    'header' => $header,
                     'color' => $positions[$location->id] % self::COLORS,
                     'rows' => $rows,
                 ];
@@ -233,18 +240,22 @@ class Controller extends BaseController
     }
 
     /**
-     * Sort by the configured order (one location name per line), then by name
+     * Sort by the configured order (one location or angel type name per line), then by name
      */
-    protected function sortKey(Location $location): string
+    public static function sortKey(string $name): string
     {
         static $order = null;
         if ($order === null) {
             $lines = preg_split('/\R/', (string) config('tagesplan_order', ''));
             $lines = array_values(array_filter(array_map(fn($line) => mb_strtolower(trim($line)), $lines)));
-            $order = array_flip($lines);
+            $order = [];
+            foreach ($lines as $position => $line) {
+                // A name can be a location and an angel type, the first line counts
+                $order[$line] ??= $position;
+            }
         }
 
-        $name = mb_strtolower(trim($location->name));
+        $name = mb_strtolower(trim($name));
         $position = $order[$name] ?? 9999;
 
         return sprintf('%04d %s', $position, $name);
