@@ -11,11 +11,43 @@
   const title = modal.querySelector('.modal-title');
   let highlighted = [];
 
+  // Cells (or handover parts) of a shift, optionally only within one table row
+  const shiftCells = (shiftId, row = document) =>
+    [...row.querySelectorAll(`.tagesplan [data-tp-shift="${shiftId}"]`)].map((a) => a.closest('.tp-part, td'));
+
+  // Mark the sides where a cell joins a cell of the same shift, the frame is drawn around both together
+  document.querySelectorAll('.tagesplan [data-tp-shift]').forEach((a) => {
+    const td = a.closest('td');
+    const cell = a.closest('.tp-part, td');
+    const selector = `[data-tp-shift="${a.dataset.tpShift}"]`;
+    if (td.previousElementSibling?.querySelector(selector)) {
+      cell.classList.add('tp-join-l');
+    }
+    if (td.nextElementSibling?.querySelector(selector)) {
+      cell.classList.add('tp-join-r');
+    }
+  });
+
   const highlight = (shiftId, clicked) => {
-    highlighted = [...document.querySelectorAll(`[data-tp-shift="${shiftId}"]`)].map((a) => a.closest('.tp-part, td'));
-    highlighted.forEach((td) => td.classList.add('tp-active'));
-    clicked?.closest('.tp-part, td')?.classList.add('tp-clicked');
+    highlighted = shiftCells(shiftId);
+    highlighted.forEach((cell) => cell.classList.add('tp-active'));
+    const row = clicked?.closest('tr');
+    if (row) {
+      shiftCells(shiftId, row).forEach((cell) => cell.classList.add('tp-clicked'));
+    }
   };
+
+  // Hovering a cell highlights the whole shift in this row (including its handover part)
+  const hover = (event, add) => {
+    const cell = event.target.closest?.('.tagesplan .tp-part, .tagesplan td');
+    const a = cell?.querySelector(':scope > [data-tp-shift]');
+    if (!a || cell.contains(event.relatedTarget)) {
+      return;
+    }
+    shiftCells(a.dataset.tpShift, a.closest('tr')).forEach((cell) => cell.classList.toggle('tp-hover', add));
+  };
+  document.addEventListener('mouseover', (event) => hover(event, true));
+  document.addEventListener('mouseout', (event) => hover(event, false));
 
   const load = (shiftId) => {
     body.innerHTML = '<div class="text-center p-3"><div class="spinner-border" role="status"></div></div>';
@@ -83,7 +115,7 @@
     if (document.activeElement?.closest('.tagesplan')) {
       document.activeElement.blur();
     }
-    highlighted.forEach((td) => td.classList.remove('tp-active', 'tp-clicked'));
+    highlighted.forEach((cell) => cell.classList.remove('tp-active', 'tp-clicked'));
     highlighted = [];
     delete modal.dataset.openShift;
   });

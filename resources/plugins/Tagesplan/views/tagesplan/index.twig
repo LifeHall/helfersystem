@@ -17,12 +17,20 @@
         .tagesplan .tp-open a { color: transparent; }
         .tagesplan .tp-open a:hover, .tagesplan .tp-open a:focus-visible { color: #212529; text-decoration: underline; }
         .tagesplan .tp-filled a:hover { text-decoration: underline; }
-        .tagesplan .tp-open:hover, .tagesplan .tp-filled:hover { box-shadow: inset 0 0 0 2px #0d6efd; cursor: pointer; }
-        .tagesplan .tp-active { box-shadow: inset 0 0 0 2px #0d6efd; }
-        .tagesplan .tp-clicked { box-shadow: inset 0 0 0 4px #dc3545; }
+        {# Frame around a shift's cells, without the edges where cells of the same shift join (.tp-join-l / -r) #}
+        .tagesplan .tp-hover, .tagesplan .tp-active { --tp-w: 2px; --tp-c: #0d6efd; }
+        .tagesplan .tp-clicked { --tp-w: 4px; --tp-c: #dc3545; }
+        .tagesplan .tp-hover { cursor: pointer; }
+        .tagesplan .tp-hover, .tagesplan .tp-active, .tagesplan .tp-clicked {
+            box-shadow: inset calc(var(--tp-w) * var(--tp-l, 1)) 0 0 0 var(--tp-c),
+                inset calc(-1 * var(--tp-w) * var(--tp-r, 1)) 0 0 0 var(--tp-c),
+                inset 0 var(--tp-w) 0 0 var(--tp-c), inset 0 calc(-1 * var(--tp-w)) 0 0 var(--tp-c);
+        }
+        .tagesplan .tp-join-l { --tp-l: 0; }
+        .tagesplan .tp-join-r { --tp-r: 0; }
         {# Handover: narrow column, upper part = previous shift ends, lower part = next shift starts #}
         .tagesplan th.tp-handover-col { min-width: 0; font-size: .75em; line-height: 1.1; }
-        .tagesplan td.tp-handover { min-width: 0; padding: 0; font-size: .75em; }
+        .tagesplan td.tp-handover { min-width: 0; padding: 0; font-size: .75em; border-left-style: hidden; border-right-style: hidden; }
         .tagesplan .tp-part { padding: .05rem .3rem; }
         .tagesplan .tp-part + .tp-part { border-top: 1px dashed var(--tp-border); }
         .tagesplan .tp-part.tp-none { background-color: #7f7f7f; }
