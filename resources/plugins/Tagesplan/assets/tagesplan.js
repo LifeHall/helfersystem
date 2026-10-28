@@ -16,25 +16,54 @@
     [...row.querySelectorAll(`.tagesplan [data-tp-shift="${shiftId}"]${typeId ? `[data-tp-type="${typeId}"]` : ''}`)]
       .map((a) => a.closest('.tp-part, td'));
 
-  // Change the day directly on selection
-  const daySelect = document.getElementById('tagesplan-day');
-  if (daySelect) {
-    daySelect.form.querySelector('.tp-day-submit')?.closest('.col-auto')?.classList.add('d-none');
-    daySelect.addEventListener('change', () => daySelect.form.submit());
-  }
-
   // Mark the sides where a cell joins a cell of the same shift, the frame is drawn around both together
-  document.querySelectorAll('.tagesplan [data-tp-shift]').forEach((a) => {
-    const td = a.closest('td');
-    const cell = a.closest('.tp-part, td');
-    const selector = `[data-tp-shift="${a.dataset.tpShift}"]`;
-    if (td.previousElementSibling?.querySelector(selector)) {
-      cell.classList.add('tp-join-l');
+  const markJoins = () => {
+    document.querySelectorAll('.tagesplan [data-tp-shift]').forEach((a) => {
+      const td = a.closest('td');
+      const cell = a.closest('.tp-part, td');
+      const selector = `[data-tp-shift="${a.dataset.tpShift}"]`;
+      if (td.previousElementSibling?.querySelector(selector)) {
+        cell.classList.add('tp-join-l');
+      }
+      if (td.nextElementSibling?.querySelector(selector)) {
+        cell.classList.add('tp-join-r');
+      }
+    });
+  };
+
+  // Change the day directly on selection
+  const initDaySelect = () => {
+    const daySelect = document.getElementById('tagesplan-day');
+    if (daySelect) {
+      daySelect.form.querySelector('.tp-day-submit')?.closest('.col-auto')?.classList.add('d-none');
+      daySelect.addEventListener('change', () => daySelect.form.submit());
     }
-    if (td.nextElementSibling?.querySelector(selector)) {
-      cell.classList.add('tp-join-r');
-    }
-  });
+  };
+
+  markJoins();
+  initDaySelect();
+
+  // Day plan URL without the popup to re-open
+  const pageUrl = () => {
+    const url = new URL(window.location.href);
+    url.searchParams.delete('shift');
+    url.searchParams.delete('type');
+    return url;
+  };
+
+  // Reload the day plan in place (keeps the scroll position), it also shows the messages
+  const refreshPage = () =>
+    fetch(pageUrl(), { credentials: 'same-origin' })
+      .then((response) => response.text())
+      .then((html) => {
+        const page = new DOMParser().parseFromString(html, 'text/html').getElementById('tp-page');
+        if (page) {
+          document.getElementById('tp-page').innerHTML = page.innerHTML;
+          markJoins();
+          initDaySelect();
+        }
+      })
+      .catch(() => window.location.assign(pageUrl()));
 
   const highlight = (shiftId, typeId, clicked) => {
     highlighted = shiftCells(shiftId, document, typeId);
@@ -104,7 +133,8 @@
     button.remove();
   });
 
-  // Forms marked with .tp-ajax are sent in the background, then only the popup content is reloaded
+  // Forms marked with .tp-ajax are sent in the background, then the popup content is reloaded.
+  // Forms marked with .tp-close close the popup on success and refresh the day plan
   body.addEventListener('submit', (event) => {
     const form = event.target.closest('form.tp-ajax');
     if (!form) {
@@ -121,8 +151,14 @@
       headers: { 'X-Tagesplan': '1' },
     })
       .then((response) => {
-        if (!response.ok) {
+        // 409: not allowed, the popup shows the reason
+        if (!response.ok && response.status !== 409) {
           throw new Error(String(response.status));
+        }
+        if (response.ok && form.classList.contains('tp-close')) {
+          bootstrap.Modal.getOrCreateInstance(modal).hide();
+          refreshPage();
+          return;
         }
         load(currentShift, currentType);
       })
@@ -142,8 +178,10 @@
     delete modal.dataset.openType;
   });
 
-  // Re-open the popup after signing up / off
+  // Re-open the popup after signing up / off (without JavaScript requests)
   if (modal.dataset.openShift) {
+    // Reloading the page should not open it again
+    window.history.replaceState(null, '', pageUrl());
     const type = modal.dataset.openType ? `[data-tp-type="${modal.dataset.openType}"]` : '';
     const cell = document.querySelector(`[data-tp-shift="${modal.dataset.openShift}"]${type}`)
       ?? document.querySelector(`[data-tp-shift="${modal.dataset.openShift}"]`);

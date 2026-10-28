@@ -56,7 +56,7 @@
         {% if type.self_signed_up %}
             <p class="text-success small">{{ m.icon('check-lg') }} {{ __('tagesplan.self_signed_up') }}</p>
         {% elseif type.self_allowed %}
-            <form method="post" action="{{ url('/tagesplan/eintragen') }}" class="mb-2">
+            <form method="post" action="{{ url('/tagesplan/eintragen') }}" class="tp-ajax tp-close mb-2">
                 {{ csrf() }}
                 <input type="hidden" name="shift_id" value="{{ shift.id }}">
                 <input type="hidden" name="angel_type_id" value="{{ type.angel_type.id }}">
@@ -79,7 +79,7 @@
         {% endif %}
 
         {% if type.users is not empty %}
-            <form method="post" action="{{ url('/tagesplan/eintragen') }}" class="row g-2 align-items-center mb-2">
+            <form method="post" action="{{ url('/tagesplan/eintragen') }}" class="tp-ajax tp-close row g-2 align-items-center mb-2">
                 {{ csrf() }}
                 <input type="hidden" name="shift_id" value="{{ shift.id }}">
                 <input type="hidden" name="angel_type_id" value="{{ type.angel_type.id }}">
@@ -103,7 +103,7 @@
                 <li class="list-group-item d-flex justify-content-between align-items-center py-1">
                     <span>{{ m.icon('person-fill') }} {{ item.entry.user.displayName }}</span>
                     {% if item.can_signoff %}
-                        <form method="post" action="{{ url('/tagesplan/austragen') }}" class="m-0">
+                        <form method="post" action="{{ url('/tagesplan/austragen') }}" class="tp-ajax tp-close m-0">
                             {{ csrf() }}
                             <input type="hidden" name="shift_entry_id" value="{{ item.entry.id }}">
                             <button type="submit" class="btn btn-sm btn-danger">

@@ -388,6 +388,11 @@ class ShiftPopupController extends BaseController
     ): Response {
         $this->addNotification($message, $type);
 
+        // Requests from the popup script: the script refreshes the day plan or shows the error in the popup
+        if (request()->headers->get('X-Tagesplan')) {
+            return $this->response->withStatus($type == NotificationType::ERROR ? 409 : 204);
+        }
+
         return $this->response->redirectTo(url('/tagesplan', [
             'day' => $shift->start->format('Y-m-d'),
             'shift' => $shift->id,
