@@ -12,7 +12,7 @@
         .tagesplan td { min-width: 9rem; }
         .tagesplan tbody.tp-group { border-top: 3px solid var(--tp-border); }
         .tagesplan tbody.tp-group tr > * { color: #212529; }
-        .tagesplan td.tp-none { background-image: repeating-linear-gradient(-45deg, rgba(0,0,0,.12) 0 2px, transparent 2px 8px); }
+        .tagesplan td.tp-none { background-color: #7f7f7f; }
         .tagesplan td.tp-open a { display: block; color: transparent; text-decoration: none; }
         .tagesplan td.tp-open a:hover, .tagesplan td.tp-open a:focus { color: #212529; text-decoration: underline; }
         .tagesplan td.tp-filled a { color: #212529; text-decoration: none; }
@@ -31,7 +31,7 @@
             .tagesplan thead th, .tagesplan th.tp-label { position: static; }
             .tagesplan td.tp-open a { color: transparent; }
             .tp-color-0 > *, .tp-color-1 > *, .tp-color-2 > *, .tp-color-3 > *, .tp-color-4 > *,
-            .tp-color-5 > *, .tp-color-6 > *, .tp-color-7 > *, .tp-color-8 > * {
+            .tp-color-5 > *, .tp-color-6 > *, .tp-color-7 > *, .tp-color-8 > *, .tagesplan td.tp-none {
                 -webkit-print-color-adjust: exact; print-color-adjust: exact;
             }
         }
@@ -113,7 +113,7 @@
 
             <p class="tp-legend small text-muted d-print-none">
                 <span style="background-color:#b4c6e7"></span>{{ __('tagesplan.legend.filled') }} / {{ __('tagesplan.legend.open') }}
-                <span style="background-image: repeating-linear-gradient(-45deg, rgba(0,0,0,.25) 0 2px, transparent 2px 8px)"></span>{{ __('tagesplan.legend.none') }}
+                <span style="background-color: #7f7f7f"></span>{{ __('tagesplan.legend.none') }}
             </p>
         {% endif %}
     </div>
