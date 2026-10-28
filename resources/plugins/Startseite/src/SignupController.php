@@ -11,6 +11,7 @@ use Engelsystem\Helpers\Authenticator;
 use Engelsystem\Helpers\Carbon;
 use Engelsystem\Http\Request;
 use Engelsystem\Http\Response;
+use Engelsystem\Mail\EngelsystemMailer;
 use Engelsystem\Models\AngelType;
 use Engelsystem\Models\Shifts\NeededAngelType;
 use Engelsystem\Models\Shifts\Shift;
@@ -20,6 +21,8 @@ use Engelsystem\Models\User\User;
 use Engelsystem\Models\UserAngelType;
 use Engelsystem\ShiftSignupState;
 use Illuminate\Support\Collection;
+use Psr\Log\LoggerInterface;
+use Throwable;
 
 /**
  * Guided sign up: 1. helper types, 2. days and times, 3. table of the matching time slots to tick
@@ -43,7 +46,9 @@ class SignupController extends BaseController
 
     public function __construct(
         protected Authenticator $auth,
-        protected Response $response
+        protected Response $response,
+        protected EngelsystemMailer $mailer,
+        protected LoggerInterface $log
     ) {
     }
 
@@ -71,6 +76,7 @@ class SignupController extends BaseController
                 'checked' => in_array($type->id, $choice->angel_types) || in_array($type->id, $locked),
                 'locked' => in_array($type->id, $locked),
                 'reason' => in_array($type->id, $locked) ? null : $reason,
+                'can_request' => $this->canRequest($type),
             ];
         }
         usort($types, fn($a, $b) => strnatcasecmp(
@@ -87,18 +93,7 @@ class SignupController extends BaseController
     public function saveTypes(Request $request): Response
     {
         $user = $this->auth->user();
-        $slots = $this->slots();
-        $locked = $this->lockedTypes($user, $slots);
-        $available = $slots->map(fn(array $slot) => $slot['type'])->unique('id')
-            ->filter(fn(AngelType $type) => !$this->typeReason($type))
-            ->pluck('id')
-            ->all();
-
-        $selected = array_map('intval', $request->request->all('types'));
-        $selected = array_values(array_unique(array_merge(
-            array_intersect($selected, $available),
-            $locked
-        )));
+        $selected = $this->selectedTypes($user, $request);
 
         if (!$selected) {
             $this->addNotification('startseite.signup.no_types', NotificationType::ERROR);
@@ -110,6 +105,44 @@ class SignupController extends BaseController
         $choice->save();
 
         return $this->response->redirectTo(url('/startseite/eintragen/tage'));
+    }
+
+    /**
+     * Requests the confirmation for a helper type and notifies the approvers,
+     * the helper types ticked so far are kept
+     */
+    public function requestApproval(Request $request): Response
+    {
+        $user = $this->auth->user();
+        $type = AngelType::findOrFail((int) $request->postData('request'));
+
+        $choice = $this->choice($user);
+        $choice->angel_types = $this->selectedTypes($user, $request);
+        $choice->save();
+
+        if (!$this->canRequest($type)) {
+            $this->addNotification(
+                $this->membership($user, $type) ? 'startseite.signup.type_pending' : 'startseite.signup.not_allowed',
+                NotificationType::ERROR
+            );
+            return $this->response->redirectTo(url('/startseite/eintragen'));
+        }
+
+        $userAngelType = new UserAngelType();
+        $userAngelType->user()->associate($user);
+        $userAngelType->angelType()->associate($type);
+        $userAngelType->save();
+
+        engelsystem_log(sprintf(
+            'User %s joined %s.',
+            User_Nick_render($user, true),
+            AngelType_name_render($type, true)
+        ));
+
+        $this->notifyApprovers($user, $type);
+        $this->addNotification(__('startseite.signup.request.success', [$type->name]));
+
+        return $this->response->redirectTo(url('/startseite/eintragen') . '#type-' . $type->id);
     }
 
     /**
@@ -504,6 +537,76 @@ class SignupController extends BaseController
         }
 
         return null;
+    }
+
+    /**
+     * The helper type requires a confirmation the user can request (not requested yet)
+     */
+    protected function canRequest(AngelType $type): bool
+    {
+        return $type->restricted
+            && $type->shift_self_signup
+            && !$this->canManage($type)
+            && !$this->membership($this->auth->user(), $type);
+    }
+
+    /**
+     * Ticked helper types that can be chosen, with the ones the user has shift entries in
+     *
+     * @return int[]
+     */
+    protected function selectedTypes(User $user, Request $request): array
+    {
+        $slots = $this->slots();
+        $available = $slots->map(fn(array $slot) => $slot['type'])->unique('id')
+            ->filter(fn(AngelType $type) => !$this->typeReason($type))
+            ->pluck('id')
+            ->all();
+
+        $selected = array_map('intval', $request->request->all('types'));
+
+        return array_values(array_unique(array_merge(
+            array_intersect($selected, $available),
+            $this->lockedTypes($user, $slots)
+        )));
+    }
+
+    /**
+     * Mails everybody who can confirm the request: users allowed to edit helper types and supporters of the type
+     */
+    protected function notifyApprovers(User $requester, AngelType $type): void
+    {
+        $editors = User::whereHas(
+            'groups.privileges',
+            fn($query) => $query->where('name', 'user.angeltypes.edit')
+        )->get();
+        $supporters = $type->userAngelTypes()->wherePivot('supporter', true)->get();
+
+        $recipients = $editors->merge($supporters)
+            ->unique('id')
+            ->reject(fn(User $user) => $user->id == $requester->id);
+
+        foreach ($recipients as $recipient) {
+            try {
+                $this->mailer->sendViewTranslated(
+                    $recipient,
+                    'startseite.mail.subject',
+                    'emails/startseite-approval',
+                    [
+                        // The first two values fill the placeholders of the subject
+                        'requester' => $requester->displayName,
+                        'angeltype_name' => $type->name,
+                        'username' => $recipient->displayName,
+                        'angeltype' => $type,
+                    ]
+                );
+            } catch (Throwable $e) {
+                $this->log->error('Startseite: approval mail to {user} failed: {error}', [
+                    'user' => $recipient->name,
+                    'error' => $e->getMessage(),
+                ]);
+            }
+        }
     }
 
     /**

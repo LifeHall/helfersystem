@@ -20,25 +20,39 @@
                 <div class="list-group mb-4">
                     {% for item in types %}
                         {% set disabled = item.locked or item.reason %}
-                        <label class="list-group-item d-flex gap-3 align-items-start{% if item.reason %} text-muted{% endif %}">
-                            <input class="form-check-input flex-shrink-0 mt-1" type="checkbox" name="types[]" value="{{ item.type.id }}"
-                                {%- if item.checked %} checked{% endif %}
-                                {%- if disabled %} disabled{% endif %}>
+                        <div class="list-group-item d-flex flex-wrap gap-2 align-items-center{% if item.reason %} text-muted{% endif %}" id="type-{{ item.type.id }}">
+                            <label class="d-flex gap-3 align-items-start flex-grow-1">
+                                <input class="form-check-input flex-shrink-0 mt-1" type="checkbox" name="types[]" value="{{ item.type.id }}"
+                                    {%- if item.checked %} checked{% endif %}
+                                    {%- if disabled %} disabled{% endif %}>
+                                <span class="flex-grow-1">
+                                    <span class="fw-semibold">{{ item.type.name }}</span>
+                                    {% if item.locations %}<span class="text-muted small">· {{ item.locations }}</span>{% endif %}
+                                    {% if item.locked %}
+                                        <span class="badge bg-success ms-1">{{ m.icon('lock') }} {{ __('startseite.signup.locked') }}</span>
+                                    {% endif %}
+                                    {% if item.reason %}
+                                        <span class="d-block small">{{ m.icon('info-circle') }} {{ item.reason }}</span>
+                                    {% endif %}
+                                </span>
+                            </label>
                             {% if item.locked %}
                                 {# Disabled checkboxes are not sent #}
                                 <input type="hidden" name="types[]" value="{{ item.type.id }}">
                             {% endif %}
-                            <span class="flex-grow-1">
-                                <span class="fw-semibold">{{ item.type.name }}</span>
-                                {% if item.locations %}<span class="text-muted small">· {{ item.locations }}</span>{% endif %}
-                                {% if item.locked %}
-                                    <span class="badge bg-success ms-1">{{ m.icon('lock') }} {{ __('startseite.signup.locked') }}</span>
-                                {% endif %}
-                                {% if item.reason %}
-                                    <span class="d-block small">{{ m.icon('info-circle') }} {{ item.reason }}</span>
-                                {% endif %}
-                            </span>
-                        </label>
+                            {% if item.can_request %}
+                                {# Sends the ticked helper types along, so they are kept #}
+                                {{ f.button(__('startseite.signup.request'), {
+                                    'type': 'submit',
+                                    'name': 'request',
+                                    'value': item.type.id,
+                                    'size': 'sm',
+                                    'btn_type': 'outline-primary',
+                                    'icon_left': 'send',
+                                    'attr': {'formaction': url('/startseite/eintragen/anfrage')},
+                                }) }}
+                            {% endif %}
+                        </div>
                     {% endfor %}
                 </div>
 

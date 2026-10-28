@@ -83,7 +83,7 @@ msgid "startseite.signup.step.table"
 msgstr "Zeitslots wählen"
 
 msgid "startseite.signup.types.info"
-msgstr "Wähle die Helferdienste, bei denen du mithelfen möchtest. Helferdienste, in denen du bereits eingetragen bist, bleiben ausgewählt."
+msgstr "Wähle die Helferdienste, bei denen du mithelfen möchtest. Helferdienste, in denen du bereits eingetragen bist, bleiben ausgewählt. Für Helferdienste mit Freischaltung kannst du hier eine Anfrage senden."
 
 msgid "startseite.signup.no_shifts"
 msgstr "Zurzeit gibt es keine offenen Schichten."
@@ -183,4 +183,19 @@ msgstr "Deine Freischaltung ist beantragt, aber noch nicht bestätigt."
 
 msgid "startseite.signup.type_restricted"
 msgstr "Für diesen Helferdienst ist eine Freischaltung nötig."
+
+msgid "startseite.signup.request"
+msgstr "Freischaltung anfragen"
+
+msgid "startseite.signup.request.success"
+msgstr "Deine Anfrage für „%s“ ist gesendet. Sobald du freigeschaltet bist, kannst du den Helferdienst auswählen."
+
+msgid "startseite.mail.subject"
+msgstr "Freigabe-Antrag von %s für „%s“"
+
+msgid "startseite.mail.introduction"
+msgstr "%s möchte im Bereich „%s“ Dienst machen und hat eine Freigabe beantragt."
+
+msgid "startseite.mail.text"
+msgstr "Du kannst die Person hier freigeben oder ablehnen:\n%s"
 

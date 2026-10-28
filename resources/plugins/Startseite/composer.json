@@ -2,7 +2,7 @@
   "type": "engelsystem-plugin",
   "name": "helfersystem/startseite",
   "description": "Startseite: angepinnte News, eigene Dienste mit PDF-Download, geführtes Eintragen",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "license": "GPL-2.0-or-later",
   "authors": [
     {
@@ -28,6 +28,10 @@
       "/startseite/eintragen": "Helfersystem\\Startseite\\SignupController@types",
       "/startseite/eintragen/dienste": [
         "Helfersystem\\Startseite\\SignupController@saveTypes",
+        "POST"
+      ],
+      "/startseite/eintragen/anfrage": [
+        "Helfersystem\\Startseite\\SignupController@requestApproval",
         "POST"
       ],
       "/startseite/eintragen/tage": "Helfersystem\\Startseite\\SignupController@days",

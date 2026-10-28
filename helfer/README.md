@@ -57,6 +57,9 @@ Plugin-Middleware, die die Route `NewsController@index` auf `HomeController@inde
   Slots sind ausgegraut; „Nur Zeitslots mit freien Plätzen zeigen“ blendet solche Zeilen aus.
   Die Auswahl aus Schritt 1 und 2 wird pro Helfer gespeichert (`startseite_signup_choices`).
   Helferdienste, Tage und Zeiten mit eigenen Einträgen lassen sich nicht abwählen.
+  Bei Helferdiensten mit Freischaltung gibt es in Schritt 1 „Freischaltung anfragen“: trägt die (unbestätigte)
+  Mitgliedschaft ein und mailt allen mit `user.angeltypes.edit` und den Supportern des Helferdienstes;
+  die bisherigen Häkchen bleiben erhalten.
   Gleiche Rechteprüfung wie der Tagesplan (`Shift_signup_allowed()`, `Shift_signout_allowed()`, gleiche
   Kollisionsregel); Kollisionen zwischen mehreren neu gewählten Slots werden beim Speichern erkannt.
 

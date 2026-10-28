@@ -83,7 +83,7 @@ msgid "startseite.signup.step.table"
 msgstr "Choose time slots"
 
 msgid "startseite.signup.types.info"
-msgstr "Choose the helper types you would like to help with. Helper types you are already signed up for stay selected."
+msgstr "Choose the helper types you would like to help with. Helper types you are already signed up for stay selected. For helper types that require a confirmation you can send a request here."
 
 msgid "startseite.signup.no_shifts"
 msgstr "There are no upcoming shifts at the moment."
@@ -183,4 +183,19 @@ msgstr "Your request is not confirmed yet."
 
 msgid "startseite.signup.type_restricted"
 msgstr "This helper type requires a confirmation."
+
+msgid "startseite.signup.request"
+msgstr "Request confirmation"
+
+msgid "startseite.signup.request.success"
+msgstr "Your request for \"%s\" has been sent. As soon as you are confirmed, you can choose the helper type."
+
+msgid "startseite.mail.subject"
+msgstr "Approval request from %s for \"%s\""
+
+msgid "startseite.mail.introduction"
+msgstr "%s would like to help in \"%s\" and has requested approval."
+
+msgid "startseite.mail.text"
+msgstr "You can confirm or deny the request here:\n%s"
 
