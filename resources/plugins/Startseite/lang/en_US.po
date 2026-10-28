@@ -217,3 +217,15 @@ msgstr "Sending mails is not set up (Application URL in Config → System is mis
 msgid "startseite.signup.blocked"
 msgstr "Collides with a selected shift."
 
+msgid "startseite.config.title"
+msgstr "Start page"
+
+msgid "config.startseite_login_text"
+msgstr "Text on the start page for visitors who are not logged in"
+
+msgid "config.startseite_login_text.info"
+msgstr "Shown at the top of the login page, Markdown is possible (e.g. **bold**, links, lists). Leave empty for the default welcome."
+
+msgid "startseite.login.no_account"
+msgstr "No account yet?"
+

@@ -217,3 +217,15 @@ msgstr "Der Mailversand ist nicht eingerichtet (Application URL in Config → Sy
 msgid "startseite.signup.blocked"
 msgstr "Überschneidet sich mit einem ausgewählten Dienst."
 
+msgid "startseite.config.title"
+msgstr "Startseite"
+
+msgid "config.startseite_login_text"
+msgstr "Text auf der Startseite für nicht angemeldete Besucher"
+
+msgid "config.startseite_login_text.info"
+msgstr "Wird oben auf der Login-Seite angezeigt, Markdown ist möglich (z. B. **fett**, Links, Listen). Leer lassen für die Standard-Begrüssung."
+
+msgid "startseite.login.no_account"
+msgstr "Noch kein Konto?"
+

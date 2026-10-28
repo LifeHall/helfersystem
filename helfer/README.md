@@ -51,6 +51,9 @@ Plugin-Middleware, die die Route `NewsController@index` auf `HomeController@inde
   Im News-Editor angepinnte News erscheinen am Ende der Reihenfolge.
 - **Meine Dienste:** Übersicht der eigenen Schichteinträge pro Tag mit Stunden, Download als PDF
   (`/startseite/dienste.pdf`, eigener kleiner PDF-Schreiber `Pdf.php`, keine Zusatzbibliothek).
+- **Login-Seite (Startseite für Gäste):** überschreibt `pages/login.twig` des Kerns. Oben ein Text aus
+  **Admin → Konfiguration → Startseite** (`startseite_login_text`, Markdown; leer = Standard-Begrüssung), in der Mitte
+  Login und Registrierung, unten die Event-Daten. Bei upstream-Änderungen an `pages/login.twig` diese Kopie abgleichen.
 - **Dienstpläne versenden** (Knopf bei „Meine Dienste“, Recht `startseite.send_shifts`, per Plugin-Migration für
   alle Gruppen mit `user_shifts_admin`): schickt allen Personen mit Schichteinträgen eine Mail in ihrer Sprache mit
   ihrem Dienstplan als PDF-Anhang (`ShiftPlanMailer` baut die Mail selbst, weil der Kern-Mailer keine Anhänge kann).
@@ -65,6 +68,8 @@ Plugin-Middleware, die die Route `NewsController@index` auf `HomeController@inde
   Bei Helferdiensten mit Freischaltung gibt es in Schritt 1 „Freischaltung anfragen“: trägt die (unbestätigte)
   Mitgliedschaft ein und mailt allen mit `user.angeltypes.edit` und den Supportern des Helferdienstes;
   die bisherigen Häkchen bleiben erhalten.
+  Wählt jemand schon bei der Registrierung einen Helferdienst mit Freischaltung, gehen dieselben Mails an die
+  Bestätiger (`RegistrationHandler` auf das Ereignis `user.created`).
   Gleiche Rechteprüfung wie der Tagesplan (`Shift_signup_allowed()`, `Shift_signout_allowed()`, gleiche
   Kollisionsregel). In der Tabelle graut ein Skript beim Anhaken sofort alle Slots aus, die sich nach dieser Regel
   überschneiden; abwählbare eigene Einträge sperrt deshalb nicht der Server, sondern das Skript (beim Speichern prüft

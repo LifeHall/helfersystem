@@ -2,7 +2,7 @@
   "type": "engelsystem-plugin",
   "name": "helfersystem/startseite",
   "description": "Startseite: angepinnte News, eigene Dienste mit PDF-Download, geführtes Eintragen",
-  "version": "1.5.2",
+  "version": "1.7.0",
   "license": "GPL-2.0-or-later",
   "authors": [
     {
@@ -11,9 +11,26 @@
     }
   ],
   "extra": {
+    "event_handlers": {
+      "user.created": "Helfersystem\\Startseite\\RegistrationHandler"
+    },
     "middleware": [
       "Helfersystem\\Startseite\\Middleware"
     ],
+    "config_options": {
+      "startseite": {
+        "title": "startseite.config.title",
+        "icon": "house",
+        "order": 61,
+        "config": {
+          "startseite_login_text": {
+            "type": "text",
+            "rows": 10,
+            "default": ""
+          }
+        }
+      }
+    },
     "routes": {
       "/startseite/news/anpinnen": [
         "Helfersystem\\Startseite\\HomeController@pin",
