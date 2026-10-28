@@ -4,6 +4,10 @@
 {% import 'pages/news/index.twig' as n %}
 
 {% block news %}
+    <style>
+        {# The dark themes of the Engelsystem keep the light Bootstrap table colors #}
+        body[data-theme_type="dark"] .startseite-day-row { --bs-table-bg: #2b3035; --bs-table-color: #dee2e6; --bs-table-border-color: #495057; }
+    </style>
     {# Pinned news in their order, admins can change it #}
     {% if news is empty %}
         <div class="alert alert-info">{{ __('startseite.news.none') }}</div>
@@ -95,7 +99,7 @@
                     </thead>
                     {% for day in shift_days %}
                         <tbody>
-                            <tr class="table-secondary">
+                            <tr class="table-secondary startseite-day-row">
                                 <th colspan="3" class="ps-3">{{ day.label }}</th>
                                 <th class="text-end pe-3">{{ day.hours|round(2) }} h</th>
                             </tr>

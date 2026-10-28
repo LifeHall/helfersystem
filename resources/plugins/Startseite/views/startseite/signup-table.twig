@@ -6,10 +6,14 @@
 
 {% block content %}
     <style>
+        {# Own greys: the dark themes of the Engelsystem keep the light Bootstrap greys (--bs-secondary-bg etc.) #}
+        #startseite-table { --ss-none: #e9ecef; --ss-full: #f8f9fa; }
+        body[data-theme_type="dark"] #startseite-table { --ss-none: #16191c; --ss-full: #2b3035; }
+        .startseite-legend-full { background-color: var(--ss-full); border: 1px solid var(--bs-border-color); }
         .startseite-slots th, .startseite-slots td { padding: .25rem .6rem; }
         .startseite-slots td { min-width: 5.5rem; }
-        .startseite-slots td.startseite-none { background-color: var(--bs-secondary-bg); }
-        .startseite-slots td.startseite-full { background-color: var(--bs-tertiary-bg); color: var(--bs-secondary-color); opacity: .6; }
+        .startseite-slots td.startseite-none { background-color: var(--ss-none); }
+        .startseite-slots td.startseite-full { background-color: var(--ss-full); color: var(--bs-secondary-color); opacity: .6; }
         .startseite-slots td.startseite-own { background-color: rgba(var(--bs-success-rgb), .2); }
         .startseite-slots td.startseite-changed { box-shadow: inset 0 0 0 2px var(--bs-primary); }
         .startseite-slots label { cursor: pointer; white-space: nowrap; }
@@ -17,7 +21,7 @@
         .startseite-slots tr > :first-child { position: sticky; left: 0; z-index: 1; background-color: var(--bs-body-bg); box-shadow: inset -1px 0 0 var(--bs-border-color); }
         {# Not possible any more because of a ticked slot #}
         .startseite-slots .startseite-blocked { cursor: not-allowed; opacity: .45; }
-        .startseite-slots td.startseite-blocked-all { background-color: var(--bs-tertiary-bg); color: var(--bs-secondary-color); }
+        .startseite-slots td.startseite-blocked-all { background-color: var(--ss-full); color: var(--bs-secondary-color); }
         .startseite-slots .form-check-input { margin-top: 0; vertical-align: middle; }
         .startseite-only-free .startseite-inactive { display: none; }
         .startseite-actions { position: sticky; bottom: 0; z-index: 3; background: var(--bs-body-bg); border-top: 1px solid var(--bs-border-color); }
@@ -43,7 +47,7 @@
                         <label class="form-check-label" for="startseite-only-free">{{ __('startseite.signup.only_free') }}</label>
                     </div>
                     <span><span class="badge text-bg-success">&nbsp;</span> {{ __('startseite.signup.legend.own') }}</span>
-                    <span><span class="badge text-bg-secondary opacity-50">&nbsp;</span> {{ __('startseite.signup.legend.full') }}</span>
+                    <span><span class="badge startseite-legend-full">&nbsp;</span> {{ __('startseite.signup.legend.full') }}</span>
                 </div>
             {% endif %}
 
