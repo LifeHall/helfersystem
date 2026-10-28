@@ -319,3 +319,12 @@ msgstr "Helper can receive another %d vouchers."
 
 msgid "voucher.eligible.force"
 msgstr "Helper can receive <s>&thinsp;%d&thinsp;</s> unlimited vouchers."
+
+# --- Manuelle Ergänzungen aus helfer/lang/en_US.po ---
+# Manual text overrides (English) – take precedence over the automatic replacements
+
+msgid "question.menu"
+msgstr "Ask the admin"
+
+msgid "faq.questions_link"
+msgstr "If you don't find an answer, you can <a href=\"%s\">ask the admin</a>."

@@ -1,0 +1,7 @@
+# Manual text overrides (English) – take precedence over the automatic replacements
+
+msgid "question.menu"
+msgstr "Ask the admin"
+
+msgid "faq.questions_link"
+msgstr "If you don't find an answer, you can <a href=\"%s\">ask the admin</a>."

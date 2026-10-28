@@ -135,6 +135,12 @@ def write(locale, entries):
     lines.append(plural)
     lines.append('')
 
+    # Manuelle Ergänzungen ersetzen automatische Einträge mit gleicher msgid
+    manual = ROOT / 'helfer' / 'lang' / (locale + '.po')
+    if manual.exists():
+        for e in parse_po(manual):
+            entries.pop(e['msgid'], None)
+
     for msgid in sorted(entries):
         e = entries[msgid]
         for key in ['msgid', 'msgid_plural', 'msgstr', 'msgstr[0]', 'msgstr[1]']:
@@ -142,8 +148,6 @@ def write(locale, entries):
                 lines.append(f'{key} "{e[key]}"')
         lines.append('')
 
-    # Manuelle Ergänzungen anhängen (überschreiben die automatischen Einträge)
-    manual = ROOT / 'helfer' / 'lang' / (locale + '.po')
     if manual.exists():
         lines.append('# --- Manuelle Ergänzungen aus helfer/lang/' + locale + '.po ---')
         lines.append(manual.read_text(encoding='utf-8'))
