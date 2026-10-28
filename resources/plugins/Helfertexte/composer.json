@@ -1,0 +1,13 @@
+{
+  "type": "engelsystem-plugin",
+  "name": "helfersystem/helfertexte",
+  "description": "Textanpassungen: Engel → Helfer, eigene Formulierungen",
+  "version": "1.0.0",
+  "license": "GPL-2.0-or-later",
+  "authors": [
+    {
+      "name": "befritscht",
+      "email": "beat.fritschi@brutsch.com"
+    }
+  ]
+}

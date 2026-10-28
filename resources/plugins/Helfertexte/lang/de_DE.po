@@ -1,5 +1,5 @@
-# Automatisch erzeugt von helfer/build-translations.py - nicht von Hand bearbeiten.
-# Eigene zusätzliche Anpassungen gehören in helfer/lang/de_DE.po
+# Automatisch erzeugt von build-translations.py - nicht von Hand bearbeiten.
+# Eigene zusätzliche Anpassungen gehören in manual/de_DE.po
 msgid ""
 msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -320,7 +320,7 @@ msgstr "Helfer kann noch %d Gutscheine bekommen."
 msgid "voucher.eligible.force"
 msgstr "Helfer kann <s>&thinsp;%d&thinsp;</s> unbegrenzt Gutscheine bekommen."
 
-# --- Manuelle Ergänzungen aus helfer/lang/de_DE.po ---
+# --- Manuelle Ergänzungen aus manual/de_DE.po ---
 # Manuelle Text-Anpassungen (Deutsch) – haben Vorrang vor den automatischen Ersetzungen
 
 msgid "question.menu"
@@ -331,3 +331,7 @@ msgstr "Wenn deine Frage hier nicht beantwortet wurde, <a href=\"%s\">frag den A
 
 msgid "shifts.event_range"
 msgstr "Eventzeitraum"
+
+# Im Original fehlt die Übersetzung (Code hat Leerzeichen um "/")
+msgid "Other angel type needed / collides with my shifts"
+msgstr "Anderer Helfertyp benötigt / kollidiert mit meinen Schichten"

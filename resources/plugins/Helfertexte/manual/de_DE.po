@@ -8,3 +8,7 @@ msgstr "Wenn deine Frage hier nicht beantwortet wurde, <a href=\"%s\">frag den A
 
 msgid "shifts.event_range"
 msgstr "Eventzeitraum"
+
+# Im Original fehlt die Übersetzung (Code hat Leerzeichen um "/")
+msgid "Other angel type needed / collides with my shifts"
+msgstr "Anderer Helfertyp benötigt / kollidiert mit meinen Schichten"

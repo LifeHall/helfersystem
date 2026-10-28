@@ -4,16 +4,17 @@ Dieser Fork basiert auf [engelsystem/engelsystem](https://github.com/engelsystem
 Eigene Anpassungen liegen möglichst ausserhalb der Original-Dateien, damit Updates
 von upstream ohne Merge-Konflikte übernommen werden können.
 
-## Engel → Helfer
+## Plugin „Helfertexte“ (Engel → Helfer)
 
-Alle sichtbaren Texte werden über `config/lang/<locale>/custom.po` überschrieben.
-Diese Dateien lädt das System nach den Original-Übersetzungen.
+`resources/plugins/Helfertexte/` – überschreibt alle sichtbaren Texte über die Übersetzungen
+des Plugins (`lang/<locale>.po`), die nach denen des Originals geladen werden.
 
-- `helfer/build-translations.py` erzeugt die Dateien automatisch aus `resources/lang/`
-  (Engel → Helfer, angel → helper). Nach jedem upstream-Merge neu ausführen.
-- Eigene, zusätzliche Textänderungen in `helfer/lang/de_DE.po` bzw. `helfer/lang/en_US.po`
-  eintragen; sie werden angehängt und haben Vorrang.
-- `config/lang/` steht in der `.gitignore` des Originals, darum mit `git add -f` committen.
+- `build-translations.py` erzeugt `lang/*.po` automatisch aus `resources/lang/`
+  (Engel → Helfer, angel → helper). Nach jedem upstream-Merge neu ausführen
+  (macht `update-from-upstream.sh` automatisch).
+- Eigene Formulierungen in `manual/de_DE.po` bzw. `manual/en_US.po`; sie haben Vorrang.
+- `resources/plugins/*` steht in der `.gitignore` des Originals, darum mit `git add -f` committen.
+- Auf einer neuen Installation unter **Admin → Plugins** installieren und aktivieren.
 
 Nicht umbenannt: Code, Datenbank, URLs (z. B. `/angeltypes`) und die Credits-Seite.
 

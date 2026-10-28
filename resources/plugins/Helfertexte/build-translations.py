@@ -1,21 +1,22 @@
 #!/usr/bin/env python3
 """
-Erzeugt config/lang/<locale>/custom.po, das alle Texte mit "Engel"/"angel"
-durch "Helfer"/"helper" ersetzt. custom.po wird vom Engelsystem zuletzt
-geladen und überschreibt die Original-Übersetzungen, ohne dass Dateien des
-Originals (upstream) verändert werden müssen.
+Erzeugt lang/<locale>.po dieses Plugins, das alle Texte mit "Engel"/"angel"
+durch "Helfer"/"helper" ersetzt. Plugin-Übersetzungen werden nach denen des
+Originals geladen und überschreiben sie, ohne dass Dateien des Originals
+(upstream) verändert werden müssen.
 
 Nach jedem Merge von upstream erneut ausführen:
-    python3 helfer/build-translations.py
+    python3 resources/plugins/Helfertexte/build-translations.py
 """
 
 import re
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent.parent
+PLUGIN = Path(__file__).resolve().parent
+ROOT = PLUGIN.parent.parent.parent
 LANG_DIR = ROOT / 'resources' / 'lang'
-OUT_DIR = ROOT / 'config' / 'lang'
+OUT_DIR = PLUGIN / 'lang'
 SOURCES = ['default.po', 'additional.po']
 
 # Einträge, die unverändert bleiben (Credits an die Original-Autoren)
@@ -121,11 +122,11 @@ def build(locale, all_ids):
 
 
 def write(locale, entries):
-    out = OUT_DIR / locale / 'custom.po'
+    out = OUT_DIR / (locale + '.po')
     out.parent.mkdir(parents=True, exist_ok=True)
     lines = [
-        '# Automatisch erzeugt von helfer/build-translations.py - nicht von Hand bearbeiten.',
-        '# Eigene zusätzliche Anpassungen gehören in helfer/lang/' + locale + '.po',
+        '# Automatisch erzeugt von build-translations.py - nicht von Hand bearbeiten.',
+        '# Eigene zusätzliche Anpassungen gehören in manual/' + locale + '.po',
         'msgid ""',
         'msgstr ""',
         '"Content-Type: text/plain; charset=UTF-8\\n"',
@@ -136,7 +137,7 @@ def write(locale, entries):
     lines.append('')
 
     # Manuelle Ergänzungen ersetzen automatische Einträge mit gleicher msgid
-    manual = ROOT / 'helfer' / 'lang' / (locale + '.po')
+    manual = PLUGIN / 'manual' / (locale + '.po')
     if manual.exists():
         for e in parse_po(manual):
             entries.pop(e['msgid'], None)
@@ -149,7 +150,7 @@ def write(locale, entries):
         lines.append('')
 
     if manual.exists():
-        lines.append('# --- Manuelle Ergänzungen aus helfer/lang/' + locale + '.po ---')
+        lines.append('# --- Manuelle Ergänzungen aus manual/' + locale + '.po ---')
         lines.append(manual.read_text(encoding='utf-8'))
 
     out.write_text('\n'.join(lines), encoding='utf-8')

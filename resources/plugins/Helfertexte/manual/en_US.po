@@ -8,3 +8,7 @@ msgstr "If you don't find an answer, you can <a href=\"%s\">ask the admin</a>."
 
 msgid "shifts.event_range"
 msgstr "Event period"
+
+# Missing in the original translations (code uses spaces around "/")
+msgid "Other angel type needed / collides with my shifts"
+msgstr "Other helper type needed / collides with my shifts"
