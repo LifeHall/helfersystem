@@ -64,7 +64,9 @@ Plugin-Middleware, die die Route `NewsController@index` auf `HomeController@inde
   Mitgliedschaft ein und mailt allen mit `user.angeltypes.edit` und den Supportern des Helferdienstes;
   die bisherigen Häkchen bleiben erhalten.
   Gleiche Rechteprüfung wie der Tagesplan (`Shift_signup_allowed()`, `Shift_signout_allowed()`, gleiche
-  Kollisionsregel); Kollisionen zwischen mehreren neu gewählten Slots werden beim Speichern erkannt.
+  Kollisionsregel). In der Tabelle graut ein Skript beim Anhaken sofort alle Slots aus, die sich nach dieser Regel
+  überschneiden; abwählbare eigene Einträge sperrt deshalb nicht der Server, sondern das Skript (beim Speichern prüft
+  der Server alles nochmals). Die Zeitspalte bleibt beim seitlichen Scrollen stehen.
 
 Auf einer neuen Installation unter **Admin → Plugins** installieren und aktivieren.
 

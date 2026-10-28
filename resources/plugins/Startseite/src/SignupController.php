@@ -403,18 +403,31 @@ class SignupController extends BaseController
     protected function cells(User $user, SignupChoice $choice): Collection
     {
         $own = ShiftEntry::where('user_id', $user->id)->get()->keyBy('shift_id');
-        $userShifts = new Collection(Shifts_by_user($user->id)->all());
         $days = $this->chosenDays($choice);
-
-        return $this->slots($choice->angel_types)
+        $slots = $this->slots($choice->angel_types)
             ->filter(fn(array $slot) => in_array($slot['day'], $days, true))
-            ->map(function (array $slot) use ($user, $own, $userShifts) {
+            ->values();
+
+        // Own entries in the table that can be unticked: collisions with them are greyed out by the script,
+        // so they are released again when the entry is unticked. Saving checks all own entries again
+        $releasable = $slots
+            ->filter(fn(array $slot) => ($own[$slot['shift']->id] ?? null)?->angel_type_id == $slot['type']->id
+                && Shift_signout_allowed($slot['shift'], $slot['type'], $user->id))
+            ->map(fn(array $slot) => $slot['shift']->id)
+            ->all();
+        $userShifts = (new Collection(Shifts_by_user($user->id)->all()))
+            ->reject(fn(Shift $shift) => in_array($shift->id, $releasable))
+            ->values();
+
+        return $slots
+            ->map(function (array $slot) use ($user, $own, $userShifts, $releasable) {
                 /** @var ShiftEntry|null $entry */
                 $entry = $own[$slot['shift']->id] ?? null;
                 $free = max(0, $slot['count'] - $slot['taken']);
+                $slot['manage'] = $this->canManage($slot['type']);
 
                 if ($entry && $entry->angel_type_id == $slot['type']->id) {
-                    $canSignoff = Shift_signout_allowed($slot['shift'], $slot['type'], $user->id);
+                    $canSignoff = in_array($slot['shift']->id, $releasable);
                     return $slot + [
                         'own' => $entry,
                         'checked' => true,
@@ -425,7 +438,7 @@ class SignupController extends BaseController
                 }
 
                 $reason = null;
-                if ($entry) {
+                if ($entry && !in_array($entry->shift_id, $releasable)) {
                     $reason = __('startseite.signup.other_type');
                 } elseif ($free <= 0) {
                     // Full slots are greyed out for everybody, also for admins
@@ -442,8 +455,7 @@ class SignupController extends BaseController
                     'free' => $free,
                     'reason' => $reason,
                 ];
-            })
-            ->values();
+            });
     }
 
     /**

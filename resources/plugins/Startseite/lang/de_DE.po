@@ -214,3 +214,6 @@ msgstr "%s Mails konnten nicht versendet werden, Details im Log."
 msgid "startseite.send.disabled"
 msgstr "Der Mailversand ist nicht eingerichtet (Application URL in Config → System fehlt)."
 
+msgid "startseite.signup.blocked"
+msgstr "Überschneidet sich mit einem ausgewählten Dienst."
+

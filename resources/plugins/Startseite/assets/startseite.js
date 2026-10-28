@@ -60,7 +60,62 @@
                 ? changes.dataset.text.replace('%1$s', added).replace('%2$s', removed)
                 : '';
         };
-        boxes.forEach((box) => box.addEventListener('change', updateChanges));
+        // Same rules as the server: overlapping shifts collide, except a handover at the same location
+        // with the same helper type (not exactly the same time); coordinators of a helper type may sign up
+        // for parallel shifts; only one helper type per shift
+        const slot = (box) => ({
+            shift: box.dataset.shift,
+            type: box.dataset.type,
+            location: box.dataset.location,
+            start: Number(box.dataset.start),
+            end: Number(box.dataset.end),
+            manage: box.dataset.manage === '1',
+        });
+        const collides = (candidate, ticked) => {
+            if (candidate.shift === ticked.shift) {
+                return true;
+            }
+            if (candidate.manage || candidate.start >= ticked.end || candidate.end <= ticked.start) {
+                return false;
+            }
+            return !(
+                candidate.location === ticked.location
+                && candidate.type === ticked.type
+                && !(candidate.start === ticked.start && candidate.end === ticked.end)
+            );
+        };
+
+        // Disabled by the server (full, not allowed, ...) stays disabled
+        const free = boxes.filter((box) => !box.disabled);
+        const updateBlocked = () => {
+            const ticked = boxes.filter((box) => box.checked).map((box) => ({ box, slot: slot(box) }));
+            free.forEach((box) => {
+                const candidate = slot(box);
+                const blocked = !box.checked
+                    && ticked.some((other) => other.box !== box && collides(candidate, other.slot));
+                box.disabled = blocked;
+                const label = box.closest('label');
+                label.classList.toggle('startseite-blocked', blocked);
+                if (blocked) {
+                    label.title = tableForm.dataset.blocked;
+                } else {
+                    label.removeAttribute('title');
+                }
+            });
+            tableForm.querySelectorAll('.startseite-slots td').forEach((cell) => {
+                const cellBoxes = [...cell.querySelectorAll('input[name="slots[]"]')];
+                cell.classList.toggle(
+                    'startseite-blocked-all',
+                    cellBoxes.length > 0 && cellBoxes.every((box) => box.disabled && !box.checked)
+                );
+            });
+        };
+
+        boxes.forEach((box) => box.addEventListener('change', () => {
+            updateBlocked();
+            updateChanges();
+        }));
+        updateBlocked();
         updateChanges();
     }
 })();

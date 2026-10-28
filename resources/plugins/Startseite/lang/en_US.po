@@ -214,3 +214,6 @@ msgstr "%s mails could not be sent, see the log for details."
 msgid "startseite.send.disabled"
 msgstr "Sending mails is not set up (Application URL in Config → System is missing)."
 
+msgid "startseite.signup.blocked"
+msgstr "Collides with a selected shift."
+
