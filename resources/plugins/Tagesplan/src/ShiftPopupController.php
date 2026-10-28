@@ -18,6 +18,7 @@ use Engelsystem\Models\Shifts\ShiftSignupStatus;
 use Engelsystem\Models\User\User;
 use Engelsystem\Models\UserAngelType;
 use Engelsystem\ShiftSignupState;
+use Illuminate\Support\Collection;
 use Psr\Log\LoggerInterface;
 use Throwable;
 
@@ -238,10 +239,35 @@ class ShiftPopupController extends BaseController
             $shift,
             $angelType,
             $userAngelType,
-            null,
+            $this->collidingShifts($user, $shift, $angelType),
             $neededAngelType,
             $shiftEntries
         );
+    }
+
+    /**
+     * Shifts of the user to check for collisions
+     *
+     * Overlapping shifts at the same location with the same angel type are allowed,
+     * as long as they do not have exactly the same start and end time
+     */
+    protected function collidingShifts(User $user, Shift $shift, AngelType $angelType): Collection
+    {
+        $userShifts = Shifts_by_user($user->id)->reject(
+            fn(Shift $other) => $other->location_id == $shift->location_id
+                && $other->angel_type_id == $angelType->id
+                && !(
+                    $other->start->timestamp == $shift->start->timestamp
+                    && $other->end->timestamp == $shift->end->timestamp
+                )
+        )->values();
+
+        // The core reloads all shifts of the user for an empty list, so use a shift that collides with nothing
+        if ($userShifts->isEmpty()) {
+            $userShifts->push((new Shift())->forceFill(['id' => 0, 'start' => '1970-01-01', 'end' => '1970-01-01']));
+        }
+
+        return $userShifts;
     }
 
     protected function stateMessage(ShiftSignupState $state): string

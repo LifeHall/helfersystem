@@ -30,6 +30,8 @@ die Farbe ergibt sich aus der Position in dieser Liste.
 Eigene Berechtigung `tagesplan.view` (Plugin-Migration, bekommt alle Gruppen mit `user_shifts`).
 Klick auf ein Feld öffnet ein Popup mit Orts- und Schichtinfos zum Ein-/Austragen
 (gleiche Rechteprüfung wie im Kern: `Shift_signup_allowed()`, `Shift_signout_allowed()`).
+Abweichung: Überlappende Schichten am gleichen Ort mit gleichem Helfertyp dürfen beide belegt
+werden, solange Start- und Endzeit nicht identisch sind (`ShiftPopupController::collidingShifts()`).
 
 Auf einer neuen Installation unter **Admin → Plugins** installieren und aktivieren.
 
