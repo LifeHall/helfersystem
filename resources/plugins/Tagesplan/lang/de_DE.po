@@ -81,3 +81,15 @@ msgstr "Freigabe beantragen"
 
 msgid "tagesplan.confirmation_pending"
 msgstr "Deine Freigabe für diesen Bereich ist beantragt und wartet auf Bestätigung."
+
+msgid "tagesplan.approval_requested"
+msgstr "Deine Freigabe für „%s“ ist beantragt. Sobald sie bestätigt ist, kannst du dich hier eintragen."
+
+msgid "tagesplan.mail.subject"
+msgstr "Freigabe-Antrag von %s für „%s“"
+
+msgid "tagesplan.mail.introduction"
+msgstr "%s möchte im Bereich „%s“ Dienst machen und hat eine Freigabe beantragt."
+
+msgid "tagesplan.mail.text"
+msgstr "Du kannst die Person hier freigeben oder ablehnen:\n%s"

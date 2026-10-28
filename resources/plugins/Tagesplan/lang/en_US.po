@@ -81,3 +81,15 @@ msgstr "Request approval"
 
 msgid "tagesplan.confirmation_pending"
 msgstr "Your approval for this area has been requested and is waiting for confirmation."
+
+msgid "tagesplan.approval_requested"
+msgstr "Your approval for \"%s\" has been requested. Once it is confirmed, you can sign up here."
+
+msgid "tagesplan.mail.subject"
+msgstr "Approval request from %s for \"%s\""
+
+msgid "tagesplan.mail.introduction"
+msgstr "%s would like to help in \"%s\" and has requested approval."
+
+msgid "tagesplan.mail.text"
+msgstr "You can confirm or deny the request here:\n%s"

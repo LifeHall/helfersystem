@@ -10,6 +10,7 @@ use Engelsystem\Controllers\NotificationType;
 use Engelsystem\Helpers\Authenticator;
 use Engelsystem\Http\Request;
 use Engelsystem\Http\Response;
+use Engelsystem\Mail\EngelsystemMailer;
 use Engelsystem\Models\AngelType;
 use Engelsystem\Models\Shifts\Shift;
 use Engelsystem\Models\Shifts\ShiftEntry;
@@ -17,6 +18,8 @@ use Engelsystem\Models\Shifts\ShiftSignupStatus;
 use Engelsystem\Models\User\User;
 use Engelsystem\Models\UserAngelType;
 use Engelsystem\ShiftSignupState;
+use Psr\Log\LoggerInterface;
+use Throwable;
 
 /**
  * Popup of the day plan: shift and location details, sign up / sign off
@@ -33,7 +36,9 @@ class ShiftPopupController extends BaseController
 
     public function __construct(
         protected Authenticator $auth,
-        protected Response $response
+        protected Response $response,
+        protected EngelsystemMailer $mailer,
+        protected LoggerInterface $log
     ) {
     }
 
@@ -175,6 +180,37 @@ class ShiftPopupController extends BaseController
         return $this->back($shift, __('Shift entry removed.'));
     }
 
+    /**
+     * Request approval for an angel type that requires confirmation and notify the approvers
+     */
+    public function requestApproval(Request $request): Response
+    {
+        $shift = Shift::findOrFail((int) $request->postData('shift_id'));
+        $angelType = AngelType::findOrFail((int) $request->postData('angel_type_id'));
+        $user = $this->auth->user();
+
+        if (UserAngelType::whereUserId($user->id)->where('angel_type_id', $angelType->id)->exists()) {
+            return $this->afterApproval($request, $shift, __('tagesplan.confirmation_pending'));
+        }
+
+        $userAngelType = new UserAngelType();
+        $userAngelType->user()->associate($user);
+        $userAngelType->angelType()->associate($angelType);
+        $userAngelType->save();
+
+        engelsystem_log(sprintf(
+            'User %s joined %s.',
+            User_Nick_render($user, true),
+            AngelType_name_render($angelType, true)
+        ));
+
+        if ($angelType->restricted) {
+            $this->notifyApprovers($user, $angelType);
+        }
+
+        return $this->afterApproval($request, $shift, __('tagesplan.approval_requested', [$angelType->name]));
+    }
+
     public function script(): Response
     {
         return $this->response
@@ -250,6 +286,57 @@ class ShiftPopupController extends BaseController
             ->mapWithKeys(fn(User $user) => [$user->id => $user->displayName])
             ->sort(fn($a, $b) => strnatcasecmp($a, $b))
             ->all();
+    }
+
+    /**
+     * Mails everybody who can confirm the request: users allowed to edit angel types and supporters of the type
+     */
+    protected function notifyApprovers(User $requester, AngelType $angelType): void
+    {
+        $editors = User::whereHas(
+            'groups.privileges',
+            fn($query) => $query->where('name', 'user.angeltypes.edit')
+        )->get();
+        $supporters = $angelType->userAngelTypes()->wherePivot('supporter', true)->get();
+
+        $recipients = $editors->merge($supporters)
+            ->unique('id')
+            ->reject(fn(User $user) => $user->id == $requester->id);
+
+        foreach ($recipients as $recipient) {
+            try {
+                $this->mailer->sendViewTranslated(
+                    $recipient,
+                    'tagesplan.mail.subject',
+                    'emails/tagesplan-approval',
+                    [
+                        // The first two values fill the placeholders of the subject
+                        'requester' => $requester->displayName,
+                        'angeltype_name' => $angelType->name,
+                        'username' => $recipient->displayName,
+                        'angeltype' => $angelType,
+                    ]
+                );
+            } catch (Throwable $e) {
+                $this->log->error('Tagesplan: approval mail to {user} failed: {error}', [
+                    'user' => $recipient->name,
+                    'error' => $e->getMessage(),
+                ]);
+            }
+        }
+    }
+
+    /**
+     * Requests from the popup script only need the notification, others are redirected back
+     */
+    protected function afterApproval(Request $request, Shift $shift, string $message): Response
+    {
+        if ($request->headers->get('X-Tagesplan')) {
+            $this->addNotification($message);
+            return $this->response->withStatus(204);
+        }
+
+        return $this->back($shift, $message);
     }
 
     protected function back(

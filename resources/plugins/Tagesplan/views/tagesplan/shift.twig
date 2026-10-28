@@ -50,9 +50,14 @@
             </form>
         {% elseif type.membership == 'none' %}
             <p class="small mb-1">{{ m.icon('shield-lock') }} {{ __('tagesplan.confirmation_required') }}</p>
-            <a href="{{ url('/user-angeltypes', {'action': 'add', 'angeltype_id': type.angel_type.id}) }}" class="btn btn-outline-primary mb-2">
-                {{ m.icon('send') }} {{ __('tagesplan.request_confirmation') }}
-            </a>
+            <form method="post" action="{{ url('/tagesplan/freigabe') }}" class="tp-ajax mb-2">
+                {{ csrf() }}
+                <input type="hidden" name="shift_id" value="{{ shift.id }}">
+                <input type="hidden" name="angel_type_id" value="{{ type.angel_type.id }}">
+                <button type="submit" class="btn btn-outline-primary">
+                    {{ m.icon('send') }} {{ __('tagesplan.request_confirmation') }}
+                </button>
+            </form>
         {% elseif type.membership == 'pending' %}
             <p class="text-muted small">{{ m.icon('hourglass-split') }} {{ __('tagesplan.confirmation_pending') }}</p>
         {% elseif type.self_reason %}

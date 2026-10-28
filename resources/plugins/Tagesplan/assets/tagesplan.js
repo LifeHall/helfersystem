@@ -38,14 +38,44 @@
       });
   };
 
+  let currentShift = null;
+
   modal.addEventListener('show.bs.modal', (event) => {
     const shiftId = event.relatedTarget?.dataset.tpShift ?? modal.dataset.openShift;
     if (!shiftId) {
       return;
     }
+    currentShift = shiftId;
     title.textContent = modal.dataset.title;
     highlight(shiftId, event.relatedTarget);
     load(shiftId);
+  });
+
+  // Forms marked with .tp-ajax are sent in the background, then only the popup content is reloaded
+  body.addEventListener('submit', (event) => {
+    const form = event.target.closest('form.tp-ajax');
+    if (!form) {
+      return;
+    }
+    event.preventDefault();
+    form.querySelectorAll('button').forEach((button) => {
+      button.disabled = true;
+    });
+    fetch(form.action, {
+      method: 'POST',
+      body: new FormData(form),
+      credentials: 'same-origin',
+      headers: { 'X-Tagesplan': '1' },
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(String(response.status));
+        }
+        load(currentShift);
+      })
+      .catch(() => {
+        body.innerHTML = `<div class="alert alert-danger">${modal.dataset.error}</div>`;
+      });
   });
 
   modal.addEventListener('hidden.bs.modal', () => {
