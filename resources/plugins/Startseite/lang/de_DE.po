@@ -1,0 +1,186 @@
+msgid "startseite.shifts.title"
+msgstr "Meine Dienste"
+
+msgid "startseite.shifts.summary"
+msgstr "%1$s Dienste · %2$s Stunden"
+
+msgid "startseite.shifts.none"
+msgstr "Du bist noch für keine Dienste eingetragen."
+
+msgid "startseite.shifts.pdf"
+msgstr "PDF herunterladen"
+
+msgid "startseite.column.time"
+msgstr "Zeit"
+
+msgid "startseite.column.location"
+msgstr "Ort"
+
+msgid "startseite.column.angel_type"
+msgstr "Helferdienst"
+
+msgid "startseite.column.title"
+msgstr "Schicht"
+
+msgid "startseite.column.hours"
+msgstr "Std."
+
+msgid "startseite.column.day"
+msgstr "Tag"
+
+msgid "startseite.pdf.title"
+msgstr "Meine Dienste"
+
+msgid "startseite.pdf.date"
+msgstr "Stand: %s"
+
+msgid "startseite.pdf.page"
+msgstr "Seite %1$s von %2$s"
+
+msgid "startseite.news.none"
+msgstr "Zurzeit gibt es keine News."
+
+msgid "startseite.news.up"
+msgstr "Nach oben"
+
+msgid "startseite.news.down"
+msgstr "Nach unten"
+
+msgid "startseite.news.pin"
+msgstr "Anpinnen"
+
+msgid "startseite.news.unpin"
+msgstr "Lösen"
+
+msgid "startseite.news.pin.success"
+msgstr "Die News ist angepinnt und wird angezeigt."
+
+msgid "startseite.news.unpin.success"
+msgstr "Die News ist gelöst und wird nicht mehr angezeigt."
+
+msgid "startseite.news.unpinned"
+msgstr "Nicht angepinnte News (%s) – werden nicht angezeigt"
+
+msgid "startseite.signup.title"
+msgstr "Geführt eintragen"
+
+msgid "startseite.signup.start"
+msgstr "Geführt eintragen"
+
+msgid "startseite.signup.adjust"
+msgstr "Dienste anpassen"
+
+msgid "startseite.signup.table"
+msgstr "Zur Auswahltabelle"
+
+msgid "startseite.signup.step.types"
+msgstr "Helferdienste"
+
+msgid "startseite.signup.step.days"
+msgstr "Tage und Zeiten"
+
+msgid "startseite.signup.step.table"
+msgstr "Zeitslots wählen"
+
+msgid "startseite.signup.types.info"
+msgstr "Wähle die Helferdienste, bei denen du mithelfen möchtest. Helferdienste, in denen du bereits eingetragen bist, bleiben ausgewählt."
+
+msgid "startseite.signup.no_shifts"
+msgstr "Zurzeit gibt es keine offenen Schichten."
+
+msgid "startseite.signup.locked"
+msgstr "eingetragen"
+
+msgid "startseite.signup.next"
+msgstr "Weiter"
+
+msgid "startseite.signup.back"
+msgstr "Zurück"
+
+msgid "startseite.signup.confirm"
+msgstr "Bestätigen"
+
+msgid "startseite.signup.save"
+msgstr "Speichern"
+
+msgid "startseite.signup.no_types"
+msgstr "Bitte wähle mindestens einen Helferdienst."
+
+msgid "startseite.signup.days.info"
+msgstr "Wähle die Tage und pro Tag die Zeit, in der du mithelfen kannst. Tage und Zeiten, an denen du schon eingetragen bist, können nicht abgewählt werden."
+
+msgid "startseite.signup.all_days"
+msgstr "Alle Tage"
+
+msgid "startseite.signup.from"
+msgstr "Von"
+
+msgid "startseite.signup.to"
+msgstr "Bis"
+
+msgid "startseite.signup.day_locked"
+msgstr "Eingetragen von %1$s bis %2$s"
+
+msgid "startseite.signup.invalid_time"
+msgstr "%s: Die Endzeit muss nach der Startzeit liegen."
+
+msgid "startseite.signup.no_days"
+msgstr "Bitte wähle mindestens einen Tag."
+
+msgid "startseite.signup.table.info"
+msgstr "Setze einen Haken bei den Zeitslots, in denen du helfen möchtest. Entfernst du einen Haken, wirst du ausgetragen. Ausgegraute Zeitslots haben bereits genügend Helfer."
+
+msgid "startseite.signup.table.empty"
+msgstr "Für deine Auswahl gibt es keine Zeitslots. Passe die Tage und Zeiten an."
+
+msgid "startseite.signup.only_free"
+msgstr "Nur Zeitslots mit freien Plätzen zeigen"
+
+msgid "startseite.signup.legend.own"
+msgstr "Eingetragen"
+
+msgid "startseite.signup.legend.full"
+msgstr "Voll oder nicht möglich"
+
+msgid "startseite.signup.full"
+msgstr "Dieser Zeitslot hat bereits genügend Helfer."
+
+msgid "startseite.signup.full_short"
+msgstr "voll"
+
+msgid "startseite.signup.free"
+msgstr "%s frei"
+
+msgid "startseite.signup.changes"
+msgstr "%1$s neu, %2$s austragen"
+
+msgid "startseite.signup.saved"
+msgstr "Gespeichert – eingetragen: %1$s, ausgetragen: %2$s."
+
+msgid "startseite.signup.unchanged"
+msgstr "Keine Änderungen."
+
+msgid "startseite.signup.failed"
+msgstr "%1$s am %2$s: %3$s"
+
+msgid "startseite.signup.no_signoff"
+msgstr "Austragen ist nicht mehr möglich. Wende dich bei Bedarf an die Einsatzleitung."
+
+msgid "startseite.signup.other_type"
+msgstr "Du bist in dieser Schicht bereits für einen anderen Helferdienst eingetragen."
+
+msgid "startseite.signup.collides"
+msgstr "Überschneidet sich mit einem deiner Dienste."
+
+msgid "startseite.signup.not_allowed"
+msgstr "Eintragen ist nicht möglich."
+
+msgid "startseite.signup.type_no_self_signup"
+msgstr "Eintragen nur durch die Einsatzleitung."
+
+msgid "startseite.signup.type_pending"
+msgstr "Deine Freischaltung ist beantragt, aber noch nicht bestätigt."
+
+msgid "startseite.signup.type_restricted"
+msgstr "Für diesen Helferdienst ist eine Freischaltung nötig."
+

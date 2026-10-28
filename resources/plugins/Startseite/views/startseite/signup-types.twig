@@ -1,0 +1,52 @@
+{% extends 'layouts/app.twig' %}
+{% import 'macros/base.twig' as m %}
+{% import 'macros/form.twig' as f %}
+
+{% block title %}{{ __('startseite.signup.title') }}{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <h1>{{ m.back(url('/news')) }} {{ block('title') }}</h1>
+        {% include 'startseite/_steps.twig' %}
+        {% include 'layouts/parts/messages.twig' %}
+
+        <p>{{ __('startseite.signup.types.info') }}</p>
+
+        {% if types is empty %}
+            <div class="alert alert-info">{{ __('startseite.signup.no_shifts') }}</div>
+        {% else %}
+            <form method="post" action="{{ url('/startseite/eintragen/dienste') }}">
+                {{ csrf() }}
+                <div class="list-group mb-4">
+                    {% for item in types %}
+                        {% set disabled = item.locked or item.reason %}
+                        <label class="list-group-item d-flex gap-3 align-items-start{% if item.reason %} text-muted{% endif %}">
+                            <input class="form-check-input flex-shrink-0 mt-1" type="checkbox" name="types[]" value="{{ item.type.id }}"
+                                {%- if item.checked %} checked{% endif %}
+                                {%- if disabled %} disabled{% endif %}>
+                            {% if item.locked %}
+                                {# Disabled checkboxes are not sent #}
+                                <input type="hidden" name="types[]" value="{{ item.type.id }}">
+                            {% endif %}
+                            <span class="flex-grow-1">
+                                <span class="fw-semibold">{{ item.type.name }}</span>
+                                {% if item.locations %}<span class="text-muted small">· {{ item.locations }}</span>{% endif %}
+                                {% if item.locked %}
+                                    <span class="badge bg-success ms-1">{{ m.icon('lock') }} {{ __('startseite.signup.locked') }}</span>
+                                {% endif %}
+                                {% if item.reason %}
+                                    <span class="d-block small">{{ m.icon('info-circle') }} {{ item.reason }}</span>
+                                {% endif %}
+                            </span>
+                        </label>
+                    {% endfor %}
+                </div>
+
+                <div class="d-flex gap-2">
+                    {{ m.button(__('form.cancel'), url('/news')) }}
+                    {{ f.submit(__('startseite.signup.next'), {'icon_right': 'chevron-right'}) }}
+                </div>
+            </form>
+        {% endif %}
+    </div>
+{% endblock %}

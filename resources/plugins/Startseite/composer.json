@@ -1,0 +1,50 @@
+{
+  "type": "engelsystem-plugin",
+  "name": "helfersystem/startseite",
+  "description": "Startseite: angepinnte News, eigene Dienste mit PDF-Download, geführtes Eintragen",
+  "version": "1.0.0",
+  "license": "GPL-2.0-or-later",
+  "authors": [
+    {
+      "name": "befritscht",
+      "email": "beat.fritschi@brutsch.com"
+    }
+  ],
+  "extra": {
+    "middleware": [
+      "Helfersystem\\Startseite\\Middleware"
+    ],
+    "routes": {
+      "/startseite/news/anpinnen": [
+        "Helfersystem\\Startseite\\HomeController@pin",
+        "POST"
+      ],
+      "/startseite/news/verschieben": [
+        "Helfersystem\\Startseite\\HomeController@move",
+        "POST"
+      ],
+      "/startseite/dienste.pdf": "Helfersystem\\Startseite\\HomeController@pdf",
+      "/startseite/startseite.js": "Helfersystem\\Startseite\\HomeController@script",
+      "/startseite/eintragen": "Helfersystem\\Startseite\\SignupController@types",
+      "/startseite/eintragen/dienste": [
+        "Helfersystem\\Startseite\\SignupController@saveTypes",
+        "POST"
+      ],
+      "/startseite/eintragen/tage": "Helfersystem\\Startseite\\SignupController@days",
+      "/startseite/eintragen/tage/speichern": [
+        "Helfersystem\\Startseite\\SignupController@saveDays",
+        "POST"
+      ],
+      "/startseite/eintragen/auswahl": "Helfersystem\\Startseite\\SignupController@table",
+      "/startseite/eintragen/auswahl/speichern": [
+        "Helfersystem\\Startseite\\SignupController@saveTable",
+        "POST"
+      ]
+    }
+  },
+  "autoload": {
+    "psr-4": {
+      "Helfersystem\\Startseite\\": "src/"
+    }
+  }
+}

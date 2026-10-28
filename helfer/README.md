@@ -40,6 +40,28 @@ bekommen im Tagesplan ein farbiges Etikett, im Popup steht die Kategorie.
 
 Auf einer neuen Installation unter **Admin → Plugins** installieren und aktivieren.
 
+## Plugin „Startseite“
+
+`resources/plugins/Startseite/` – ersetzt die News-Übersicht (`/news`, Standard-Startseite) über eine
+Plugin-Middleware, die die Route `NewsController@index` auf `HomeController@index` umbiegt (Kern unverändert).
+
+- **News:** Es werden nur angepinnte News angezeigt (`news.is_pinned`), in der festgelegten Reihenfolge
+  (Tabelle `startseite_news_order`). Admins (`admin_news`) können direkt auf der Seite anpinnen, lösen und
+  mit ↑/↓ verschieben; nicht angepinnte News stehen für sie in einer aufklappbaren Liste darunter.
+  Im News-Editor angepinnte News erscheinen am Ende der Reihenfolge.
+- **Meine Dienste:** Übersicht der eigenen Schichteinträge pro Tag mit Stunden, Download als PDF
+  (`/startseite/dienste.pdf`, eigener kleiner PDF-Schreiber `Pdf.php`, keine Zusatzbibliothek).
+- **Geführt eintragen** (`/startseite/eintragen`, Berechtigung `startseite.signup`, per Plugin-Migration für alle
+  Gruppen mit `tagesplan.view` oder `user_shifts`): 1. Helferdienste (Helfertypen), 2. Tage mit Von/Bis-Zeit,
+  3. Tabelle pro Helferdienst (Zeilen = Zeitslots, Spalten = Tage) zum An-/Abhaken. Volle oder nicht mögliche
+  Slots sind ausgegraut; „Nur Zeitslots mit freien Plätzen zeigen“ blendet solche Zeilen aus.
+  Die Auswahl aus Schritt 1 und 2 wird pro Helfer gespeichert (`startseite_signup_choices`).
+  Helferdienste, Tage und Zeiten mit eigenen Einträgen lassen sich nicht abwählen.
+  Gleiche Rechteprüfung wie der Tagesplan (`Shift_signup_allowed()`, `Shift_signout_allowed()`, gleiche
+  Kollisionsregel); Kollisionen zwischen mehreren neu gewählten Slots werden beim Speichern erkannt.
+
+Auf einer neuen Installation unter **Admin → Plugins** installieren und aktivieren.
+
 ## Rechte (Datenbank, nicht im Repo)
 
 Helfer (Gruppe „Angel“) sehen im Menü nur News, Frag den Admin und Tagesplan. Dafür wurden

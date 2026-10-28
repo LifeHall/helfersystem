@@ -1,0 +1,83 @@
+{% extends 'layouts/app.twig' %}
+{% import 'macros/base.twig' as m %}
+{% import 'macros/form.twig' as f %}
+
+{% block title %}{{ __('startseite.signup.title') }}{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <h1>{{ m.back(url('/startseite/eintragen')) }} {{ block('title') }}</h1>
+        {% include 'startseite/_steps.twig' %}
+        {% include 'layouts/parts/messages.twig' %}
+
+        <p>{{ __('startseite.signup.days.info') }}</p>
+
+        <form method="post" action="{{ url('/startseite/eintragen/tage/speichern') }}" id="startseite-days">
+            {{ csrf() }}
+            <div class="table-responsive mb-2">
+                <table class="table table-sm align-middle w-auto">
+                    <thead>
+                        <tr>
+                            <th>
+                                <input class="form-check-input" type="checkbox" id="startseite-all" title="{{ __('startseite.signup.all_days') }}">
+                                <label for="startseite-all" class="ms-1">{{ __('startseite.column.day') }}</label>
+                            </th>
+                            <th>{{ __('startseite.signup.from') }}</th>
+                            <th>{{ __('startseite.signup.to') }}</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for day, item in days %}
+                            <tr>
+                                <td class="text-nowrap">
+                                    <input class="form-check-input startseite-day" type="checkbox" id="day-{{ day }}" name="days[{{ day }}]" value="1"
+                                        {%- if item.checked %} checked{% endif %}
+                                        {%- if item.locked %} disabled{% endif %}>
+                                    {% if item.locked %}<input type="hidden" name="days[{{ day }}]" value="1">{% endif %}
+                                    <label for="day-{{ day }}" class="ms-1">{{ item.label }}</label>
+                                </td>
+                                <td>
+                                    <select class="form-select form-select-sm" name="from[{{ day }}]" aria-label="{{ __('startseite.signup.from') }}">
+                                        {% for time in item.starts %}
+                                            <option value="{{ time }}"
+                                                {%- if time == item.from %} selected{% endif %}
+                                                {%- if item.lock_from and time > item.lock_from %} disabled{% endif %}>{{ time }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </td>
+                                <td>
+                                    <select class="form-select form-select-sm" name="to[{{ day }}]" aria-label="{{ __('startseite.signup.to') }}">
+                                        {% for time in item.ends %}
+                                            <option value="{{ time }}"
+                                                {%- if time == item.to %} selected{% endif %}
+                                                {%- if item.lock_to and time < item.lock_to %} disabled{% endif %}>{{ time }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </td>
+                                <td class="small text-muted">
+                                    {% if item.locked %}
+                                        {{ m.icon('lock') }} {{ __('startseite.signup.day_locked', [item.lock_from, item.lock_to]) }}
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr><td colspan="4">{{ __('startseite.signup.no_shifts') }}</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="d-flex gap-2">
+                {{ m.button(__('startseite.signup.back'), url('/startseite/eintragen'), {'icon_left': 'chevron-left'}) }}
+                {{ f.submit(__('startseite.signup.confirm'), {'icon_right': 'chevron-right'}) }}
+            </div>
+        </form>
+    </div>
+
+{% endblock %}
+
+{% block scripts %}
+    {{ parent() }}
+    <script src="{{ url('/startseite/startseite.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,118 @@
+{% extends 'layouts/app.twig' %}
+{% import 'macros/base.twig' as m %}
+{% import 'macros/form.twig' as f %}
+
+{% block title %}{{ __('startseite.signup.title') }}{% endblock %}
+
+{% block content %}
+    <style>
+        .startseite-slots th, .startseite-slots td { padding: .25rem .6rem; }
+        .startseite-slots td { min-width: 5.5rem; }
+        .startseite-slots td.startseite-none { background-color: var(--bs-secondary-bg); }
+        .startseite-slots td.startseite-full { background-color: var(--bs-tertiary-bg); color: var(--bs-secondary-color); opacity: .6; }
+        .startseite-slots td.startseite-own { background-color: rgba(var(--bs-success-rgb), .2); }
+        .startseite-slots td.startseite-changed { box-shadow: inset 0 0 0 2px var(--bs-primary); }
+        .startseite-slots label { cursor: pointer; white-space: nowrap; }
+        .startseite-slots .form-check-input { margin-top: 0; vertical-align: middle; }
+        .startseite-only-free .startseite-inactive { display: none; }
+        .startseite-actions { position: sticky; bottom: 0; z-index: 3; background: var(--bs-body-bg); border-top: 1px solid var(--bs-border-color); }
+    </style>
+
+    <div class="container">
+        <h1>{{ m.back(url('/startseite/eintragen/tage')) }} {{ block('title') }}</h1>
+        {% include 'startseite/_steps.twig' %}
+        {% include 'layouts/parts/messages.twig' %}
+
+        <p>{{ __('startseite.signup.table.info') }}</p>
+
+        <form method="post" action="{{ url('/startseite/eintragen/auswahl/speichern') }}" id="startseite-table">
+            {{ csrf() }}
+
+            {% if tables is empty %}
+                <div class="alert alert-info">{{ __('startseite.signup.table.empty') }}</div>
+            {% else %}
+                <div class="d-flex flex-wrap align-items-center gap-3 mb-3 small">
+                    <div class="form-check form-switch mb-0">
+                        <input class="form-check-input" type="checkbox" id="startseite-only-free">
+                        <label class="form-check-label" for="startseite-only-free">{{ __('startseite.signup.only_free') }}</label>
+                    </div>
+                    <span><span class="badge text-bg-success">&nbsp;</span> {{ __('startseite.signup.legend.own') }}</span>
+                    <span><span class="badge text-bg-secondary opacity-50">&nbsp;</span> {{ __('startseite.signup.legend.full') }}</span>
+                </div>
+            {% endif %}
+
+            {% for table in tables %}
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h2 class="h5 mb-0 d-inline">{{ table.type.name }}</h2>
+                        {% if table.locations %}<span class="text-muted small ms-1">· {{ table.locations }}</span>{% endif %}
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-sm table-bordered mb-0 w-auto text-center align-middle startseite-slots">
+                            <thead>
+                                <tr>
+                                    <th class="text-start">{{ __('startseite.column.time') }}</th>
+                                    {% for label in table.days %}
+                                        <th class="text-nowrap">{{ label }}</th>
+                                    {% endfor %}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for label, row in table.rows %}
+                                    <tr{% if not row.active %} class="startseite-inactive"{% endif %}>
+                                        <th class="text-start text-nowrap">{{ label }}</th>
+                                        {% for day in table.days|keys %}
+                                            {% set cells = row.cells[day]|default([]) %}
+                                            {% if cells is empty %}
+                                                <td class="startseite-none"></td>
+                                            {% else %}
+                                                {% set own = cells|filter(cell => cell.checked)|length > 0 %}
+                                                {% set open = cells|filter(cell => not cell.disabled)|length > 0 %}
+                                                <td class="{{ own ? 'startseite-own' : (open ? '' : 'startseite-full') }}">
+                                                    {% for cell in cells %}
+                                                        {% if cell.disabled and not cell.checked %}
+                                                            {# Full or not possible: no checkbox, only the reason #}
+                                                            <span class="d-block small" title="{{ cell.reason }}">
+                                                                {{ cell.free == 0 ? __('startseite.signup.full_short') : '–' }}
+                                                            </span>
+                                                        {% else %}
+                                                            <label class="d-block"{% if cell.reason %} title="{{ cell.reason }}"{% endif %}>
+                                                                <input class="form-check-input" type="checkbox" name="slots[]" value="{{ cell.key }}"
+                                                                    aria-label="{{ table.type.name }}, {{ table.days[day] }}, {{ label }}"
+                                                                    {%- if cell.checked %} checked data-own="1"{% endif %}
+                                                                    {%- if cell.disabled %} disabled{% endif %}>
+                                                                {% if cell.disabled %}
+                                                                    {{ m.icon('lock') }}
+                                                                {% elseif not cell.checked %}
+                                                                    <span class="small text-muted">{{ __('startseite.signup.free', [cell.free]) }}</span>
+                                                                {% endif %}
+                                                            </label>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                </td>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            {% endfor %}
+
+            <div class="startseite-actions d-flex flex-wrap gap-2 py-2">
+                {{ m.button(__('startseite.signup.back'), url('/startseite/eintragen/tage'), {'icon_left': 'chevron-left'}) }}
+                {% if tables is not empty %}
+                    {{ f.submit(__('startseite.signup.save'), {'icon_left': 'check-lg'}) }}
+                {% endif %}
+                <span class="align-self-center small text-muted" id="startseite-changes"
+                    data-text="{{ __('startseite.signup.changes') }}"></span>
+            </div>
+        </form>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    {{ parent() }}
+    <script src="{{ url('/startseite/startseite.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,186 @@
+msgid "startseite.shifts.title"
+msgstr "My shifts"
+
+msgid "startseite.shifts.summary"
+msgstr "%1$s shifts · %2$s hours"
+
+msgid "startseite.shifts.none"
+msgstr "You have not signed up for any shifts yet."
+
+msgid "startseite.shifts.pdf"
+msgstr "Download PDF"
+
+msgid "startseite.column.time"
+msgstr "Time"
+
+msgid "startseite.column.location"
+msgstr "Location"
+
+msgid "startseite.column.angel_type"
+msgstr "Helper type"
+
+msgid "startseite.column.title"
+msgstr "Shift"
+
+msgid "startseite.column.hours"
+msgstr "Hours"
+
+msgid "startseite.column.day"
+msgstr "Day"
+
+msgid "startseite.pdf.title"
+msgstr "My shifts"
+
+msgid "startseite.pdf.date"
+msgstr "As of: %s"
+
+msgid "startseite.pdf.page"
+msgstr "Page %1$s of %2$s"
+
+msgid "startseite.news.none"
+msgstr "There is no news at the moment."
+
+msgid "startseite.news.up"
+msgstr "Move up"
+
+msgid "startseite.news.down"
+msgstr "Move down"
+
+msgid "startseite.news.pin"
+msgstr "Pin"
+
+msgid "startseite.news.unpin"
+msgstr "Unpin"
+
+msgid "startseite.news.pin.success"
+msgstr "The news is pinned and shown."
+
+msgid "startseite.news.unpin.success"
+msgstr "The news is unpinned and no longer shown."
+
+msgid "startseite.news.unpinned"
+msgstr "Unpinned news (%s) – not shown"
+
+msgid "startseite.signup.title"
+msgstr "Guided sign up"
+
+msgid "startseite.signup.start"
+msgstr "Guided sign up"
+
+msgid "startseite.signup.adjust"
+msgstr "Adjust shifts"
+
+msgid "startseite.signup.table"
+msgstr "Selection table"
+
+msgid "startseite.signup.step.types"
+msgstr "Helper types"
+
+msgid "startseite.signup.step.days"
+msgstr "Days and times"
+
+msgid "startseite.signup.step.table"
+msgstr "Choose time slots"
+
+msgid "startseite.signup.types.info"
+msgstr "Choose the helper types you would like to help with. Helper types you are already signed up for stay selected."
+
+msgid "startseite.signup.no_shifts"
+msgstr "There are no upcoming shifts at the moment."
+
+msgid "startseite.signup.locked"
+msgstr "signed up"
+
+msgid "startseite.signup.next"
+msgstr "Next"
+
+msgid "startseite.signup.back"
+msgstr "Back"
+
+msgid "startseite.signup.confirm"
+msgstr "Confirm"
+
+msgid "startseite.signup.save"
+msgstr "Save"
+
+msgid "startseite.signup.no_types"
+msgstr "Please choose at least one helper type."
+
+msgid "startseite.signup.days.info"
+msgstr "Choose the days and for each day the time you can help. Days and times you are already signed up for can not be removed."
+
+msgid "startseite.signup.all_days"
+msgstr "All days"
+
+msgid "startseite.signup.from"
+msgstr "From"
+
+msgid "startseite.signup.to"
+msgstr "To"
+
+msgid "startseite.signup.day_locked"
+msgstr "Signed up from %1$s to %2$s"
+
+msgid "startseite.signup.invalid_time"
+msgstr "%s: The end time has to be after the start time."
+
+msgid "startseite.signup.no_days"
+msgstr "Please choose at least one day."
+
+msgid "startseite.signup.table.info"
+msgstr "Tick the time slots you would like to help in. Removing a tick signs you off. Greyed out time slots already have enough helpers."
+
+msgid "startseite.signup.table.empty"
+msgstr "There are no time slots for your choice. Adjust the days and times."
+
+msgid "startseite.signup.only_free"
+msgstr "Only show time slots with free places"
+
+msgid "startseite.signup.legend.own"
+msgstr "Signed up"
+
+msgid "startseite.signup.legend.full"
+msgstr "Full or not possible"
+
+msgid "startseite.signup.full"
+msgstr "This time slot already has enough helpers."
+
+msgid "startseite.signup.full_short"
+msgstr "full"
+
+msgid "startseite.signup.free"
+msgstr "%s free"
+
+msgid "startseite.signup.changes"
+msgstr "%1$s new, %2$s to sign off"
+
+msgid "startseite.signup.saved"
+msgstr "Saved – signed up: %1$s, signed off: %2$s."
+
+msgid "startseite.signup.unchanged"
+msgstr "No changes."
+
+msgid "startseite.signup.failed"
+msgstr "%1$s on %2$s: %3$s"
+
+msgid "startseite.signup.no_signoff"
+msgstr "Signing off is no longer possible. Please contact the coordinators if necessary."
+
+msgid "startseite.signup.other_type"
+msgstr "You are already signed up for another helper type in this shift."
+
+msgid "startseite.signup.collides"
+msgstr "Collides with one of your shifts."
+
+msgid "startseite.signup.not_allowed"
+msgstr "Signing up is not possible."
+
+msgid "startseite.signup.type_no_self_signup"
+msgstr "Only the coordinators can sign up helpers."
+
+msgid "startseite.signup.type_pending"
+msgstr "Your request is not confirmed yet."
+
+msgid "startseite.signup.type_restricted"
+msgstr "This helper type requires a confirmation."
+
