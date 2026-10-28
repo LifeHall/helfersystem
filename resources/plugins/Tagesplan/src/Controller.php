@@ -99,7 +99,7 @@ class Controller extends BaseController
     }
 
     /**
-     * Time slots between all shift start/end times; gaps without any shift are split into full hours
+     * Time slots between all shift start/end times, skipping gaps without any shift (e.g. breaks)
      *
      * @param Collection|Shift[] $shifts
      * @return array[] ['start' => timestamp, 'end' => timestamp, 'label' => string]
@@ -120,23 +120,12 @@ class Controller extends BaseController
             $covered = $shifts->contains(
                 fn(Shift $shift) => $shift->start->timestamp <= $start && $shift->end->timestamp >= $end
             );
-
-            $parts = [$start];
-            if (!$covered) {
-                $hour = Carbon::createFromTimestamp($start, $timezone)->startOfHour()->addHour();
-                while ($hour->timestamp < $end) {
-                    $parts[] = $hour->timestamp;
-                    $hour->addHour();
-                }
-            }
-            $parts[] = $end;
-
-            for ($j = 0; $j < count($parts) - 1; $j++) {
+            if ($covered) {
                 $columns[] = [
-                    'start' => $parts[$j],
-                    'end' => $parts[$j + 1],
-                    'label' => Carbon::createFromTimestamp($parts[$j], $timezone)->format('H:i')
-                        . ' – ' . Carbon::createFromTimestamp($parts[$j + 1], $timezone)->format('H:i'),
+                    'start' => $start,
+                    'end' => $end,
+                    'label' => Carbon::createFromTimestamp($start, $timezone)->format('H:i')
+                        . ' – ' . Carbon::createFromTimestamp($end, $timezone)->format('H:i'),
                 ];
             }
         }
