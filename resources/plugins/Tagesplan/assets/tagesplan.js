@@ -79,6 +79,10 @@
   });
 
   modal.addEventListener('hidden.bs.modal', () => {
+    // Bootstrap focuses the clicked cell again, which would keep its hover text visible
+    if (document.activeElement?.closest('.tagesplan')) {
+      document.activeElement.blur();
+    }
     highlighted.forEach((td) => td.classList.remove('tp-active', 'tp-clicked'));
     highlighted = [];
     delete modal.dataset.openShift;
