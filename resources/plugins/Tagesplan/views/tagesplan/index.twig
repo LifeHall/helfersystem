@@ -33,6 +33,9 @@
         .tagesplan td.tp-handover { min-width: 0; padding: 0; font-size: .75em; border-left-style: hidden; border-right-style: hidden; }
         .tagesplan .tp-part { padding: .05rem .3rem; }
         .tagesplan .tp-part + .tp-part { border-top: 1px dashed var(--tp-border); }
+        {# Vertical lines only on the half where the shift changes #}
+        .tagesplan .tp-part.tp-line-l { border-left: 1px solid var(--tp-border); }
+        .tagesplan .tp-part.tp-line-r { border-right: 1px solid var(--tp-border); }
         .tagesplan .tp-part.tp-none { background-color: #7f7f7f; }
         .tagesplan .tp-part.tp-open a, .tagesplan .tp-part.tp-filled a { color: #212529; }
         .tagesplan .tp-part.tp-open a .tp-free { color: transparent; }
@@ -125,9 +128,13 @@
                                 {% for cell in row.cells %}
                                     <td class="tp-{{ cell.state }}" {% if cell.colspan > 1 %}colspan="{{ cell.colspan }}"{% endif %}>
                                         {% if cell.state == 'handover' %}
+                                            {% set previous_shift = row.cells[loop.index0 - 1].shift_id ?? null %}
+                                            {% set next_shift = row.cells[loop.index0 + 1].shift_id ?? null %}
                                             {% for part in cell.parts %}
                                                 {% set direction = loop.first ? 'leaving' : 'arriving' %}
-                                                <div class="tp-part tp-{{ part.state }}">
+                                                <div class="tp-part tp-{{ part.state }}
+                                                    {{- previous_shift != part.shift_id ? ' tp-line-l' -}}
+                                                    {{- next_shift != part.shift_id ? ' tp-line-r' }}">
                                                     {% if part.state == 'filled' or part.state == 'open' %}
                                                         <a href="{{ part.url }}" data-tp-shift="{{ part.shift_id }}"
                                                             title="{{ __('tagesplan.handover.' ~ direction) }}: {{ part.title }}"
