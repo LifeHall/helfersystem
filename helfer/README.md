@@ -59,6 +59,8 @@ Plugin-Middleware, die die Route `NewsController@index` auf `HomeController@inde
   3. Tabelle pro Helferdienst (Zeilen = Zeitslots, Spalten = Tage) zum An-/Abhaken. Volle oder nicht mögliche
   Slots sind ausgegraut; „Nur Zeitslots mit freien Plätzen zeigen“ blendet solche Zeilen aus.
   Die Auswahl aus Schritt 1 und 2 wird pro Helfer gespeichert (`startseite_signup_choices`).
+  Solange noch keine Auswahl gespeichert ist, sind in Schritt 1 die bei der Registrierung gewählten Helferdienste
+  (Mitgliedschaften in `user_angel_type`) vorausgewählt, soweit sie schon auswählbar sind.
   Helferdienste und Tage mit eigenen Einträgen lassen sich nicht abwählen.
   Bei Helferdiensten mit Freischaltung gibt es in Schritt 1 „Freischaltung anfragen“: trägt die (unbestätigte)
   Mitgliedschaft ein und mailt allen mit `user.angeltypes.edit` und den Supportern des Helferdienstes;

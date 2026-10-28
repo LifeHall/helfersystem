@@ -62,6 +62,11 @@ class SignupController extends BaseController
         $slots = $this->slots();
         $locked = $this->lockedTypes($user, $slots);
 
+        // Before the first save: the helper types chosen at the registration (or joined later)
+        $preset = $choice->exists
+            ? $choice->angel_types
+            : UserAngelType::whereUserId($user->id)->pluck('angel_type_id')->map(fn($id) => (int) $id)->all();
+
         $types = [];
         foreach ($slots->groupBy(fn(array $slot) => $slot['type']->id) as $typeSlots) {
             /** @var AngelType $type */
@@ -73,7 +78,7 @@ class SignupController extends BaseController
                     ->unique()
                     ->sort(fn($a, $b) => strnatcasecmp($a, $b))
                     ->implode(', '),
-                'checked' => in_array($type->id, $choice->angel_types) || in_array($type->id, $locked),
+                'checked' => (in_array($type->id, $preset) && !$reason) || in_array($type->id, $locked),
                 'locked' => in_array($type->id, $locked),
                 'reason' => in_array($type->id, $locked) ? null : $reason,
                 'can_request' => $this->canRequest($type),
