@@ -5,3 +5,6 @@ msgstr "Ask the admin"
 
 msgid "faq.questions_link"
 msgstr "If you don't find an answer, you can <a href=\"%s\">ask the admin</a>."
+
+msgid "shifts.event_range"
+msgstr "Event period"

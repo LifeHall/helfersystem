@@ -18,3 +18,14 @@ Diese Dateien lädt das System nach den Original-Übersetzungen.
 Nicht umbenannt: Code, Datenbank, URLs (z. B. `/angeltypes`) und die Credits-Seite.
 
 Den Anwendungsnamen setzt `APP_NAME` in der Server-`.env`.
+
+## Geänderte Original-Dateien
+
+Diese Dateien des Originals sind angepasst (Stellen mit `Helfersystem` markiert).
+Bei Merge-Konflikten nach einem upstream-Update hier zuerst nachsehen:
+
+| Datei | Änderung |
+|---|---|
+| `includes/pages/user_shifts.php` | Knopf „Eventzeitraum“: Template-Variablen + Funktion `shifts_event_range()` am Dateiende |
+| `resources/views/pages/user-shifts.html` | Knopf „Eventzeitraum“ im Schichtfilter |
+| `resources/assets/js/forms.js` | Klick-Handler `.set-range` |

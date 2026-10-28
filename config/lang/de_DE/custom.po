@@ -328,3 +328,6 @@ msgstr "Frag den Admin"
 
 msgid "faq.questions_link"
 msgstr "Wenn deine Frage hier nicht beantwortet wurde, <a href=\"%s\">frag den Admin</a>."
+
+msgid "shifts.event_range"
+msgstr "Eventzeitraum"
