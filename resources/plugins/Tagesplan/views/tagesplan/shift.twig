@@ -1,0 +1,97 @@
+{% import 'macros/base.twig' as m %}
+<div class="tp-shift" data-title="{{ location.name }} · {{ time_label }}">
+    {% include 'layouts/parts/messages.twig' %}
+
+    <p class="mb-2">
+        {{ m.icon('calendar-event') }} {{ day_label }}<br>
+        {{ m.icon('clock') }} <strong>{{ time_label }}</strong>
+        {% if shift.title %}<br>{{ m.icon('info-circle') }} {{ shift.title }}{% endif %}
+    </p>
+
+    <div class="card mb-3">
+        <div class="card-body py-2">
+            <h6 class="card-title mb-1">
+                {{ m.icon('pin-map-fill') }}
+                <a href="{{ url('/locations', {'action': 'view', 'location_id': location.id}) }}">{{ location.name }}</a>
+            </h6>
+            {% if location.description %}
+                <div class="small">{{ location.description|md }}</div>
+            {% endif %}
+            {% if location.dect and config('enable_dect') %}
+                <div class="small">{{ m.icon('telephone-fill') }} {{ location.dect }}</div>
+            {% endif %}
+            {% if location.map_url %}
+                <div class="small">
+                    {{ m.icon('map') }} <a href="{{ location.map_url }}" target="_blank" rel="noopener">{{ __('tagesplan.map') }}</a>
+                </div>
+            {% endif %}
+            {% if shift.description %}
+                <hr class="my-2">
+                <div class="small">{{ shift.description|md }}</div>
+            {% endif %}
+        </div>
+    </div>
+
+    {% for type in types %}
+        <h6>
+            {{ type.angel_type.name }}
+            <span class="badge {{ type.free > 0 ? 'bg-warning text-dark' : 'bg-success' }}">
+                {{ type.entries|length }} / {{ type.count }}
+            </span>
+        </h6>
+        <ul class="list-group mb-2">
+            {% for item in type.entries %}
+                <li class="list-group-item d-flex justify-content-between align-items-center py-1">
+                    <span>{{ m.icon('person-fill') }} {{ item.entry.user.displayName }}</span>
+                    {% if item.can_signoff %}
+                        <form method="post" action="{{ url('/tagesplan/austragen') }}" class="m-0">
+                            {{ csrf() }}
+                            <input type="hidden" name="shift_entry_id" value="{{ item.entry.id }}">
+                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                {{ m.icon('x-lg') }} {{ __('tagesplan.signoff') }}
+                            </button>
+                        </form>
+                    {% endif %}
+                </li>
+            {% endfor %}
+            {% if type.free > 0 %}
+                {% for i in 1..type.free %}
+                    <li class="list-group-item text-muted py-1">{{ m.icon('person') }} {{ __('tagesplan.legend.open') }}</li>
+                {% endfor %}
+            {% endif %}
+        </ul>
+
+        {% if type.self_signed_up %}
+            <p class="text-success small">{{ m.icon('check-lg') }} {{ __('tagesplan.self_signed_up') }}</p>
+        {% elseif type.self_allowed %}
+            <form method="post" action="{{ url('/tagesplan/eintragen') }}" class="mb-2">
+                {{ csrf() }}
+                <input type="hidden" name="shift_id" value="{{ shift.id }}">
+                <input type="hidden" name="angel_type_id" value="{{ type.angel_type.id }}">
+                <button type="submit" class="btn btn-primary">{{ m.icon('plus-lg') }} {{ __('tagesplan.signup_self') }}</button>
+            </form>
+        {% elseif type.self_reason %}
+            <p class="text-muted small">{{ m.icon('info-circle') }} {{ type.self_reason }}</p>
+        {% endif %}
+
+        {% if type.users is not empty %}
+            <form method="post" action="{{ url('/tagesplan/eintragen') }}" class="row g-2 align-items-center mb-3">
+                {{ csrf() }}
+                <input type="hidden" name="shift_id" value="{{ shift.id }}">
+                <input type="hidden" name="angel_type_id" value="{{ type.angel_type.id }}">
+                <div class="col">
+                    <label class="visually-hidden" for="tp-user-{{ type.angel_type.id }}">{{ __('tagesplan.signup_other') }}</label>
+                    <select name="user_id" id="tp-user-{{ type.angel_type.id }}" class="form-select form-select-sm" required>
+                        <option value="">{{ __('tagesplan.choose_person') }}</option>
+                        {% for id, name in type.users %}
+                            <option value="{{ id }}">{{ name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-auto">
+                    <button type="submit" class="btn btn-sm btn-secondary">{{ m.icon('person-plus-fill') }} {{ __('tagesplan.signup_other') }}</button>
+                </div>
+            </form>
+        {% endif %}
+    {% endfor %}
+</div>

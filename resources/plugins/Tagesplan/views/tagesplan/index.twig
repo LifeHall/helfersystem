@@ -13,10 +13,13 @@
         .tagesplan tbody.tp-group { border-top: 3px solid var(--tp-border); }
         .tagesplan tbody.tp-group tr > * { color: #212529; }
         .tagesplan td.tp-none { background-color: #7f7f7f; }
-        .tagesplan td.tp-open a { display: block; color: transparent; text-decoration: none; }
+        .tagesplan td.tp-open a, .tagesplan td.tp-filled a { display: block; color: #212529; text-decoration: none; }
+        .tagesplan td.tp-open a { color: transparent; }
         .tagesplan td.tp-open a:hover, .tagesplan td.tp-open a:focus { color: #212529; text-decoration: underline; }
-        .tagesplan td.tp-filled a { color: #212529; text-decoration: none; }
         .tagesplan td.tp-filled a:hover { text-decoration: underline; }
+        .tagesplan td.tp-open:hover, .tagesplan td.tp-filled:hover { box-shadow: inset 0 0 0 2px #0d6efd; cursor: pointer; }
+        .tagesplan td.tp-active { box-shadow: inset 0 0 0 2px #0d6efd; }
+        .tagesplan td.tp-clicked { box-shadow: inset 0 0 0 4px #dc3545; }
         .tp-color-0 > * { background-color: #d0cece; }
         .tp-color-1 > * { background-color: #b4c6e7; }
         .tp-color-2 > * { background-color: #fbe5d6; }
@@ -43,7 +46,10 @@
             {% if day %}<small class="text-muted">{{ days[day] }}</small>{% endif %}
         </h1>
 
-        {% include 'layouts/parts/messages.twig' %}
+        {# When the popup re-opens after an action, it shows the messages itself #}
+        {% if not open_shift %}
+            {% include 'layouts/parts/messages.twig' %}
+        {% endif %}
 
         {% if days is not empty %}
             <form method="get" action="{{ url('/tagesplan') }}" class="row g-2 align-items-center mb-3 d-print-none">
@@ -97,10 +103,11 @@
                                 <th class="tp-label">{{ row.label }}</th>
                                 {% for cell in row.cells %}
                                     <td class="tp-{{ cell.state }}" {% if cell.colspan > 1 %}colspan="{{ cell.colspan }}"{% endif %}>
-                                        {% if cell.state == 'filled' %}
-                                            <a href="{{ cell.url }}" title="{{ cell.title }}">{{ cell.name }}</a>
-                                        {% elseif cell.state == 'open' %}
-                                            <a href="{{ cell.url }}" title="{{ cell.title }}">{{ __('tagesplan.open') }}</a>
+                                        {% if cell.state == 'filled' or cell.state == 'open' %}
+                                            <a href="{{ cell.url }}" title="{{ cell.title }}" data-tp-shift="{{ cell.shift_id }}"
+                                                data-bs-toggle="modal" data-bs-target="#tp-modal">
+                                                {{- cell.state == 'filled' ? cell.name : __('tagesplan.open') -}}
+                                            </a>
                                         {% endif %}
                                     </td>
                                 {% endfor %}
@@ -117,4 +124,23 @@
             </p>
         {% endif %}
     </div>
+
+    <div class="modal fade" id="tp-modal" tabindex="-1" aria-labelledby="tp-modal-title" aria-hidden="true"
+        data-url="{{ url('/tagesplan/schicht') }}" data-title="{{ __('tagesplan.shift') }}"
+        data-error="{{ __('tagesplan.loading_error') }}" {% if open_shift %}data-open-shift="{{ open_shift }}"{% endif %}>
+        <div class="modal-dialog modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="tp-modal-title">{{ __('tagesplan.shift') }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('form.close')|default('Close') }}"></button>
+                </div>
+                <div class="modal-body"></div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    {{ parent() }}
+    <script src="{{ url('/tagesplan/tagesplan.js') }}"></script>
 {% endblock %}

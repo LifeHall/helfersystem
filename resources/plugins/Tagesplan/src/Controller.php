@@ -78,6 +78,8 @@ class Controller extends BaseController
             'next_day' => $index !== false ? ($days[$index + 1] ?? null) : null,
             'columns' => $columns,
             'groups' => $groups,
+            // Shift popup to re-open after signing up / off
+            'open_shift' => (int) $request->input('shift') ?: null,
         ]);
     }
 
@@ -304,6 +306,7 @@ class Controller extends BaseController
                 'colspan' => $span,
                 'state' => $entry ? 'filled' : ($need && $slot < $need['count'] ? 'open' : 'none'),
                 'name' => $entry?->user->displayName,
+                'shift_id' => $shift->id,
                 'url' => url('/shifts', ['action' => 'view', 'shift_id' => $shift->id]),
                 'title' => $shift->title ?: $shift->shiftType->name,
             ];

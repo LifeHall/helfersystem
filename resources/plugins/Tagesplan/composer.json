@@ -2,7 +2,7 @@
   "type": "engelsystem-plugin",
   "name": "helfersystem/tagesplan",
   "description": "Tagesansicht der Schichten, gruppiert nach Ort",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "license": "GPL-2.0-or-later",
   "authors": [
     {
@@ -15,7 +15,17 @@
       "Helfersystem\\Tagesplan\\ServiceProvider"
     ],
     "routes": {
-      "/tagesplan": "Helfersystem\\Tagesplan\\Controller@index"
+      "/tagesplan": "Helfersystem\\Tagesplan\\Controller@index",
+      "/tagesplan/schicht": "Helfersystem\\Tagesplan\\ShiftPopupController@show",
+      "/tagesplan/eintragen": [
+        "Helfersystem\\Tagesplan\\ShiftPopupController@signup",
+        "POST"
+      ],
+      "/tagesplan/austragen": [
+        "Helfersystem\\Tagesplan\\ShiftPopupController@signoff",
+        "POST"
+      ],
+      "/tagesplan/tagesplan.js": "Helfersystem\\Tagesplan\\ShiftPopupController@script"
     },
     "config_options": {
       "tagesplan": {

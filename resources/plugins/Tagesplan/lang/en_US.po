@@ -23,7 +23,7 @@ msgid "tagesplan.no_shifts"
 msgstr "There are no shifts on this day."
 
 msgid "tagesplan.open"
-msgstr "open – go to shift"
+msgstr "open – click to sign up"
 
 msgid "tagesplan.legend.filled"
 msgstr "Filled"
@@ -39,3 +39,36 @@ msgstr "Order of locations"
 
 msgid "config.tagesplan_order.info"
 msgstr "One location per line, in the desired order. Locations not listed are shown afterwards in alphabetical order."
+
+msgid "tagesplan.shift"
+msgstr "Shift"
+
+msgid "tagesplan.loading_error"
+msgstr "The shift could not be loaded."
+
+msgid "tagesplan.map"
+msgstr "Open map"
+
+msgid "tagesplan.signoff"
+msgstr "Sign off"
+
+msgid "tagesplan.signup_self"
+msgstr "Sign me up"
+
+msgid "tagesplan.signup_other"
+msgstr "Sign up"
+
+msgid "tagesplan.choose_person"
+msgstr "Choose person …"
+
+msgid "tagesplan.self_signed_up"
+msgstr "You are signed up for this shift."
+
+msgid "tagesplan.already_signed_up"
+msgstr "%s is already signed up for this shift."
+
+msgid "tagesplan.not_needed"
+msgstr "This angel type is not needed in this shift."
+
+msgid "tagesplan.not_allowed"
+msgstr "You are not allowed to do this."

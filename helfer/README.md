@@ -26,6 +26,8 @@ Schichten, gruppiert nach Ort, eine Zeile pro benötigtem Platz, eine Spalte pro
 Überlappende Schichten am selben Ort bekommen eigene Zeilen. Berechtigung: `user_shifts`.
 Reihenfolge der Orte unter **Admin → Einstellungen → Tagesplan** (ein Ort pro Zeile);
 die Farbe ergibt sich aus der Position in dieser Liste.
+Klick auf ein Feld öffnet ein Popup mit Orts- und Schichtinfos zum Ein-/Austragen
+(gleiche Rechteprüfung wie im Kern: `Shift_signup_allowed()`, `Shift_signout_allowed()`).
 
 Auf einer neuen Installation unter **Admin → Plugins** installieren und aktivieren.
 

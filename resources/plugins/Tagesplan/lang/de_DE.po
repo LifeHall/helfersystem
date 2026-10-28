@@ -23,7 +23,7 @@ msgid "tagesplan.no_shifts"
 msgstr "Für diesen Tag sind keine Schichten erfasst."
 
 msgid "tagesplan.open"
-msgstr "frei – zur Schicht"
+msgstr "frei – klicken zum Eintragen"
 
 msgid "tagesplan.legend.filled"
 msgstr "Besetzt"
@@ -39,3 +39,36 @@ msgstr "Reihenfolge der Orte"
 
 msgid "config.tagesplan_order.info"
 msgstr "Ein Ort pro Zeile, in der gewünschten Reihenfolge. Nicht aufgeführte Orte erscheinen danach alphabetisch."
+
+msgid "tagesplan.shift"
+msgstr "Schicht"
+
+msgid "tagesplan.loading_error"
+msgstr "Die Schicht konnte nicht geladen werden."
+
+msgid "tagesplan.map"
+msgstr "Karte öffnen"
+
+msgid "tagesplan.signoff"
+msgstr "Austragen"
+
+msgid "tagesplan.signup_self"
+msgstr "Mich eintragen"
+
+msgid "tagesplan.signup_other"
+msgstr "Eintragen"
+
+msgid "tagesplan.choose_person"
+msgstr "Person auswählen …"
+
+msgid "tagesplan.self_signed_up"
+msgstr "Du bist für diese Schicht eingetragen."
+
+msgid "tagesplan.already_signed_up"
+msgstr "%s ist bereits für diese Schicht eingetragen."
+
+msgid "tagesplan.not_needed"
+msgstr "Dieser Helfertyp wird in dieser Schicht nicht benötigt."
+
+msgid "tagesplan.not_allowed"
+msgstr "Dazu fehlt dir die Berechtigung."
