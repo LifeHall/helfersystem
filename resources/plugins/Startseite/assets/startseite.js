@@ -1,18 +1,11 @@
 // Guided sign up of the start page
 (() => {
-    // Step 2: days, the times of a day can only be changed if the day is selected
+    // Step 2: days, "all days" ticks or unticks all days that are not locked
     const daysForm = document.getElementById('startseite-days');
     if (daysForm) {
         const days = [...daysForm.querySelectorAll('.startseite-day')];
         const all = document.getElementById('startseite-all');
         const update = () => {
-            days.forEach((day) => {
-                // Locked days are sent by a hidden field, their times have to be sent too
-                const enabled = day.checked || day.disabled;
-                day.closest('tr').querySelectorAll('select').forEach((select) => {
-                    select.disabled = !enabled;
-                });
-            });
             all.checked = days.length > 0 && days.every((day) => day.checked);
         };
         days.forEach((day) => day.addEventListener('change', update));

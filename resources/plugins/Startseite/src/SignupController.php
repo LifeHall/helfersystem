@@ -25,9 +25,9 @@ use Psr\Log\LoggerInterface;
 use Throwable;
 
 /**
- * Guided sign up: 1. helper types, 2. days and times, 3. table of the matching time slots to tick
+ * Guided sign up: 1. helper types, 2. days, 3. table of the time slots of these days to tick
  *
- * The choices of step 1 and 2 are saved, days, times and helper types with own shift entries can not be removed.
+ * The choices of step 1 and 2 are saved, days and helper types with own shift entries can not be removed.
  * Uses the same permission checks as the shift entries of the core (Shift_signup_allowed(), Shift_signout_allowed())
  */
 class SignupController extends BaseController
@@ -146,7 +146,7 @@ class SignupController extends BaseController
     }
 
     /**
-     * Step 2: days and times per day
+     * Step 2: days
      */
     public function days(): Response
     {
@@ -156,12 +156,10 @@ class SignupController extends BaseController
             return $this->response->redirectTo(url('/startseite/eintragen'));
         }
 
+        $chosen = $this->chosenDays($choice);
         $days = $this->dayOptions($user, $this->slots($choice->angel_types));
         foreach ($days as $day => $options) {
-            $saved = $choice->days[$day] ?? null;
-            $days[$day]['checked'] = $saved || $options['locked'];
-            $days[$day]['from'] = $this->clampFrom($options, $saved['from'] ?? null);
-            $days[$day]['to'] = $this->clampTo($options, $saved['to'] ?? null);
+            $days[$day]['checked'] = in_array($day, $chosen, true) || $options['locked'];
         }
 
         return $this->response->withView('startseite/signup-days', [
@@ -177,26 +175,12 @@ class SignupController extends BaseController
         $options = $this->dayOptions($user, $this->slots($choice->angel_types));
 
         $checked = $request->request->all('days');
-        $from = $request->request->all('from');
-        $to = $request->request->all('to');
 
         $days = [];
         foreach ($options as $day => $option) {
-            if (!isset($checked[$day]) && !$option['locked']) {
-                continue;
+            if (isset($checked[$day]) || $option['locked']) {
+                $days[] = $day;
             }
-
-            $dayFrom = $this->clampFrom($option, $from[$day] ?? null);
-            $dayTo = $this->clampTo($option, $to[$day] ?? null);
-            if ($this->minutes($dayFrom) >= $this->minutes($dayTo)) {
-                $this->addNotification(
-                    __('startseite.signup.invalid_time', [$option['label']]),
-                    NotificationType::ERROR
-                );
-                return $this->response->redirectTo(url('/startseite/eintragen/tage'));
-            }
-
-            $days[$day] = ['from' => $dayFrom, 'to' => $dayTo];
         }
 
         if (!$days) {
@@ -420,14 +404,10 @@ class SignupController extends BaseController
     {
         $own = ShiftEntry::where('user_id', $user->id)->get()->keyBy('shift_id');
         $userShifts = new Collection(Shifts_by_user($user->id)->all());
+        $days = $this->chosenDays($choice);
 
         return $this->slots($choice->angel_types)
-            ->filter(function (array $slot) use ($choice) {
-                $day = $choice->days[$slot['day']] ?? null;
-                return $day
-                    && $slot['from'] >= $this->minutes($day['from'])
-                    && $slot['to'] <= $this->minutes($day['to']);
-            })
+            ->filter(fn(array $slot) => in_array($slot['day'], $days, true))
             ->map(function (array $slot) use ($user, $own, $userShifts) {
                 /** @var ShiftEntry|null $entry */
                 $entry = $own[$slot['shift']->id] ?? null;
@@ -628,9 +608,21 @@ class SignupController extends BaseController
     }
 
     /**
-     * Days with slots, their possible start and end times and the range of the own shift entries
+     * Saved days, before version 1.2 they were saved with times: [Y-m-d => ['from' => H:i, 'to' => H:i]]
      *
-     * @return array[] [Y-m-d => ['label', 'starts' => string[], 'ends' => string[], 'locked', 'lock_from', 'lock_to']]
+     * @return string[] Y-m-d
+     */
+    protected function chosenDays(SignupChoice $choice): array
+    {
+        $days = $choice->days ?: [];
+
+        return array_values(array_map('strval', array_is_list($days) ? $days : array_keys($days)));
+    }
+
+    /**
+     * Days with slots, locked if the user has own shift entries on them
+     *
+     * @return array[] [Y-m-d => ['label', 'locked']]
      */
     protected function dayOptions(User $user, Collection $slots): array
     {
@@ -639,45 +631,15 @@ class SignupController extends BaseController
 
         $days = [];
         foreach ($slots->groupBy('day')->sortKeys() as $day => $daySlots) {
-            $mine = $daySlots->filter(fn(array $slot) => ($own[$slot['shift']->id] ?? null) == $slot['type']->id);
-            $starts = $daySlots->pluck('from')->unique()->sort()->values();
-            $ends = $daySlots->pluck('to')->unique()->sort()->values();
-
             $days[$day] = [
                 'label' => Carbon::createFromFormat('Y-m-d', $day)->locale($locale)->isoFormat('dddd, DD.MM.YYYY'),
-                'starts' => $starts->map(fn($minutes) => $this->time($minutes))->all(),
-                'ends' => $ends->map(fn($minutes) => $this->time($minutes))->all(),
-                'locked' => $mine->isNotEmpty(),
-                'lock_from' => $mine->isNotEmpty() ? $this->time($mine->min('from')) : null,
-                'lock_to' => $mine->isNotEmpty() ? $this->time($mine->max('to')) : null,
+                'locked' => $daySlots->contains(
+                    fn(array $slot) => ($own[$slot['shift']->id] ?? null) == $slot['type']->id
+                ),
             ];
         }
 
         return $days;
-    }
-
-    /**
-     * A possible start time, not after the first own shift entry of the day, default the first one
-     */
-    protected function clampFrom(array $day, ?string $from): string
-    {
-        $starts = $day['lock_from']
-            ? array_filter($day['starts'], fn($time) => $this->minutes($time) <= $this->minutes($day['lock_from']))
-            : $day['starts'];
-
-        return in_array($from, $starts, true) ? $from : reset($starts);
-    }
-
-    /**
-     * A possible end time, not before the last own shift entry of the day, default the last one
-     */
-    protected function clampTo(array $day, ?string $to): string
-    {
-        $ends = $day['lock_to']
-            ? array_filter($day['ends'], fn($time) => $this->minutes($time) >= $this->minutes($day['lock_to']))
-            : $day['ends'];
-
-        return in_array($to, $ends, true) ? $to : end($ends);
     }
 
     protected function membership(User $user, AngelType $type): ?UserAngelType
@@ -724,12 +686,5 @@ class SignupController extends BaseController
     protected function time(int $minutes): string
     {
         return sprintf('%02d:%02d', intdiv($minutes, 60), $minutes % 60);
-    }
-
-    protected function minutes(string $time): int
-    {
-        [$hours, $minutes] = array_map('intval', explode(':', $time) + [0, 0]);
-
-        return $hours * 60 + $minutes;
     }
 }

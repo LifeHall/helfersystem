@@ -11,7 +11,7 @@ use Engelsystem\Models\BaseModel;
  *
  * @property int $user_id
  * @property int[] $angel_types
- * @property array<string, array{from: string, to: string}> $days [Y-m-d => ['from' => 'H:i', 'to' => 'H:i']]
+ * @property string[] $days Y-m-d
  */
 class SignupChoice extends BaseModel
 {
@@ -26,7 +26,7 @@ class SignupChoice extends BaseModel
     /** @var array<string, mixed> */
     protected $attributes = [ // phpcs:ignore
         'angel_types' => '[]',
-        'days' => '{}',
+        'days' => '[]',
     ];
 
     /** @var array<string> */

@@ -77,7 +77,7 @@ msgid "startseite.signup.step.types"
 msgstr "Helper types"
 
 msgid "startseite.signup.step.days"
-msgstr "Days and times"
+msgstr "Days"
 
 msgid "startseite.signup.step.table"
 msgstr "Choose time slots"
@@ -107,22 +107,10 @@ msgid "startseite.signup.no_types"
 msgstr "Please choose at least one helper type."
 
 msgid "startseite.signup.days.info"
-msgstr "Choose the days and for each day the time you can help. Days and times you are already signed up for can not be removed."
+msgstr "Choose the days you can help on. Days you are already signed up for can not be removed."
 
 msgid "startseite.signup.all_days"
 msgstr "All days"
-
-msgid "startseite.signup.from"
-msgstr "From"
-
-msgid "startseite.signup.to"
-msgstr "To"
-
-msgid "startseite.signup.day_locked"
-msgstr "Signed up from %1$s to %2$s"
-
-msgid "startseite.signup.invalid_time"
-msgstr "%s: The end time has to be after the start time."
 
 msgid "startseite.signup.no_days"
 msgstr "Please choose at least one day."
@@ -131,7 +119,7 @@ msgid "startseite.signup.table.info"
 msgstr "Tick the time slots you would like to help in. Removing a tick signs you off. Greyed out time slots already have enough helpers."
 
 msgid "startseite.signup.table.empty"
-msgstr "There are no time slots for your choice. Adjust the days and times."
+msgstr "There are no time slots for your choice. Adjust the days."
 
 msgid "startseite.signup.only_free"
 msgstr "Only show time slots with free places"

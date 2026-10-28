@@ -77,7 +77,7 @@ msgid "startseite.signup.step.types"
 msgstr "Helferdienste"
 
 msgid "startseite.signup.step.days"
-msgstr "Tage und Zeiten"
+msgstr "Tage"
 
 msgid "startseite.signup.step.table"
 msgstr "Zeitslots wählen"
@@ -107,22 +107,10 @@ msgid "startseite.signup.no_types"
 msgstr "Bitte wähle mindestens einen Helferdienst."
 
 msgid "startseite.signup.days.info"
-msgstr "Wähle die Tage und pro Tag die Zeit, in der du mithelfen kannst. Tage und Zeiten, an denen du schon eingetragen bist, können nicht abgewählt werden."
+msgstr "Wähle die Tage, an denen du mithelfen kannst. Tage, an denen du schon eingetragen bist, können nicht abgewählt werden."
 
 msgid "startseite.signup.all_days"
 msgstr "Alle Tage"
-
-msgid "startseite.signup.from"
-msgstr "Von"
-
-msgid "startseite.signup.to"
-msgstr "Bis"
-
-msgid "startseite.signup.day_locked"
-msgstr "Eingetragen von %1$s bis %2$s"
-
-msgid "startseite.signup.invalid_time"
-msgstr "%s: Die Endzeit muss nach der Startzeit liegen."
 
 msgid "startseite.signup.no_days"
 msgstr "Bitte wähle mindestens einen Tag."
@@ -131,7 +119,7 @@ msgid "startseite.signup.table.info"
 msgstr "Setze einen Haken bei den Zeitslots, in denen du helfen möchtest. Entfernst du einen Haken, wirst du ausgetragen. Ausgegraute Zeitslots haben bereits genügend Helfer."
 
 msgid "startseite.signup.table.empty"
-msgstr "Für deine Auswahl gibt es keine Zeitslots. Passe die Tage und Zeiten an."
+msgstr "Für deine Auswahl gibt es keine Zeitslots. Passe die Tage an."
 
 msgid "startseite.signup.only_free"
 msgstr "Nur Zeitslots mit freien Plätzen zeigen"

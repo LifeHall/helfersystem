@@ -52,11 +52,11 @@ Plugin-Middleware, die die Route `NewsController@index` auf `HomeController@inde
 - **Meine Dienste:** Übersicht der eigenen Schichteinträge pro Tag mit Stunden, Download als PDF
   (`/startseite/dienste.pdf`, eigener kleiner PDF-Schreiber `Pdf.php`, keine Zusatzbibliothek).
 - **Geführt eintragen** (`/startseite/eintragen`, Berechtigung `startseite.signup`, per Plugin-Migration für alle
-  Gruppen mit `tagesplan.view` oder `user_shifts`): 1. Helferdienste (Helfertypen), 2. Tage mit Von/Bis-Zeit,
+  Gruppen mit `tagesplan.view` oder `user_shifts`): 1. Helferdienste (Helfertypen), 2. Tage (ohne Zeitauswahl, alle Zeitslots des Tages),
   3. Tabelle pro Helferdienst (Zeilen = Zeitslots, Spalten = Tage) zum An-/Abhaken. Volle oder nicht mögliche
   Slots sind ausgegraut; „Nur Zeitslots mit freien Plätzen zeigen“ blendet solche Zeilen aus.
   Die Auswahl aus Schritt 1 und 2 wird pro Helfer gespeichert (`startseite_signup_choices`).
-  Helferdienste, Tage und Zeiten mit eigenen Einträgen lassen sich nicht abwählen.
+  Helferdienste und Tage mit eigenen Einträgen lassen sich nicht abwählen.
   Bei Helferdiensten mit Freischaltung gibt es in Schritt 1 „Freischaltung anfragen“: trägt die (unbestätigte)
   Mitgliedschaft ein und mailt allen mit `user.angeltypes.edit` und den Supportern des Helferdienstes;
   die bisherigen Häkchen bleiben erhalten.
