@@ -14,6 +14,12 @@ class ServiceProvider extends BaseServiceProvider
         /** @var Config $config */
         $config = $this->app->get('config');
 
+        // Defaults of plugin options are not set by the core, so the admin config would compare an unticked
+        // checkbox (false) with null, see no change and not save it
+        if ($config->get('tagesplan_helpers_visible') === null) {
+            $config->set('tagesplan_helpers_visible', true);
+        }
+
         // Adds the "Tagesplan" tab to the main navigation, only for the managers if it is hidden from the helpers
         $config->set('header_items', [
             ...$config->get('header_items', []),
