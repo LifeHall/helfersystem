@@ -29,6 +29,7 @@ use Throwable;
  */
 class ShiftPopupController extends BaseController
 {
+    use ChecksVisibility;
     use HasUserNotifications;
 
     protected array $permissions = [

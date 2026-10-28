@@ -14,10 +14,13 @@ class ServiceProvider extends BaseServiceProvider
         /** @var Config $config */
         $config = $this->app->get('config');
 
-        // Adds the "Tagesplan" tab to the main navigation
+        // Adds the "Tagesplan" tab to the main navigation, only for the managers if it is hidden from the helpers
         $config->set('header_items', [
             ...$config->get('header_items', []),
-            'tagesplan.menu' => [url('/tagesplan'), 'tagesplan.view'],
+            'tagesplan.menu' => [
+                url('/tagesplan'),
+                Controller::visibleForHelpers() ? 'tagesplan.view' : 'tagesplan.manage',
+            ],
         ]);
     }
 }

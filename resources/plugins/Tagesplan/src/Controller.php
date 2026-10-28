@@ -29,6 +29,8 @@ class Controller extends BaseController
     // Overlaps up to this length (in seconds) are shown as a handover in the same row
     protected const HANDOVER_MAX = 3600;
 
+    use ChecksVisibility;
+
     protected array $permissions = [
         'tagesplan.view',
     ];

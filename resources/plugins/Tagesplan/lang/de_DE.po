@@ -120,3 +120,9 @@ msgstr "%s möchte im Bereich „%s“ Dienst machen und hat eine Freigabe beant
 
 msgid "tagesplan.mail.text"
 msgstr "Du kannst die Person hier freigeben oder ablehnen:\n%s"
+
+msgid "config.tagesplan_helpers_visible"
+msgstr "Tagesplan für Helfer sichtbar"
+
+msgid "config.tagesplan_helpers_visible.info"
+msgstr "Ausgeschaltet sehen nur Admins und Schichteinteiler (Recht „tagesplan.manage“) den Tagesplan."

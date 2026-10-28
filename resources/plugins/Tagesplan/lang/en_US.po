@@ -120,3 +120,9 @@ msgstr "%s would like to help in \"%s\" and has requested approval."
 
 msgid "tagesplan.mail.text"
 msgstr "You can confirm or deny the request here:\n%s"
+
+msgid "config.tagesplan_helpers_visible"
+msgstr "Day plan visible for helpers"
+
+msgid "config.tagesplan_helpers_visible.info"
+msgstr "If switched off, only admins and shift coordinators (privilege \"tagesplan.manage\") can see the day plan."
