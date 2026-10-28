@@ -33,3 +33,9 @@ msgstr "Frei"
 
 msgid "tagesplan.legend.none"
 msgstr "Nicht benötigt"
+
+msgid "config.tagesplan_order"
+msgstr "Reihenfolge der Orte"
+
+msgid "config.tagesplan_order.info"
+msgstr "Ein Ort pro Zeile, in der gewünschten Reihenfolge. Nicht aufgeführte Orte erscheinen danach alphabetisch."

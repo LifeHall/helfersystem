@@ -17,20 +17,21 @@
         .tagesplan td.tp-open a:hover, .tagesplan td.tp-open a:focus { color: #212529; text-decoration: underline; }
         .tagesplan td.tp-filled a { color: #212529; text-decoration: none; }
         .tagesplan td.tp-filled a:hover { text-decoration: underline; }
-        .tp-color-0 > * { background-color: #b4c7e7; }
-        .tp-color-1 > * { background-color: #fbe0d0; }
-        .tp-color-2 > * { background-color: #ffd5f9; }
-        .tp-color-3 > * { background-color: #c6e0b4; }
-        .tp-color-4 > * { background-color: #e2d6cc; }
-        .tp-color-5 > * { background-color: #fff2cc; }
-        .tp-color-6 > * { background-color: #d9d2e9; }
-        .tp-color-7 > * { background-color: #c9e9ef; }
+        .tp-color-0 > * { background-color: #d0cece; }
+        .tp-color-1 > * { background-color: #b4c6e7; }
+        .tp-color-2 > * { background-color: #fbe5d6; }
+        .tp-color-3 > * { background-color: #ffd5ff; }
+        .tp-color-4 > * { background-color: #c5e0b4; }
+        .tp-color-5 > * { background-color: #e2d8d0; }
+        .tp-color-6 > * { background-color: #fff2cc; }
+        .tp-color-7 > * { background-color: #deebf7; }
+        .tp-color-8 > * { background-color: #ededed; }
         .tp-legend span { display: inline-block; width: 1.5rem; height: 1rem; border: 1px solid #6c757d; vertical-align: middle; margin: 0 .25rem 0 1rem; }
         @media print {
             .tagesplan thead th, .tagesplan th.tp-label { position: static; }
             .tagesplan td.tp-open a { color: transparent; }
-            .tp-color-0 > *, .tp-color-1 > *, .tp-color-2 > *, .tp-color-3 > *,
-            .tp-color-4 > *, .tp-color-5 > *, .tp-color-6 > *, .tp-color-7 > * {
+            .tp-color-0 > *, .tp-color-1 > *, .tp-color-2 > *, .tp-color-3 > *, .tp-color-4 > *,
+            .tp-color-5 > *, .tp-color-6 > *, .tp-color-7 > *, .tp-color-8 > * {
                 -webkit-print-color-adjust: exact; print-color-adjust: exact;
             }
         }
@@ -111,7 +112,7 @@
             </div>
 
             <p class="tp-legend small text-muted d-print-none">
-                <span class="tp-color-0" style="background-color:#b4c7e7"></span>{{ __('tagesplan.legend.filled') }} / {{ __('tagesplan.legend.open') }}
+                <span style="background-color:#b4c6e7"></span>{{ __('tagesplan.legend.filled') }} / {{ __('tagesplan.legend.open') }}
                 <span style="background-image: repeating-linear-gradient(-45deg, rgba(0,0,0,.25) 0 2px, transparent 2px 8px)"></span>{{ __('tagesplan.legend.none') }}
             </p>
         {% endif %}

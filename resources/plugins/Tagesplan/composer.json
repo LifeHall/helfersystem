@@ -2,7 +2,7 @@
   "type": "engelsystem-plugin",
   "name": "helfersystem/tagesplan",
   "description": "Tagesansicht der Schichten, gruppiert nach Ort",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "license": "GPL-2.0-or-later",
   "authors": [
     {
@@ -11,9 +11,25 @@
     }
   ],
   "extra": {
-    "providers": ["Helfersystem\\Tagesplan\\ServiceProvider"],
+    "providers": [
+      "Helfersystem\\Tagesplan\\ServiceProvider"
+    ],
     "routes": {
       "/tagesplan": "Helfersystem\\Tagesplan\\Controller@index"
+    },
+    "config_options": {
+      "tagesplan": {
+        "title": "tagesplan.title",
+        "icon": "calendar3",
+        "order": 60,
+        "config": {
+          "tagesplan_order": {
+            "type": "text",
+            "rows": 12,
+            "default": ""
+          }
+        }
+      }
     }
   },
   "autoload": {

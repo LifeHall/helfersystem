@@ -8,6 +8,7 @@ use Engelsystem\Controllers\BaseController;
 use Engelsystem\Helpers\Carbon;
 use Engelsystem\Http\Request;
 use Engelsystem\Http\Response;
+use Engelsystem\Models\Location;
 use Engelsystem\Models\Shifts\Shift;
 use Engelsystem\Models\Shifts\ShiftEntry;
 use Illuminate\Support\Collection;
@@ -17,7 +18,7 @@ use Illuminate\Support\Collection;
  */
 class Controller extends BaseController
 {
-    protected const COLORS = 8;
+    protected const COLORS = 9;
 
     protected array $permissions = [
         'user_shifts',
@@ -25,7 +26,8 @@ class Controller extends BaseController
 
     public function __construct(
         protected Response $response,
-        protected Shift $shift
+        protected Shift $shift,
+        protected Location $location
     ) {
     }
 
@@ -97,10 +99,10 @@ class Controller extends BaseController
     }
 
     /**
-     * Time slots between all shift start/end times, skipping slots without any shift
+     * Time slots between all shift start/end times; gaps without any shift are split into full hours
      *
      * @param Collection|Shift[] $shifts
-     * @return array[] ['start' => timestamp, 'end' => timestamp]
+     * @return array[] ['start' => timestamp, 'end' => timestamp, 'label' => string]
      */
     protected function columns(Collection $shifts): array
     {
@@ -110,6 +112,7 @@ class Controller extends BaseController
             ->sort()
             ->values();
 
+        $timezone = Carbon::now()->timezone;
         $columns = [];
         for ($i = 0; $i < $bounds->count() - 1; $i++) {
             $start = $bounds[$i];
@@ -117,13 +120,23 @@ class Controller extends BaseController
             $covered = $shifts->contains(
                 fn(Shift $shift) => $shift->start->timestamp <= $start && $shift->end->timestamp >= $end
             );
-            if ($covered) {
-                $timezone = Carbon::now()->timezone;
+
+            $parts = [$start];
+            if (!$covered) {
+                $hour = Carbon::createFromTimestamp($start, $timezone)->startOfHour()->addHour();
+                while ($hour->timestamp < $end) {
+                    $parts[] = $hour->timestamp;
+                    $hour->addHour();
+                }
+            }
+            $parts[] = $end;
+
+            for ($j = 0; $j < count($parts) - 1; $j++) {
                 $columns[] = [
-                    'start' => $start,
-                    'end' => $end,
-                    'label' => Carbon::createFromTimestamp($start, $timezone)->format('H:i')
-                        . ' – ' . Carbon::createFromTimestamp($end, $timezone)->format('H:i'),
+                    'start' => $parts[$j],
+                    'end' => $parts[$j + 1],
+                    'label' => Carbon::createFromTimestamp($parts[$j], $timezone)->format('H:i')
+                        . ' – ' . Carbon::createFromTimestamp($parts[$j + 1], $timezone)->format('H:i'),
                 ];
             }
         }
@@ -141,11 +154,18 @@ class Controller extends BaseController
             $needs[$shift->id] = $this->needs($shift);
         }
 
+        // Fixed position per location across all days, used for sorting and colors
+        $positions = $this->location->newQuery()
+            ->get()
+            ->sortBy(fn(Location $location) => $this->sortKey($location))
+            ->pluck('id')
+            ->flip();
+
         $groups = [];
         $byLocation = $shifts->groupBy('location_id')
-            ->sortBy(fn(Collection $locationShifts) => mb_strtolower($locationShifts->first()->location->name));
+            ->sortBy(fn(Collection $locationShifts) => $positions[$locationShifts->first()->location_id]);
 
-        foreach ($byLocation->values() as $index => $locationShifts) {
+        foreach ($byLocation as $locationShifts) {
             $location = $locationShifts->first()->location;
             $lanes = $this->lanes($locationShifts);
 
@@ -159,7 +179,7 @@ class Controller extends BaseController
 
             $rows = [];
             foreach ($types as $typeId => $typeName) {
-                $number = 0;
+                $typeRows = [];
                 foreach ($lanes as $lane) {
                     $slots = 0;
                     foreach ($lane as $shift) {
@@ -168,27 +188,48 @@ class Controller extends BaseController
                     }
 
                     for ($slot = 0; $slot < $slots; $slot++) {
-                        $number++;
-                        $rows[] = [
-                            'label' => count($types) > 1
-                                ? $location->name . ' – ' . $typeName . ' ' . $number
-                                : $location->name . ' ' . $number,
-                            'cells' => $this->cells($lane, $typeId, $slot, $columns, $needs),
-                        ];
+                        $typeRows[] = $this->cells($lane, $typeId, $slot, $columns, $needs);
                     }
+                }
+
+                $label = count($types) > 1 ? $location->name . ' – ' . $typeName : $location->name;
+                foreach ($typeRows as $number => $cells) {
+                    $rows[] = [
+                        // Only number the positions if there is more than one
+                        'label' => count($typeRows) > 1 ? $label . ' ' . ($number + 1) : $label,
+                        'cells' => $cells,
+                    ];
                 }
             }
 
             if ($rows) {
                 $groups[] = [
                     'location' => $location,
-                    'color' => $index % self::COLORS,
+                    'color' => $positions[$location->id] % self::COLORS,
                     'rows' => $rows,
                 ];
             }
         }
 
         return $groups;
+    }
+
+    /**
+     * Sort by the configured order (one location name per line), then by name
+     */
+    protected function sortKey(Location $location): string
+    {
+        static $order = null;
+        if ($order === null) {
+            $lines = preg_split('/\R/', (string) config('tagesplan_order', ''));
+            $lines = array_values(array_filter(array_map(fn($line) => mb_strtolower(trim($line)), $lines)));
+            $order = array_flip($lines);
+        }
+
+        $name = mb_strtolower(trim($location->name));
+        $position = $order[$name] ?? 9999;
+
+        return sprintf('%04d %s', $position, $name);
     }
 
     /**

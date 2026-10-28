@@ -33,3 +33,9 @@ msgstr "Open"
 
 msgid "tagesplan.legend.none"
 msgstr "Not needed"
+
+msgid "config.tagesplan_order"
+msgstr "Order of locations"
+
+msgid "config.tagesplan_order.info"
+msgstr "One location per line, in the desired order. Locations not listed are shown afterwards in alphabetical order."
