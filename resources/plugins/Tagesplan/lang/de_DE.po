@@ -52,6 +52,12 @@ msgstr "Kategorie"
 msgid "tagesplan.legend.categories"
 msgstr "Kategorien"
 
+msgid "tagesplan.goto_shift"
+msgstr "Zur Schicht"
+
+msgid "tagesplan.show_all_types"
+msgstr "Alle Helfertypen am Ort anzeigen (%s weitere)"
+
 msgid "config.tagesplan_order"
 msgstr "Reihenfolge der Orte"
 

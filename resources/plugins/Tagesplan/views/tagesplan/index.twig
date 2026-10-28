@@ -100,7 +100,8 @@
                     </select>
                 </div>
                 <div class="col-auto">
-                    <button type="submit" class="btn btn-primary">{{ __('tagesplan.show') }}</button>
+                    {# Hidden by the script, the day changes on selection #}
+                    <button type="submit" class="btn btn-primary tp-day-submit">{{ __('tagesplan.show') }}</button>
                 </div>
                 <div class="col-auto">
                     {% if next_day %}
@@ -152,7 +153,7 @@
                                                     {{- previous_shift != part.shift_id ? ' tp-line-l' -}}
                                                     {{- next_shift != part.shift_id ? ' tp-line-r' }}">
                                                     {% if part.state == 'filled' or part.state == 'open' %}
-                                                        <a href="{{ part.url }}" data-tp-shift="{{ part.shift_id }}"
+                                                        <a href="{{ part.url }}" data-tp-shift="{{ part.shift_id }}" data-tp-type="{{ part.type_id }}"
                                                             title="{{ __('tagesplan.handover.' ~ direction) }}: {{ part.title }}"
                                                             data-bs-toggle="modal" data-bs-target="#tp-modal">
                                                             {{- m.icon(loop.first ? 'box-arrow-right' : 'box-arrow-in-right') }}
@@ -169,7 +170,7 @@
                                                 </div>
                                             {% endfor %}
                                         {% elseif cell.state == 'filled' or cell.state == 'open' %}
-                                            <a href="{{ cell.url }}" title="{{ cell.title }}" data-tp-shift="{{ cell.shift_id }}"
+                                            <a href="{{ cell.url }}" title="{{ cell.title }}" data-tp-shift="{{ cell.shift_id }}" data-tp-type="{{ cell.type_id }}"
                                                 data-bs-toggle="modal" data-bs-target="#tp-modal">
                                                 {{- cell.state == 'filled' ? cell.name : __('tagesplan.open') -}}
                                                 {%- if cell.category %}<span class="tp-category" style="background-color: {{ cell.category.color }}">{{ cell.category.name }}</span>{% endif -%}
@@ -200,7 +201,7 @@
 
     <div class="modal fade" id="tp-modal" tabindex="-1" aria-labelledby="tp-modal-title" aria-hidden="true"
         data-url="{{ url('/tagesplan/schicht') }}" data-title="{{ __('tagesplan.shift') }}"
-        data-error="{{ __('tagesplan.loading_error') }}" {% if open_shift %}data-open-shift="{{ open_shift }}"{% endif %}>
+        data-error="{{ __('tagesplan.loading_error') }}" {% if open_shift %}data-open-shift="{{ open_shift }}" data-open-type="{{ open_type }}"{% endif %}>
         <div class="modal-dialog modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header">

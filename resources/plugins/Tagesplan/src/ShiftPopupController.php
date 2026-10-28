@@ -43,11 +43,16 @@ class ShiftPopupController extends BaseController
     ) {
     }
 
+    // Angel type to show in the popup after an action
+    protected ?int $openType = null;
+
     public function show(Request $request): Response
     {
         $shift = Shift::with(['location', 'shiftType'])->findOrFail((int) $request->input('shift_id'));
         $user = $this->auth->user();
         $locale = (string) session()->get('locale', 'de_DE');
+        // Only the clicked angel type is shown, the others can be expanded
+        $selectedType = (int) $request->input('angel_type_id');
 
         $types = [];
         foreach (NeededAngelTypes_by_shift($shift) as $need) {
@@ -67,6 +72,7 @@ class ShiftPopupController extends BaseController
 
             $types[] = [
                 'angel_type' => $angelType,
+                'hidden' => $selectedType && $selectedType != $angelType->id,
                 'count' => (int) $need['count'],
                 'free' => max(0, (int) $need['count'] - $entries->count()),
                 'entries' => $entries->map(fn(ShiftEntry $entry) => [
@@ -93,6 +99,7 @@ class ShiftPopupController extends BaseController
             'day_label' => $shift->start->copy()->locale($locale)->isoFormat('dddd, DD.MM.YYYY'),
             'time_label' => $shift->start->format('H:i') . ' – ' . $shift->end->format('H:i'),
             'types' => $types,
+            'hidden_types' => count(array_filter($types, fn($type) => $type['hidden'])),
         ]);
     }
 
@@ -101,6 +108,7 @@ class ShiftPopupController extends BaseController
         $shift = Shift::findOrFail((int) $request->postData('shift_id'));
         $angelType = AngelType::findOrFail((int) $request->postData('angel_type_id'));
         $user = $this->auth->user();
+        $this->openType = $angelType->id;
         $target = $request->postData('user_id') ? User::findOrFail((int) $request->postData('user_id')) : $user;
 
         if (!NeededAngeltype_by_Shift_and_Angeltype($shift, $angelType)) {
@@ -172,6 +180,7 @@ class ShiftPopupController extends BaseController
         $shiftEntry = ShiftEntry::with(['shift', 'angelType', 'user'])
             ->findOrFail((int) $request->postData('shift_entry_id'));
         $shift = $shiftEntry->shift;
+        $this->openType = $shiftEntry->angel_type_id;
 
         if (!Shift_signout_allowed($shift, $shiftEntry->angelType, $shiftEntry->user_id)) {
             return $this->back(
@@ -382,6 +391,7 @@ class ShiftPopupController extends BaseController
         return $this->response->redirectTo(url('/tagesplan', [
             'day' => $shift->start->format('Y-m-d'),
             'shift' => $shift->id,
+            'type' => $this->openType,
         ]));
     }
 }

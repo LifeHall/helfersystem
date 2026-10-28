@@ -105,6 +105,7 @@ class Controller extends BaseController
             'categories' => $categories,
             // Shift popup to re-open after signing up / off
             'open_shift' => (int) $request->input('shift') ?: null,
+            'open_type' => (int) $request->input('type') ?: null,
         ]);
     }
 
@@ -408,8 +409,13 @@ class Controller extends BaseController
             'state' => $entry ? 'filled' : ($need && $slot < $need['count'] ? 'open' : 'none'),
             'name' => $entry?->user->displayName,
             'shift_id' => $shift->id,
+            'type_id' => $typeId,
             // Without JavaScript: reload the day plan with this shift's popup
-            'url' => url('/tagesplan', ['day' => $shift->start->format('Y-m-d'), 'shift' => $shift->id]),
+            'url' => url('/tagesplan', [
+                'day' => $shift->start->format('Y-m-d'),
+                'shift' => $shift->id,
+                'type' => $typeId,
+            ]),
             'title' => ($shift->title ?: $shift->shiftType->name)
                 . ' (' . $shift->start->format('H:i') . ' – ' . $shift->end->format('H:i') . ')',
             'category' => $this->category($shift),

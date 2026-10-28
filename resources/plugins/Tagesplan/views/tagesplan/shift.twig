@@ -37,7 +37,16 @@
         </div>
     </div>
 
+    {% if can('user_shifts_admin') %}
+        <p class="mb-3">
+            <a href="{{ url('/shifts', {'action': 'view', 'shift_id': shift.id}) }}" class="btn btn-sm btn-outline-secondary">
+                {{ m.icon('box-arrow-up-right') }} {{ __('tagesplan.goto_shift') }}
+            </a>
+        </p>
+    {% endif %}
+
     {% for type in types %}
+        <div class="tp-type{{ type.hidden ? ' d-none' }}">
         <h6>
             {{ type.angel_type.name }}
             <span class="badge {{ type.free > 0 ? 'bg-warning text-dark' : 'bg-success' }}">
@@ -110,5 +119,12 @@
                 {% endfor %}
             {% endif %}
         </ul>
+        </div>
     {% endfor %}
+
+    {% if hidden_types > 0 %}
+        <button type="button" class="btn btn-sm btn-outline-secondary w-100 tp-expand">
+            {{ m.icon('chevron-down') }} {{ __('tagesplan.show_all_types', [hidden_types]) }}
+        </button>
+    {% endif %}
 </div>

@@ -11,9 +11,17 @@
   const title = modal.querySelector('.modal-title');
   let highlighted = [];
 
-  // Cells (or handover parts) of a shift, optionally only within one table row
-  const shiftCells = (shiftId, row = document) =>
-    [...row.querySelectorAll(`.tagesplan [data-tp-shift="${shiftId}"]`)].map((a) => a.closest('.tp-part, td'));
+  // Cells (or handover parts) of a shift, optionally only of one angel type or within one table row
+  const shiftCells = (shiftId, row = document, typeId = null) =>
+    [...row.querySelectorAll(`.tagesplan [data-tp-shift="${shiftId}"]${typeId ? `[data-tp-type="${typeId}"]` : ''}`)]
+      .map((a) => a.closest('.tp-part, td'));
+
+  // Change the day directly on selection
+  const daySelect = document.getElementById('tagesplan-day');
+  if (daySelect) {
+    daySelect.form.querySelector('.tp-day-submit')?.closest('.col-auto')?.classList.add('d-none');
+    daySelect.addEventListener('change', () => daySelect.form.submit());
+  }
 
   // Mark the sides where a cell joins a cell of the same shift, the frame is drawn around both together
   document.querySelectorAll('.tagesplan [data-tp-shift]').forEach((a) => {
@@ -28,8 +36,8 @@
     }
   });
 
-  const highlight = (shiftId, clicked) => {
-    highlighted = shiftCells(shiftId);
+  const highlight = (shiftId, typeId, clicked) => {
+    highlighted = shiftCells(shiftId, document, typeId);
     highlighted.forEach((cell) => cell.classList.add('tp-active'));
     const row = clicked?.closest('tr');
     if (row) {
@@ -49,9 +57,10 @@
   document.addEventListener('mouseover', (event) => hover(event, true));
   document.addEventListener('mouseout', (event) => hover(event, false));
 
-  const load = (shiftId) => {
+  const load = (shiftId, typeId) => {
     body.innerHTML = '<div class="text-center p-3"><div class="spinner-border" role="status"></div></div>';
-    fetch(`${modal.dataset.url}?shift_id=${encodeURIComponent(shiftId)}`, { credentials: 'same-origin' })
+    const params = new URLSearchParams({ shift_id: shiftId, angel_type_id: typeId ?? '' });
+    fetch(`${modal.dataset.url}?${params}`, { credentials: 'same-origin' })
       .then((response) => {
         if (!response.ok) {
           throw new Error(String(response.status));
@@ -71,6 +80,7 @@
   };
 
   let currentShift = null;
+  let currentType = null;
 
   modal.addEventListener('show.bs.modal', (event) => {
     const shiftId = event.relatedTarget?.dataset.tpShift ?? modal.dataset.openShift;
@@ -78,9 +88,20 @@
       return;
     }
     currentShift = shiftId;
+    currentType = event.relatedTarget?.dataset.tpType ?? modal.dataset.openType ?? null;
     title.textContent = modal.dataset.title;
-    highlight(shiftId, event.relatedTarget);
-    load(shiftId);
+    highlight(shiftId, currentType, event.relatedTarget);
+    load(shiftId, currentType);
+  });
+
+  // Show the other angel types of the shift
+  body.addEventListener('click', (event) => {
+    const button = event.target.closest('.tp-expand');
+    if (!button) {
+      return;
+    }
+    body.querySelectorAll('.tp-type.d-none').forEach((type) => type.classList.remove('d-none'));
+    button.remove();
   });
 
   // Forms marked with .tp-ajax are sent in the background, then only the popup content is reloaded
@@ -103,7 +124,7 @@
         if (!response.ok) {
           throw new Error(String(response.status));
         }
-        load(currentShift);
+        load(currentShift, currentType);
       })
       .catch(() => {
         body.innerHTML = `<div class="alert alert-danger">${modal.dataset.error}</div>`;
@@ -118,11 +139,14 @@
     highlighted.forEach((cell) => cell.classList.remove('tp-active', 'tp-clicked'));
     highlighted = [];
     delete modal.dataset.openShift;
+    delete modal.dataset.openType;
   });
 
   // Re-open the popup after signing up / off
   if (modal.dataset.openShift) {
-    const cell = document.querySelector(`[data-tp-shift="${modal.dataset.openShift}"]`);
+    const type = modal.dataset.openType ? `[data-tp-type="${modal.dataset.openType}"]` : '';
+    const cell = document.querySelector(`[data-tp-shift="${modal.dataset.openShift}"]${type}`)
+      ?? document.querySelector(`[data-tp-shift="${modal.dataset.openShift}"]`);
     cell?.scrollIntoView({ block: 'center' });
     bootstrap.Modal.getOrCreateInstance(modal).show(cell);
   }
