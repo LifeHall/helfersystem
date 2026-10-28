@@ -12,9 +12,9 @@
   let highlighted = [];
 
   const highlight = (shiftId, clicked) => {
-    highlighted = [...document.querySelectorAll(`[data-tp-shift="${shiftId}"]`)].map((a) => a.closest('td'));
+    highlighted = [...document.querySelectorAll(`[data-tp-shift="${shiftId}"]`)].map((a) => a.closest('.tp-part, td'));
     highlighted.forEach((td) => td.classList.add('tp-active'));
-    clicked?.closest('td')?.classList.add('tp-clicked');
+    clicked?.closest('.tp-part, td')?.classList.add('tp-clicked');
   };
 
   const load = (shiftId) => {

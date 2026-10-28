@@ -20,6 +20,9 @@ class Controller extends BaseController
 {
     protected const COLORS = 9;
 
+    // Overlaps up to this length (in seconds) are shown as a handover in the same row
+    protected const HANDOVER_MAX = 3600;
+
     protected array $permissions = [
         'tagesplan.view',
     ];
@@ -137,8 +140,9 @@ class Controller extends BaseController
 
     /**
      * @param Collection|Shift[] $shifts
+     * @param array[] $columns Handover columns get marked
      */
-    protected function groups(Collection $shifts, array $columns): array
+    protected function groups(Collection $shifts, array &$columns): array
     {
         $needs = [];
         foreach ($shifts as $shift) {
@@ -159,6 +163,7 @@ class Controller extends BaseController
         foreach ($byLocation as $locationShifts) {
             $location = $locationShifts->first()->location;
             $lanes = $this->lanes($locationShifts);
+            $this->markHandovers($lanes, $columns);
 
             $types = [];
             foreach ($locationShifts as $shift) {
@@ -245,7 +250,8 @@ class Controller extends BaseController
     }
 
     /**
-     * Distributes overlapping shifts of a location into separate lanes
+     * Distributes overlapping shifts of a location into separate lanes,
+     * a shift starting shortly before the previous one ends stays in its lane as handover
      *
      * @param Collection|Shift[] $shifts
      * @return Shift[][]
@@ -255,7 +261,12 @@ class Controller extends BaseController
         $lanes = [];
         foreach ($shifts->sortBy('start') as $shift) {
             foreach ($lanes as $i => $lane) {
-                if ($lane[count($lane) - 1]->end <= $shift->start) {
+                $last = $lane[count($lane) - 1];
+                $beforeLast = $lane[count($lane) - 2] ?? null;
+                if (
+                    $last->end <= $shift->start
+                    || ($this->isHandover($last, $shift) && (!$beforeLast || $beforeLast->end <= $shift->start))
+                ) {
                     $lanes[$i][] = $shift;
                     continue 2;
                 }
@@ -264,6 +275,37 @@ class Controller extends BaseController
         }
 
         return $lanes;
+    }
+
+    /**
+     * The next shift starts shortly before the previous one ends (not the same or a contained time)
+     */
+    protected function isHandover(Shift $previous, Shift $next): bool
+    {
+        return $previous->start < $next->start
+            && $previous->end > $next->start
+            && $previous->end < $next->end
+            && $previous->end->timestamp - $next->start->timestamp <= self::HANDOVER_MAX;
+    }
+
+    /**
+     * @param Shift[][] $lanes
+     * @param array[] $columns
+     */
+    protected function markHandovers(array $lanes, array &$columns): void
+    {
+        foreach ($lanes as $lane) {
+            for ($i = 1; $i < count($lane); $i++) {
+                foreach ($columns as $c => $column) {
+                    if (
+                        $column['start'] >= $lane[$i]->start->timestamp
+                        && $column['end'] <= $lane[$i - 1]->end->timestamp
+                    ) {
+                        $columns[$c]['handover'] = true;
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -276,44 +318,59 @@ class Controller extends BaseController
         $column = 0;
 
         while ($column < $count) {
-            $shift = null;
-            foreach ($lane as $laneShift) {
-                if (
-                    $laneShift->start->timestamp <= $columns[$column]['start']
-                    && $laneShift->end->timestamp >= $columns[$column]['end']
-                ) {
-                    $shift = $laneShift;
-                    break;
-                }
-            }
-
-            if (!$shift) {
-                $cells[] = ['colspan' => 1, 'state' => 'none'];
-                $column++;
-                continue;
-            }
-
-            $span = 0;
-            while ($column + $span < $count && $columns[$column + $span]['end'] <= $shift->end->timestamp) {
+            $covering = $this->covering($lane, $columns[$column]);
+            $span = 1;
+            while ($column + $span < $count && $this->covering($lane, $columns[$column + $span]) == $covering) {
                 $span++;
             }
 
-            $need = $needs[$shift->id][$typeId] ?? null;
-            /** @var ShiftEntry|null $entry */
-            $entry = $need['entries'][$slot] ?? null;
-
-            $cells[] = [
-                'colspan' => $span,
-                'state' => $entry ? 'filled' : ($need && $slot < $need['count'] ? 'open' : 'none'),
-                'name' => $entry?->user->displayName,
-                'shift_id' => $shift->id,
-                // Without JavaScript: reload the day plan with this shift's popup
-                'url' => url('/tagesplan', ['day' => $shift->start->format('Y-m-d'), 'shift' => $shift->id]),
-                'title' => $shift->title ?: $shift->shiftType->name,
-            ];
+            if (!$covering) {
+                $cells[] = ['colspan' => $span, 'state' => 'none'];
+            } elseif (count($covering) == 1) {
+                $cells[] = ['colspan' => $span] + $this->slot($covering[0], $typeId, $slot, $needs);
+            } else {
+                // Handover: the previous shift ends (first part) while the next one starts (second part)
+                $cells[] = [
+                    'colspan' => $span,
+                    'state' => 'handover',
+                    'parts' => array_map(fn(Shift $shift) => $this->slot($shift, $typeId, $slot, $needs), $covering),
+                ];
+            }
             $column += $span;
         }
 
         return $cells;
+    }
+
+    /**
+     * Shifts of a lane covering a column, ordered by start
+     *
+     * @param Shift[] $lane
+     * @return Shift[]
+     */
+    protected function covering(array $lane, array $column): array
+    {
+        return array_values(array_filter(
+            $lane,
+            fn(Shift $shift) => $shift->start->timestamp <= $column['start']
+                && $shift->end->timestamp >= $column['end']
+        ));
+    }
+
+    protected function slot(Shift $shift, int $typeId, int $slot, array $needs): array
+    {
+        $need = $needs[$shift->id][$typeId] ?? null;
+        /** @var ShiftEntry|null $entry */
+        $entry = $need['entries'][$slot] ?? null;
+
+        return [
+            'state' => $entry ? 'filled' : ($need && $slot < $need['count'] ? 'open' : 'none'),
+            'name' => $entry?->user->displayName,
+            'shift_id' => $shift->id,
+            // Without JavaScript: reload the day plan with this shift's popup
+            'url' => url('/tagesplan', ['day' => $shift->start->format('Y-m-d'), 'shift' => $shift->id]),
+            'title' => ($shift->title ?: $shift->shiftType->name)
+                . ' (' . $shift->start->format('H:i') . ' – ' . $shift->end->format('H:i') . ')',
+        ];
     }
 }

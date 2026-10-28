@@ -34,6 +34,18 @@ msgstr "Frei"
 msgid "tagesplan.legend.none"
 msgstr "Nicht benötigt"
 
+msgid "tagesplan.handover"
+msgstr "Übergabe"
+
+msgid "tagesplan.handover.leaving"
+msgstr "Geht"
+
+msgid "tagesplan.handover.arriving"
+msgstr "Kommt"
+
+msgid "tagesplan.legend.handover"
+msgstr "Übergabe: Schicht endet / nächste Schicht beginnt"
+
 msgid "config.tagesplan_order"
 msgstr "Reihenfolge der Orte"
 

@@ -34,6 +34,18 @@ msgstr "Open"
 msgid "tagesplan.legend.none"
 msgstr "Not needed"
 
+msgid "tagesplan.handover"
+msgstr "Handover"
+
+msgid "tagesplan.handover.leaving"
+msgstr "Leaving"
+
+msgid "tagesplan.handover.arriving"
+msgstr "Arriving"
+
+msgid "tagesplan.legend.handover"
+msgstr "Handover: shift ends / next shift starts"
+
 msgid "config.tagesplan_order"
 msgstr "Order of locations"
 
