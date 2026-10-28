@@ -46,6 +46,12 @@ msgstr "Arriving"
 msgid "tagesplan.legend.handover"
 msgstr "Handover: shift ends / next shift starts"
 
+msgid "tagesplan.category"
+msgstr "Category"
+
+msgid "tagesplan.legend.categories"
+msgstr "Categories"
+
 msgid "config.tagesplan_order"
 msgstr "Order of locations"
 

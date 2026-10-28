@@ -20,6 +20,12 @@ class Controller extends BaseController
 {
     protected const COLORS = 9;
 
+    // Badge colors of the shift types (categories)
+    protected const CATEGORY_COLORS = ['#6f42c1', '#d63384', '#fd7e14', '#198754', '#0d6efd', '#795548'];
+
+    // Shift type of most shifts, it is not marked
+    protected ?int $mainShiftType = null;
+
     // Overlaps up to this length (in seconds) are shown as a handover in the same row
     protected const HANDOVER_MAX = 3600;
 
@@ -49,8 +55,16 @@ class Controller extends BaseController
             $day = $this->defaultDay($days);
         }
 
+        $this->mainShiftType = $this->shift->newQuery()
+            ->toBase()
+            ->select('shift_type_id')
+            ->groupBy('shift_type_id')
+            ->orderByRaw('COUNT(*) DESC')
+            ->value('shift_type_id');
+
         $columns = [];
         $groups = [];
+        $categories = [];
         if ($day) {
             $start = Carbon::createFromFormat('Y-m-d H:i:s', $day . ' 00:00:00');
             $shifts = $this->shift->newQuery()
@@ -62,6 +76,13 @@ class Controller extends BaseController
 
             $columns = $this->columns($shifts);
             $groups = $this->groups($shifts, $columns);
+            $categories = $shifts
+                ->map(fn(Shift $shift) => $this->category($shift))
+                ->filter()
+                ->unique('name')
+                ->sortBy('name')
+                ->values()
+                ->all();
         }
 
         $index = $day ? array_search($day, $days, true) : false;
@@ -81,6 +102,7 @@ class Controller extends BaseController
             'next_day' => $index !== false ? ($days[$index + 1] ?? null) : null,
             'columns' => $columns,
             'groups' => $groups,
+            'categories' => $categories,
             // Shift popup to re-open after signing up / off
             'open_shift' => (int) $request->input('shift') ?: null,
         ]);
@@ -371,6 +393,24 @@ class Controller extends BaseController
             'url' => url('/tagesplan', ['day' => $shift->start->format('Y-m-d'), 'shift' => $shift->id]),
             'title' => ($shift->title ?: $shift->shiftType->name)
                 . ' (' . $shift->start->format('H:i') . ' – ' . $shift->end->format('H:i') . ')',
+            'category' => $this->category($shift),
+        ];
+    }
+
+    /**
+     * Category (shift type) to mark the shift with, null for the main shift type
+     *
+     * @return array|null ['name' => string, 'color' => string]
+     */
+    protected function category(Shift $shift): ?array
+    {
+        if ($shift->shift_type_id == $this->mainShiftType) {
+            return null;
+        }
+
+        return [
+            'name' => $shift->shiftType->name,
+            'color' => self::CATEGORY_COLORS[$shift->shift_type_id % count(self::CATEGORY_COLORS)],
         ];
     }
 }

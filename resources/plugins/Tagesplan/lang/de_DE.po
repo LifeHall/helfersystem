@@ -46,6 +46,12 @@ msgstr "Kommt"
 msgid "tagesplan.legend.handover"
 msgstr "Übergabe: Schicht endet / nächste Schicht beginnt"
 
+msgid "tagesplan.category"
+msgstr "Kategorie"
+
+msgid "tagesplan.legend.categories"
+msgstr "Kategorien"
+
 msgid "config.tagesplan_order"
 msgstr "Reihenfolge der Orte"
 

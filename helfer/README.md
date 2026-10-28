@@ -34,6 +34,8 @@ Klick auf ein Feld öffnet ein Popup mit Orts- und Schichtinfos zum Ein-/Austrag
 Abweichung: Überlappende Schichten am gleichen Ort mit gleichem Helfertyp dürfen beide belegt
 werden, solange Start- und Endzeit nicht identisch sind (`ShiftPopupController::collidingShifts()`).
 Schichteinteiler (und Supporter des Helfertyps) dürfen sich und andere auch in parallele Schichten eintragen.
+Kategorien: Schichten mit einem anderen Schichttyp als dem meistverwendeten (z. B. „Raclette-Plausch“, „Private Events“)
+bekommen im Tagesplan ein farbiges Etikett, im Popup steht die Kategorie.
 
 Auf einer neuen Installation unter **Admin → Plugins** installieren und aktivieren.
 

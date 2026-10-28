@@ -49,6 +49,8 @@
         .tp-color-6 > * { background-color: #fff2cc; }
         .tp-color-7 > * { background-color: #deebf7; }
         .tp-color-8 > * { background-color: #ededed; }
+        .tagesplan .tp-category, .tp-legend .tp-category { -webkit-print-color-adjust: exact; print-color-adjust: exact; font-style: normal; display: inline-block; font-size: .7em; font-weight: 600; color: #fff; border-radius: .25rem; padding: 0 .3rem; margin-left: .3rem; vertical-align: middle; }
+        .tagesplan .tp-part .tp-category { width: .6rem; height: .6rem; padding: 0; border-radius: 50%; margin-left: .2rem; }
         .tp-legend span { display: inline-block; width: 1.5rem; height: 1rem; border: 1px solid #6c757d; vertical-align: middle; margin: 0 .25rem 0 1rem; }
         @media print {
             .tagesplan thead th, .tagesplan th.tp-label { position: static; }
@@ -145,6 +147,7 @@
                                                             {%- else -%}
                                                                 <span class="tp-free">{{ __('tagesplan.legend.open') }}</span>
                                                             {%- endif -%}
+                                                            {%- if part.category %}<i class="tp-category" style="background-color: {{ part.category.color }}" title="{{ part.category.name }}"></i>{% endif -%}
                                                         </a>
                                                     {% else %}
                                                         &nbsp;
@@ -155,6 +158,7 @@
                                             <a href="{{ cell.url }}" title="{{ cell.title }}" data-tp-shift="{{ cell.shift_id }}"
                                                 data-bs-toggle="modal" data-bs-target="#tp-modal">
                                                 {{- cell.state == 'filled' ? cell.name : __('tagesplan.open') -}}
+                                                {%- if cell.category %}<span class="tp-category" style="background-color: {{ cell.category.color }}">{{ cell.category.name }}</span>{% endif -%}
                                             </a>
                                         {% endif %}
                                     </td>
@@ -169,6 +173,12 @@
             <p class="tp-legend small text-muted d-print-none">
                 <span style="background-color:#b4c6e7"></span>{{ __('tagesplan.legend.filled') }} / {{ __('tagesplan.legend.open') }}
                 <span style="background-color: #7f7f7f"></span>{{ __('tagesplan.legend.none') }}
+                {% if categories %}
+                    <br>{{ __('tagesplan.legend.categories') }}:
+                    {% for category in categories %}
+                        <i class="tp-category" style="background-color: {{ category.color }}">{{ category.name }}</i>
+                    {% endfor %}
+                {% endif %}
                 <br>{{ m.icon('box-arrow-right') }} / {{ m.icon('box-arrow-in-right') }} {{ __('tagesplan.legend.handover') }}
             </p>
         {% endif %}

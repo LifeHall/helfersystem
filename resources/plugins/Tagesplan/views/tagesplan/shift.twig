@@ -5,6 +5,7 @@
     <p class="mb-2">
         {{ m.icon('calendar-event') }} {{ day_label }}<br>
         {{ m.icon('clock') }} <strong>{{ time_label }}</strong>
+        <br>{{ m.icon('tag') }} {{ __('tagesplan.category') }}: <strong>{{ shift.shiftType.name }}</strong>
         {% if shift.title %}<br>{{ m.icon('info-circle') }} {{ shift.title }}{% endif %}
     </p>
 
