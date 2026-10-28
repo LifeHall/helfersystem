@@ -17,7 +17,7 @@ class ServiceProvider extends BaseServiceProvider
         // Adds the "Tagesplan" tab to the main navigation
         $config->set('header_items', [
             ...$config->get('header_items', []),
-            'tagesplan.menu' => [url('/tagesplan'), 'user_shifts'],
+            'tagesplan.menu' => [url('/tagesplan'), 'tagesplan.view'],
         ]);
     }
 }

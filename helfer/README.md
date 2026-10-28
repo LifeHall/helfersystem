@@ -27,10 +27,19 @@ Schichten, gruppiert nach Ort, eine Zeile pro benötigtem Platz, eine Spalte pro
 Überlappende Schichten am selben Ort bekommen eigene Zeilen. Berechtigung: `user_shifts`.
 Reihenfolge der Orte unter **Admin → Einstellungen → Tagesplan** (ein Ort pro Zeile);
 die Farbe ergibt sich aus der Position in dieser Liste.
+Eigene Berechtigung `tagesplan.view` (Plugin-Migration, bekommt alle Gruppen mit `user_shifts`).
 Klick auf ein Feld öffnet ein Popup mit Orts- und Schichtinfos zum Ein-/Austragen
 (gleiche Rechteprüfung wie im Kern: `Shift_signup_allowed()`, `Shift_signout_allowed()`).
 
 Auf einer neuen Installation unter **Admin → Plugins** installieren und aktivieren.
+
+## Rechte (Datenbank, nicht im Repo)
+
+Helfer (Gruppe „Angel“) sehen im Menü nur News, Frag den Admin und Tagesplan. Dafür wurden
+`user_shifts`, `user_meetings`, `angeltypes.view` und `locations.view` der Gruppe „Angel“ entzogen
+und den Gruppen „Shift Coordinator“ und „Bureaucrat“ gegeben (Admin → Gruppen).
+Hinweis: `/angeltypes` und `/locations` sind im Original „freie Seiten“ und per direkter URL
+weiterhin erreichbar; nur der Menüpunkt ist ausgeblendet.
 
 ## Geänderte Original-Dateien
 

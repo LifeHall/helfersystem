@@ -21,7 +21,7 @@ class Controller extends BaseController
     protected const COLORS = 9;
 
     protected array $permissions = [
-        'user_shifts',
+        'tagesplan.view',
     ];
 
     public function __construct(
@@ -307,7 +307,8 @@ class Controller extends BaseController
                 'state' => $entry ? 'filled' : ($need && $slot < $need['count'] ? 'open' : 'none'),
                 'name' => $entry?->user->displayName,
                 'shift_id' => $shift->id,
-                'url' => url('/shifts', ['action' => 'view', 'shift_id' => $shift->id]),
+                // Without JavaScript: reload the day plan with this shift's popup
+                'url' => url('/tagesplan', ['day' => $shift->start->format('Y-m-d'), 'shift' => $shift->id]),
                 'title' => $shift->title ?: $shift->shiftType->name,
             ];
             $column += $span;

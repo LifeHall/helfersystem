@@ -31,7 +31,7 @@ class ShiftPopupController extends BaseController
     use HasUserNotifications;
 
     protected array $permissions = [
-        'user_shifts',
+        'tagesplan.view',
     ];
 
     public function __construct(

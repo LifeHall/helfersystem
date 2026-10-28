@@ -12,7 +12,11 @@
         <div class="card-body py-2">
             <h6 class="card-title mb-1">
                 {{ m.icon('pin-map-fill') }}
-                <a href="{{ url('/locations', {'action': 'view', 'location_id': location.id}) }}">{{ location.name }}</a>
+                {% if can('locations.view') %}
+                    <a href="{{ url('/locations', {'action': 'view', 'location_id': location.id}) }}">{{ location.name }}</a>
+                {% else %}
+                    {{ location.name }}
+                {% endif %}
             </h6>
             {% if location.description %}
                 <div class="small">{{ location.description|md }}</div>
