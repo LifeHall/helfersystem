@@ -2,7 +2,7 @@
   "type": "engelsystem-plugin",
   "name": "helfersystem/tagesplan",
   "description": "Tagesansicht der Schichten, gruppiert nach Ort",
-  "version": "1.10.0",
+  "version": "1.10.1",
   "license": "GPL-2.0-or-later",
   "authors": [
     {

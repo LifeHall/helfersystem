@@ -5,18 +5,20 @@
 
 {% block content %}
     <style>
-        .tagesplan { --tp-border: #6c757d; border-collapse: collapse; width: auto; }
-        .tagesplan th, .tagesplan td { border: 1px solid var(--tp-border); padding: .2rem .5rem; white-space: nowrap; }
-        .tagesplan thead th { text-align: center; background: var(--bs-body-bg); position: sticky; top: 0; z-index: 2; }
-        .tagesplan th.tp-label { text-align: left; position: sticky; left: 0; z-index: 1; min-width: 12rem; }
-        .tagesplan td { min-width: 9rem; }
+        .tagesplan { --tp-border: #6c757d; border-collapse: collapse; width: auto; font-size: .85rem; line-height: 1.25; }
+        .tagesplan th, .tagesplan td { border: 1px solid var(--tp-border); padding: .1rem .35rem; white-space: nowrap; }
+        .tagesplan thead th { text-align: center; background: var(--bs-body-bg); position: sticky; top: 0; z-index: 2; font-size: .75rem; }
+        .tagesplan th.tp-label { text-align: left; position: sticky; left: 0; z-index: 1; min-width: 8rem; }
+        .tagesplan td { min-width: 4.5rem; }
+        {# Long names are shortened, the full name is in the tooltip #}
+        .tagesplan td > a { max-width: 10rem; overflow: hidden; text-overflow: ellipsis; }
         .tagesplan tbody.tp-group { border-top: 3px solid var(--tp-border); }
         .tagesplan tbody.tp-group tr > * { color: #212529; }
         {# Header row of a location: darker shade of the location color #}
         .tagesplan tr.tp-location > th {
             background-image: linear-gradient(rgba(0, 0, 0, .5), rgba(0, 0, 0, .5));
             color: #fff; font-weight: 700; font-size: 1.05em; letter-spacing: .03em; text-transform: uppercase;
-            padding-top: .35rem; padding-bottom: .35rem; border-bottom: 2px solid var(--tp-border);
+            padding-top: .15rem; padding-bottom: .15rem; border-bottom: 2px solid var(--tp-border);
         }
         .tagesplan tbody.tp-group tr.tp-location > * { color: #fff; }
         .tagesplan tr.tp-type-start > * { border-top: 2px solid var(--tp-border); }
@@ -71,7 +73,7 @@
     </style>
 
     <div class="container-fluid" id="tp-page">
-        <h1>
+        <h1 class="h3 mb-2">
             {{ block('title') }}
             {% if day %}<small class="text-muted">{{ days[day] }}</small>{% endif %}
         </h1>
@@ -82,18 +84,18 @@
         {% endif %}
 
         {% if days is not empty %}
-            <form method="get" action="{{ url('/tagesplan') }}" class="row g-2 align-items-center mb-3 d-print-none">
+            <form method="get" action="{{ url('/tagesplan') }}" class="row g-2 align-items-center mb-2 d-print-none">
                 <div class="col-auto">
                     {% if previous_day %}
-                        <a href="{{ url('/tagesplan', {'day': previous_day}) }}" class="btn btn-secondary"
+                        <a href="{{ url('/tagesplan', {'day': previous_day}) }}" class="btn btn-sm btn-secondary"
                             title="{{ __('tagesplan.previous') }}">{{ m.icon('chevron-left') }}</a>
                     {% else %}
-                        <span class="btn btn-secondary disabled">{{ m.icon('chevron-left') }}</span>
+                        <span class="btn btn-sm btn-secondary disabled">{{ m.icon('chevron-left') }}</span>
                     {% endif %}
                 </div>
                 <div class="col-auto">
                     <label class="visually-hidden" for="tagesplan-day">{{ __('tagesplan.day') }}</label>
-                    <select name="day" id="tagesplan-day" class="form-select">
+                    <select name="day" id="tagesplan-day" class="form-select form-select-sm">
                         {% for value, label in days %}
                             <option value="{{ value }}" {% if value == day %}selected{% endif %}>{{ label }}</option>
                         {% endfor %}
@@ -101,14 +103,14 @@
                 </div>
                 <div class="col-auto">
                     {# Hidden by the script, the day changes on selection #}
-                    <button type="submit" class="btn btn-primary tp-day-submit">{{ __('tagesplan.show') }}</button>
+                    <button type="submit" class="btn btn-sm btn-primary tp-day-submit">{{ __('tagesplan.show') }}</button>
                 </div>
                 <div class="col-auto">
                     {% if next_day %}
-                        <a href="{{ url('/tagesplan', {'day': next_day}) }}" class="btn btn-secondary"
+                        <a href="{{ url('/tagesplan', {'day': next_day}) }}" class="btn btn-sm btn-secondary"
                             title="{{ __('tagesplan.next') }}">{{ m.icon('chevron-right') }}</a>
                     {% else %}
-                        <span class="btn btn-secondary disabled">{{ m.icon('chevron-right') }}</span>
+                        <span class="btn btn-sm btn-secondary disabled">{{ m.icon('chevron-right') }}</span>
                     {% endif %}
                 </div>
             </form>
@@ -126,7 +128,7 @@
                             {% if column.handover ?? false %}
                                 <th class="tp-handover-col">{{ __('tagesplan.handover') }}<br>{{ column.label|replace({' – ': '–'}) }}</th>
                             {% else %}
-                                <th>{{ column.label }}</th>
+                                <th>{{ column.label|replace({' – ': '–'}) }}</th>
                             {% endif %}
                         {% endfor %}
                     </tr>
@@ -170,9 +172,9 @@
                                                 </div>
                                             {% endfor %}
                                         {% elseif cell.state == 'filled' or cell.state == 'open' %}
-                                            <a href="{{ cell.url }}" title="{{ cell.title }}" data-tp-shift="{{ cell.shift_id }}" data-tp-type="{{ cell.type_id }}"
+                                            <a href="{{ cell.url }}" title="{{ cell.state == 'filled' ? cell.name ~ ' · ' }}{{ cell.title }}" data-tp-shift="{{ cell.shift_id }}" data-tp-type="{{ cell.type_id }}"
                                                 data-bs-toggle="modal" data-bs-target="#tp-modal">
-                                                {{- cell.state == 'filled' ? cell.name : __('tagesplan.open') -}}
+                                                {{- cell.state == 'filled' ? cell.name : __('tagesplan.legend.open') -}}
                                                 {%- if cell.category %}<span class="tp-category" style="background-color: {{ cell.category.color }}">{{ cell.category.name }}</span>{% endif -%}
                                             </a>
                                         {% endif %}
@@ -211,7 +213,7 @@
                 <div class="modal-body"></div>
                 {# Also on small screens, where the popup fills the screen #}
                 <div class="modal-footer py-2">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('tagesplan.close') }}</button>
+                    <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">{{ __('tagesplan.close') }}</button>
                 </div>
             </div>
         </div>
