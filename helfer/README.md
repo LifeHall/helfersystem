@@ -33,6 +33,7 @@ Klick auf ein Feld öffnet ein Popup mit Orts- und Schichtinfos zum Ein-/Austrag
 (gleiche Rechteprüfung wie im Kern: `Shift_signup_allowed()`, `Shift_signout_allowed()`).
 Abweichung: Überlappende Schichten am gleichen Ort mit gleichem Helfertyp dürfen beide belegt
 werden, solange Start- und Endzeit nicht identisch sind (`ShiftPopupController::collidingShifts()`).
+Schichteinteiler (und Supporter des Helfertyps) dürfen sich und andere auch in parallele Schichten eintragen.
 
 Auf einer neuen Installation unter **Admin → Plugins** installieren und aktivieren.
 

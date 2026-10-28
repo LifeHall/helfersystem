@@ -249,11 +249,12 @@ class ShiftPopupController extends BaseController
      * Shifts of the user to check for collisions
      *
      * Overlapping shifts at the same location with the same angel type are allowed,
-     * as long as they do not have exactly the same start and end time
+     * as long as they do not have exactly the same start and end time.
+     * Shift coordinators may sign up for parallel shifts, like they may sign up others
      */
     protected function collidingShifts(User $user, Shift $shift, AngelType $angelType): Collection
     {
-        $userShifts = Shifts_by_user($user->id)->reject(
+        $userShifts = $this->canManage($angelType) ? new Collection() : Shifts_by_user($user->id)->reject(
             fn(Shift $other) => $other->location_id == $shift->location_id
                 && $other->angel_type_id == $angelType->id
                 && !(
