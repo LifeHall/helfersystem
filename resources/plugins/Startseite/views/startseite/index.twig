@@ -4,6 +4,37 @@
 {% import 'pages/news/index.twig' as n %}
 
 {% block news %}
+    {# Pinned news in their order, admins can change it #}
+    {% if news is empty %}
+        <div class="alert alert-info">{{ __('startseite.news.none') }}</div>
+    {% endif %}
+
+    {% for item in news %}
+        <div id="news-{{ item.id }}">
+            {% if can('admin_news') %}
+                <div class="d-flex align-items-center gap-1 mb-1 small">
+                    <span class="badge bg-secondary me-1">{{ m.icon('pin-angle') }} {{ loop.index }}</span>
+                    <form method="post" action="{{ url('/startseite/news/verschieben') }}">
+                        {{ csrf() }}
+                        <input type="hidden" name="news_id" value="{{ item.id }}">
+                        {{ f.button('', {'type': 'submit', 'name': 'direction', 'value': 'up', 'size': 'sm', 'icon_left': 'arrow-up', 'title': __('startseite.news.up'), 'disabled': loop.first}) }}
+                    </form>
+                    <form method="post" action="{{ url('/startseite/news/verschieben') }}">
+                        {{ csrf() }}
+                        <input type="hidden" name="news_id" value="{{ item.id }}">
+                        {{ f.button('', {'type': 'submit', 'name': 'direction', 'value': 'down', 'size': 'sm', 'icon_left': 'arrow-down', 'title': __('startseite.news.down'), 'disabled': loop.last}) }}
+                    </form>
+                    <form method="post" action="{{ url('/startseite/news/anpinnen') }}">
+                        {{ csrf() }}
+                        <input type="hidden" name="news_id" value="{{ item.id }}">
+                        {{ f.button(__('startseite.news.unpin'), {'type': 'submit', 'name': 'pin', 'value': '0', 'size': 'sm', 'icon_left': 'pin', 'btn_type': 'outline-secondary'}) }}
+                    </form>
+                </div>
+            {% endif %}
+            {{ n.news(item, true, true) }}
+        </div>
+    {% endfor %}
+
     {# Own shifts #}
     <div class="card mb-4 border-primary">
         <div class="card-header d-flex flex-wrap align-items-center gap-2">
@@ -71,37 +102,6 @@
             </div>
         {% endif %}
     </div>
-
-    {# Pinned news in their order, admins can change it #}
-    {% if news is empty %}
-        <div class="alert alert-info">{{ __('startseite.news.none') }}</div>
-    {% endif %}
-
-    {% for item in news %}
-        <div id="news-{{ item.id }}">
-            {% if can('admin_news') %}
-                <div class="d-flex align-items-center gap-1 mb-1 small">
-                    <span class="badge bg-secondary me-1">{{ m.icon('pin-angle') }} {{ loop.index }}</span>
-                    <form method="post" action="{{ url('/startseite/news/verschieben') }}">
-                        {{ csrf() }}
-                        <input type="hidden" name="news_id" value="{{ item.id }}">
-                        {{ f.button('', {'type': 'submit', 'name': 'direction', 'value': 'up', 'size': 'sm', 'icon_left': 'arrow-up', 'title': __('startseite.news.up'), 'disabled': loop.first}) }}
-                    </form>
-                    <form method="post" action="{{ url('/startseite/news/verschieben') }}">
-                        {{ csrf() }}
-                        <input type="hidden" name="news_id" value="{{ item.id }}">
-                        {{ f.button('', {'type': 'submit', 'name': 'direction', 'value': 'down', 'size': 'sm', 'icon_left': 'arrow-down', 'title': __('startseite.news.down'), 'disabled': loop.last}) }}
-                    </form>
-                    <form method="post" action="{{ url('/startseite/news/anpinnen') }}">
-                        {{ csrf() }}
-                        <input type="hidden" name="news_id" value="{{ item.id }}">
-                        {{ f.button(__('startseite.news.unpin'), {'type': 'submit', 'name': 'pin', 'value': '0', 'size': 'sm', 'icon_left': 'pin', 'btn_type': 'outline-secondary'}) }}
-                    </form>
-                </div>
-            {% endif %}
-            {{ n.news(item, true, true) }}
-        </div>
-    {% endfor %}
 
     {% if can('admin_news') and unpinned is not empty %}
         <details class="card mb-4">
