@@ -39,7 +39,7 @@
 
     {% if can('user_shifts_admin') %}
         <p class="mb-3">
-            <a href="{{ url('/shifts', {'action': 'view', 'shift_id': shift.id}) }}" class="btn btn-sm btn-outline-secondary">
+            <a href="{{ url('/shifts', {'action': 'view', 'shift_id': shift.id}) }}" class="btn btn-sm btn-secondary">
                 {{ m.icon('box-arrow-up-right') }} {{ __('tagesplan.goto_shift') }}
             </a>
         </p>
@@ -68,7 +68,7 @@
                 {{ csrf() }}
                 <input type="hidden" name="shift_id" value="{{ shift.id }}">
                 <input type="hidden" name="angel_type_id" value="{{ type.angel_type.id }}">
-                <button type="submit" class="btn btn-outline-primary">
+                <button type="submit" class="btn btn-primary">
                     {{ m.icon('send') }} {{ __('tagesplan.request_confirmation') }}
                 </button>
             </form>
@@ -106,7 +106,7 @@
                         <form method="post" action="{{ url('/tagesplan/austragen') }}" class="m-0">
                             {{ csrf() }}
                             <input type="hidden" name="shift_entry_id" value="{{ item.entry.id }}">
-                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                            <button type="submit" class="btn btn-sm btn-danger">
                                 {{ m.icon('x-lg') }} {{ __('tagesplan.signoff') }}
                             </button>
                         </form>
@@ -123,7 +123,7 @@
     {% endfor %}
 
     {% if hidden_types > 0 %}
-        <button type="button" class="btn btn-sm btn-outline-secondary w-100 tp-expand">
+        <button type="button" class="btn btn-sm btn-secondary w-100 tp-expand">
             {{ m.icon('chevron-down') }} {{ __('tagesplan.show_all_types', [hidden_types]) }}
         </button>
     {% endif %}
