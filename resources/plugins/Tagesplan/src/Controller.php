@@ -191,7 +191,10 @@ class Controller extends BaseController
                     $types[$typeId] = $need['name'];
                 }
             }
-            uasort($types, fn($a, $b) => strnatcasecmp(static::sortKey($a), static::sortKey($b)));
+            uasort($types, fn($a, $b) => strnatcasecmp(
+                static::sortKey($a, $location->name),
+                static::sortKey($b, $location->name)
+            ));
 
             // The location is shown as header row above its angel types, if they are not named like it
             $header = count($types) > 1 || mb_strtolower(reset($types)) != mb_strtolower($location->name);
@@ -241,8 +244,11 @@ class Controller extends BaseController
 
     /**
      * Sort by the configured order (one location or angel type name per line), then by name
+     *
+     * A name can be a location and an angel type (e.g. "Bistro"),
+     * so angel types use the first line after their location
      */
-    public static function sortKey(string $name): string
+    public static function sortKey(string $name, ?string $location = null): string
     {
         static $order = null;
         if ($order === null) {
@@ -250,13 +256,15 @@ class Controller extends BaseController
             $lines = array_values(array_filter(array_map(fn($line) => mb_strtolower(trim($line)), $lines)));
             $order = [];
             foreach ($lines as $position => $line) {
-                // A name can be a location and an angel type, the first line counts
-                $order[$line] ??= $position;
+                $order[$line][] = $position;
             }
         }
 
         $name = mb_strtolower(trim($name));
-        $position = $order[$name] ?? 9999;
+        $positions = $order[$name] ?? [];
+        $after = $location !== null ? (int) (($order[mb_strtolower(trim($location))] ?? [-1])[0]) : -1;
+        $position = current(array_filter($positions, fn($position) => $position > $after))
+            ?: ($positions[0] ?? 9999);
 
         return sprintf('%04d %s', $position, $name);
     }
