@@ -1,0 +1,9 @@
+{% extends "emails/mail.text.twig" %}
+
+{% block introduction %}
+{{ __('startseite.send.introduction', [config('app_name')]) }}
+{% endblock %}
+
+{% block message %}
+{{ __('startseite.send.text', [count, hours, url('/news')]) }}
+{% endblock %}

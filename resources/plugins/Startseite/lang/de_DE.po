@@ -187,3 +187,30 @@ msgstr "%s möchte im Bereich „%s“ Dienst machen und hat eine Freigabe beant
 msgid "startseite.mail.text"
 msgstr "Du kannst die Person hier freigeben oder ablehnen:\n%s"
 
+msgid "startseite.send.button"
+msgstr "Dienstpläne versenden"
+
+msgid "startseite.send.confirm_title"
+msgstr "Dienstpläne an %s Personen versenden?"
+
+msgid "startseite.send.confirm_text"
+msgstr "Alle Personen mit eingetragenen Diensten erhalten eine Mail mit ihrem Dienstplan als PDF."
+
+msgid "startseite.send.subject"
+msgstr "Dein Dienstplan"
+
+msgid "startseite.send.introduction"
+msgstr "im Anhang findest du deinen aktuellen Dienstplan für %s."
+
+msgid "startseite.send.text"
+msgstr "Du bist für %1$s Dienste mit insgesamt %2$s Stunden eingetragen.\n\nDeine Dienste kannst du jederzeit hier ansehen und anpassen:\n%3$s"
+
+msgid "startseite.send.success"
+msgstr "Dienstplan an %s Personen versendet."
+
+msgid "startseite.send.failed"
+msgstr "%s Mails konnten nicht versendet werden, Details im Log."
+
+msgid "startseite.send.disabled"
+msgstr "Der Mailversand ist nicht eingerichtet (Application URL in Config → System fehlt)."
+

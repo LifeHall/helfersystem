@@ -187,3 +187,30 @@ msgstr "%s would like to help in \"%s\" and has requested approval."
 msgid "startseite.mail.text"
 msgstr "You can confirm or deny the request here:\n%s"
 
+msgid "startseite.send.button"
+msgstr "Send shift plans"
+
+msgid "startseite.send.confirm_title"
+msgstr "Send the shift plans to %s people?"
+
+msgid "startseite.send.confirm_text"
+msgstr "Everybody with shift entries gets a mail with their shift plan as PDF."
+
+msgid "startseite.send.subject"
+msgstr "Your shift plan"
+
+msgid "startseite.send.introduction"
+msgstr "attached you find your current shift plan for %s."
+
+msgid "startseite.send.text"
+msgstr "You are signed up for %1$s shifts with %2$s hours in total.\n\nYou can view and adjust your shifts here at any time:\n%3$s"
+
+msgid "startseite.send.success"
+msgstr "Shift plan sent to %s people."
+
+msgid "startseite.send.failed"
+msgstr "%s mails could not be sent, see the log for details."
+
+msgid "startseite.send.disabled"
+msgstr "Sending mails is not set up (Application URL in Config → System is missing)."
+

@@ -7,13 +7,16 @@ namespace Helfersystem\Startseite;
 use Engelsystem\Config\Config;
 use Engelsystem\Controllers\BaseController;
 use Engelsystem\Controllers\HasUserNotifications;
+use Engelsystem\Controllers\NotificationType;
 use Engelsystem\Helpers\Authenticator;
 use Engelsystem\Helpers\Carbon;
+use Engelsystem\Helpers\Translation\Translator;
 use Engelsystem\Http\Request;
 use Engelsystem\Http\Response;
 use Engelsystem\Models\News;
 use Engelsystem\Models\Shifts\ShiftEntry;
 use Engelsystem\Models\User\User;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
@@ -28,13 +31,16 @@ class HomeController extends BaseController
         'news',
         'pin' => 'admin_news',
         'move' => 'admin_news',
+        'send' => 'startseite.send_shifts',
     ];
 
     public function __construct(
         protected Authenticator $auth,
         protected Response $response,
         protected Config $config,
-        protected News $news
+        protected News $news,
+        protected ShiftPlanMailer $mailer,
+        protected Translator $translator
     ) {
     }
 
@@ -57,6 +63,7 @@ class HomeController extends BaseController
             'shift_count' => array_sum(array_map(fn($day) => count($day['entries']), $days)),
             'shift_hours' => array_sum(array_map(fn($day) => $day['hours'], $days)),
             'has_choice' => SignupChoice::whereKey($user->id)->exists(),
+            'recipients' => $this->auth->can('startseite.send_shifts') ? $this->recipients()->count() : 0,
             'is_overview' => true,
         ]);
     }
@@ -118,7 +125,7 @@ class HomeController extends BaseController
             $this->shiftDays($user)
         );
 
-        $filename = 'Dienste ' . preg_replace('/[^\w\- ]+/u', '', $user->displayName) . '.pdf';
+        $filename = ShiftPdf::filename($user->displayName);
 
         return $this->response
             ->withHeader('Content-Type', 'application/pdf')
@@ -127,6 +134,41 @@ class HomeController extends BaseController
                 'attachment; filename="' . Str::ascii($filename) . '"; filename*=UTF-8\'\'' . rawurlencode($filename)
             )
             ->withContent($pdf);
+    }
+
+    /**
+     * Mails everybody with shift entries their shifts as PDF, in their language
+     */
+    public function send(): Response
+    {
+        if (!$this->mailer->isEnabled()) {
+            $this->addNotification('startseite.send.disabled', NotificationType::ERROR);
+            return $this->response->redirectTo(url('/news'));
+        }
+
+        // Many recipients can take a while
+        set_time_limit(0);
+
+        $activeLocale = $this->translator->getLocale();
+        $sent = 0;
+        $failed = 0;
+        foreach ($this->recipients()->with(['contact', 'personalData', 'settings'])->get() as $user) {
+            $locale = in_array($user->settings?->language, $this->translator->getLocales())
+                ? $user->settings->language
+                : $activeLocale;
+            $this->translator->setLocale($locale);
+
+            $this->mailer->send($user, $this->shiftDays($user, $locale)) ? $sent++ : $failed++;
+        }
+        $this->translator->setLocale($activeLocale);
+
+        engelsystem_log(sprintf('Sent the shift plans as PDF: %d mails, %d failed', $sent, $failed));
+        $this->addNotification(__('startseite.send.success', [$sent]));
+        if ($failed) {
+            $this->addNotification(__('startseite.send.failed', [$failed]), NotificationType::ERROR);
+        }
+
+        return $this->response->redirectTo(url('/news'));
     }
 
     public function script(): Response
@@ -155,13 +197,22 @@ class HomeController extends BaseController
     }
 
     /**
+     * Users with shift entries
+     */
+    protected function recipients(): Builder
+    {
+        return User::whereHas('shiftEntries');
+    }
+
+    /**
      * Shift entries of the user grouped by day
      *
+     * @param string|null $locale For the day names, default the one of the session
      * @return array[] [['label' => string, 'hours' => float, 'entries' => array[]]]
      */
-    protected function shiftDays(User $user): array
+    protected function shiftDays(User $user, ?string $locale = null): array
     {
-        $locale = (string) session()->get('locale', 'de_DE');
+        $locale ??= (string) session()->get('locale', 'de_DE');
         $now = Carbon::now();
 
         $entries = ShiftEntry::with(['shift.location', 'shift.shiftType', 'angelType'])

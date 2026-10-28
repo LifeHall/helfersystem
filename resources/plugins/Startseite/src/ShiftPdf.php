@@ -206,6 +206,14 @@ class ShiftPdf
         return $columns;
     }
 
+    /**
+     * File name of the PDF for a helper, without characters that are not allowed in file names
+     */
+    public static function filename(string $name): string
+    {
+        return 'Dienste ' . trim((string) preg_replace('/[^\w\- ]+/u', '', $name)) . '.pdf';
+    }
+
     protected function hours(float $hours): string
     {
         return round($hours, 2) . ' h';

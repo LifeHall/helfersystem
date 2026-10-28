@@ -46,6 +46,20 @@
                 {% if shift_count %}
                     {{ m.button(__('startseite.shifts.pdf'), url('/startseite/dienste.pdf'), {'icon_left': 'file-earmark-pdf', 'size': 'sm'}) }}
                 {% endif %}
+                {% if can('startseite.send_shifts') and recipients %}
+                    <form method="post" action="{{ url('/startseite/dienste/versenden') }}">
+                        {{ csrf() }}
+                        {{ f.button(__('startseite.send.button') ~ ' (' ~ recipients ~ ')', {
+                            'type': 'submit',
+                            'size': 'sm',
+                            'btn_type': 'outline-primary',
+                            'icon_left': 'envelope-paper',
+                            'confirm_title': __('startseite.send.confirm_title', [recipients]),
+                            'confirm_text': __('startseite.send.confirm_text'),
+                            'confirm_button_text': __('startseite.send.button'),
+                        }) }}
+                    </form>
+                {% endif %}
                 {% if can('startseite.signup') %}
                     {% if has_choice %}
                         {{ m.button(__('startseite.signup.table'), url('/startseite/eintragen/auswahl'), {'icon_left': 'table', 'size': 'sm'}) }}

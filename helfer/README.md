@@ -51,6 +51,9 @@ Plugin-Middleware, die die Route `NewsController@index` auf `HomeController@inde
   Im News-Editor angepinnte News erscheinen am Ende der Reihenfolge.
 - **Meine Dienste:** Übersicht der eigenen Schichteinträge pro Tag mit Stunden, Download als PDF
   (`/startseite/dienste.pdf`, eigener kleiner PDF-Schreiber `Pdf.php`, keine Zusatzbibliothek).
+- **Dienstpläne versenden** (Knopf bei „Meine Dienste“, Recht `startseite.send_shifts`, per Plugin-Migration für
+  alle Gruppen mit `user_shifts_admin`): schickt allen Personen mit Schichteinträgen eine Mail in ihrer Sprache mit
+  ihrem Dienstplan als PDF-Anhang (`ShiftPlanMailer` baut die Mail selbst, weil der Kern-Mailer keine Anhänge kann).
 - **Geführt eintragen** (`/startseite/eintragen`, Berechtigung `startseite.signup`, per Plugin-Migration für alle
   Gruppen mit `tagesplan.view` oder `user_shifts`): 1. Helferdienste (Helfertypen), 2. Tage (ohne Zeitauswahl, alle Zeitslots des Tages),
   3. Tabelle pro Helferdienst (Zeilen = Zeitslots, Spalten = Tage) zum An-/Abhaken. Volle oder nicht mögliche
