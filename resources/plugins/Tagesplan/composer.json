@@ -1,0 +1,24 @@
+{
+  "type": "engelsystem-plugin",
+  "name": "helfersystem/tagesplan",
+  "description": "Tagesansicht der Schichten, gruppiert nach Ort",
+  "version": "1.0.0",
+  "license": "GPL-2.0-or-later",
+  "authors": [
+    {
+      "name": "befritscht",
+      "email": "beat.fritschi@brutsch.com"
+    }
+  ],
+  "extra": {
+    "providers": ["Helfersystem\\Tagesplan\\ServiceProvider"],
+    "routes": {
+      "/tagesplan": "Helfersystem\\Tagesplan\\Controller@index"
+    }
+  },
+  "autoload": {
+    "psr-4": {
+      "Helfersystem\\Tagesplan\\": "src/"
+    }
+  }
+}

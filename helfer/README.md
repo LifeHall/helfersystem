@@ -19,6 +19,14 @@ Nicht umbenannt: Code, Datenbank, URLs (z. B. `/angeltypes`) und die Credits-Sei
 
 Den Anwendungsnamen setzt `APP_NAME` in der Server-`.env`.
 
+## Plugin „Tagesplan“
+
+`resources/plugins/Tagesplan/` – neuer Menüpunkt „Tagesplan“ (`/tagesplan`): Tagesansicht der
+Schichten, gruppiert nach Ort, eine Zeile pro benötigtem Platz, eine Spalte pro Zeitfenster.
+Überlappende Schichten am selben Ort bekommen eigene Zeilen. Berechtigung: `user_shifts`.
+
+Auf einer neuen Installation unter **Admin → Plugins** installieren und aktivieren.
+
 ## Geänderte Original-Dateien
 
 Diese Dateien des Originals sind angepasst (Stellen mit `Helfersystem` markiert).

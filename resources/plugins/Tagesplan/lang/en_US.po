@@ -1,0 +1,35 @@
+msgid "tagesplan.menu"
+msgstr "Day plan"
+
+msgid "tagesplan.title"
+msgstr "Day plan"
+
+msgid "tagesplan.day"
+msgstr "Day"
+
+msgid "tagesplan.show"
+msgstr "Show"
+
+msgid "tagesplan.previous"
+msgstr "Previous day"
+
+msgid "tagesplan.next"
+msgstr "Next day"
+
+msgid "tagesplan.position"
+msgstr "Position"
+
+msgid "tagesplan.no_shifts"
+msgstr "There are no shifts on this day."
+
+msgid "tagesplan.open"
+msgstr "open – go to shift"
+
+msgid "tagesplan.legend.filled"
+msgstr "Filled"
+
+msgid "tagesplan.legend.open"
+msgstr "Open"
+
+msgid "tagesplan.legend.none"
+msgstr "Not needed"

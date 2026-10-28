@@ -1,0 +1,35 @@
+msgid "tagesplan.menu"
+msgstr "Tagesplan"
+
+msgid "tagesplan.title"
+msgstr "Tagesplan"
+
+msgid "tagesplan.day"
+msgstr "Tag"
+
+msgid "tagesplan.show"
+msgstr "Anzeigen"
+
+msgid "tagesplan.previous"
+msgstr "Vorheriger Tag"
+
+msgid "tagesplan.next"
+msgstr "Nächster Tag"
+
+msgid "tagesplan.position"
+msgstr "Platz"
+
+msgid "tagesplan.no_shifts"
+msgstr "Für diesen Tag sind keine Schichten erfasst."
+
+msgid "tagesplan.open"
+msgstr "frei – zur Schicht"
+
+msgid "tagesplan.legend.filled"
+msgstr "Besetzt"
+
+msgid "tagesplan.legend.open"
+msgstr "Frei"
+
+msgid "tagesplan.legend.none"
+msgstr "Nicht benötigt"

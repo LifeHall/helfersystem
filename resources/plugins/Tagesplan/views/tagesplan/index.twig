@@ -1,0 +1,119 @@
+{% extends 'layouts/app.twig' %}
+{% import 'macros/base.twig' as m %}
+
+{% block title %}{{ __('tagesplan.title') }}{% endblock %}
+
+{% block content %}
+    <style>
+        .tagesplan { --tp-border: #6c757d; border-collapse: collapse; width: auto; }
+        .tagesplan th, .tagesplan td { border: 1px solid var(--tp-border); padding: .2rem .5rem; white-space: nowrap; }
+        .tagesplan thead th { text-align: center; background: var(--bs-body-bg); position: sticky; top: 0; z-index: 2; }
+        .tagesplan th.tp-label { text-align: left; position: sticky; left: 0; z-index: 1; min-width: 12rem; }
+        .tagesplan td { min-width: 9rem; }
+        .tagesplan tbody.tp-group { border-top: 3px solid var(--tp-border); }
+        .tagesplan tbody.tp-group tr > * { color: #212529; }
+        .tagesplan td.tp-none { background-image: repeating-linear-gradient(-45deg, rgba(0,0,0,.12) 0 2px, transparent 2px 8px); }
+        .tagesplan td.tp-open a { display: block; color: transparent; text-decoration: none; }
+        .tagesplan td.tp-open a:hover, .tagesplan td.tp-open a:focus { color: #212529; text-decoration: underline; }
+        .tagesplan td.tp-filled a { color: #212529; text-decoration: none; }
+        .tagesplan td.tp-filled a:hover { text-decoration: underline; }
+        .tp-color-0 > * { background-color: #b4c7e7; }
+        .tp-color-1 > * { background-color: #fbe0d0; }
+        .tp-color-2 > * { background-color: #ffd5f9; }
+        .tp-color-3 > * { background-color: #c6e0b4; }
+        .tp-color-4 > * { background-color: #e2d6cc; }
+        .tp-color-5 > * { background-color: #fff2cc; }
+        .tp-color-6 > * { background-color: #d9d2e9; }
+        .tp-color-7 > * { background-color: #c9e9ef; }
+        .tp-legend span { display: inline-block; width: 1.5rem; height: 1rem; border: 1px solid #6c757d; vertical-align: middle; margin: 0 .25rem 0 1rem; }
+        @media print {
+            .tagesplan thead th, .tagesplan th.tp-label { position: static; }
+            .tagesplan td.tp-open a { color: transparent; }
+            .tp-color-0 > *, .tp-color-1 > *, .tp-color-2 > *, .tp-color-3 > *,
+            .tp-color-4 > *, .tp-color-5 > *, .tp-color-6 > *, .tp-color-7 > * {
+                -webkit-print-color-adjust: exact; print-color-adjust: exact;
+            }
+        }
+    </style>
+
+    <div class="container-fluid">
+        <h1>
+            {{ block('title') }}
+            {% if day %}<small class="text-muted">{{ days[day] }}</small>{% endif %}
+        </h1>
+
+        {% include 'layouts/parts/messages.twig' %}
+
+        {% if days is not empty %}
+            <form method="get" action="{{ url('/tagesplan') }}" class="row g-2 align-items-center mb-3 d-print-none">
+                <div class="col-auto">
+                    {% if previous_day %}
+                        <a href="{{ url('/tagesplan', {'day': previous_day}) }}" class="btn btn-secondary"
+                            title="{{ __('tagesplan.previous') }}">{{ m.icon('chevron-left') }}</a>
+                    {% else %}
+                        <span class="btn btn-secondary disabled">{{ m.icon('chevron-left') }}</span>
+                    {% endif %}
+                </div>
+                <div class="col-auto">
+                    <label class="visually-hidden" for="tagesplan-day">{{ __('tagesplan.day') }}</label>
+                    <select name="day" id="tagesplan-day" class="form-select">
+                        {% for value, label in days %}
+                            <option value="{{ value }}" {% if value == day %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-auto">
+                    <button type="submit" class="btn btn-primary">{{ __('tagesplan.show') }}</button>
+                </div>
+                <div class="col-auto">
+                    {% if next_day %}
+                        <a href="{{ url('/tagesplan', {'day': next_day}) }}" class="btn btn-secondary"
+                            title="{{ __('tagesplan.next') }}">{{ m.icon('chevron-right') }}</a>
+                    {% else %}
+                        <span class="btn btn-secondary disabled">{{ m.icon('chevron-right') }}</span>
+                    {% endif %}
+                </div>
+            </form>
+        {% endif %}
+
+        {% if groups is empty %}
+            <div class="alert alert-info">{{ __('tagesplan.no_shifts') }}</div>
+        {% else %}
+            <div class="table-responsive">
+                <table class="tagesplan mb-2">
+                    <thead>
+                    <tr>
+                        <th class="tp-label">{{ __('tagesplan.position') }}</th>
+                        {% for column in columns %}
+                            <th>{{ column.label }}</th>
+                        {% endfor %}
+                    </tr>
+                    </thead>
+                    {% for group in groups %}
+                        <tbody class="tp-group">
+                        {% for row in group.rows %}
+                            <tr class="tp-color-{{ group.color }}">
+                                <th class="tp-label">{{ row.label }}</th>
+                                {% for cell in row.cells %}
+                                    <td class="tp-{{ cell.state }}" {% if cell.colspan > 1 %}colspan="{{ cell.colspan }}"{% endif %}>
+                                        {% if cell.state == 'filled' %}
+                                            <a href="{{ cell.url }}" title="{{ cell.title }}">{{ cell.name }}</a>
+                                        {% elseif cell.state == 'open' %}
+                                            <a href="{{ cell.url }}" title="{{ cell.title }}">{{ __('tagesplan.open') }}</a>
+                                        {% endif %}
+                                    </td>
+                                {% endfor %}
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    {% endfor %}
+                </table>
+            </div>
+
+            <p class="tp-legend small text-muted d-print-none">
+                <span class="tp-color-0" style="background-color:#b4c7e7"></span>{{ __('tagesplan.legend.filled') }} / {{ __('tagesplan.legend.open') }}
+                <span style="background-image: repeating-linear-gradient(-45deg, rgba(0,0,0,.25) 0 2px, transparent 2px 8px)"></span>{{ __('tagesplan.legend.none') }}
+            </p>
+        {% endif %}
+    </div>
+{% endblock %}
