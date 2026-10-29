@@ -1,0 +1,23 @@
+{
+  "type": "engelsystem-plugin",
+  "name": "helfersystem/familienkonten",
+  "description": "Familienkonten: mehrere Konten mit der gleichen Mailadresse",
+  "version": "1.0.0",
+  "license": "GPL-2.0-or-later",
+  "authors": [
+    {
+      "name": "befritscht",
+      "email": "beat.fritschi@brutsch.com"
+    }
+  ],
+  "extra": {
+    "middleware": [
+      "Helfersystem\\Familienkonten\\Middleware"
+    ]
+  },
+  "autoload": {
+    "psr-4": {
+      "Helfersystem\\Familienkonten\\": "src/"
+    }
+  }
+}

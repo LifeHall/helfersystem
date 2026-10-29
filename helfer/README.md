@@ -79,6 +79,28 @@ Plugin-Middleware, die die Route `NewsController@index` auf `HomeController@inde
 
 Auf einer neuen Installation unter **Admin → Plugins** installieren und aktivieren.
 
+## Plugin „Familienkonten“
+
+`resources/plugins/Familienkonten/` – mehrere Konten (z. B. Familienmitglieder) mit derselben Mailadresse.
+
+- **Datenbank:** Die Plugin-Migration ersetzt den eindeutigen Index `users_email_unique` durch einen normalen Index.
+  Deinstallieren (Migration rückwärts) geht nur, solange keine Adresse mehrfach vorkommt.
+- **Registrierung:** Der Kern lehnt eine schon verwendete Adresse ab. Die Plugin-Middleware gibt der Registrierung
+  deshalb eine eindeutige Platzhalter-Adresse und setzt beim Ereignis `user.created` als erstes (vor der
+  Willkommensmail) die echte Adresse ein.
+- **Login mit Mailadresse:** Der Kern nimmt das erste Konto mit der Adresse. Die Middleware sucht das Konto, zu dem
+  das Passwort passt, und meldet mit dessen Benutzernamen an.
+- **Passwort vergessen:** Bei mehreren Konten geht pro Konto eine Mail mit dem Benutzernamen raus
+  (`PasswordResetController` des Plugins, sonst unverändert der Kern).
+- Mails (Dienstpläne, Infos) gehen pro Konto an die gemeinsame Adresse.
+- Nicht abgedeckt: Die alte Admin-Seite „Benutzer bearbeiten“ (`admin_user`) lehnt beim Ändern auf eine schon
+  verwendete Adresse weiterhin ab. Helfer können ihre Adresse selbst unter Einstellungen → Profil ändern.
+
+Bei upstream-Merges prüfen: die Routen-Namen `RegistrationController@save`, `AuthController@postLogin`,
+`PasswordResetController@postReset` und das Ereignis `user.created`.
+
+Auf einer neuen Installation unter **Admin → Plugins** installieren und aktivieren.
+
 ## Rechte (Datenbank, nicht im Repo)
 
 Helfer (Gruppe „Angel“) sehen im Menü nur News, Frag den Admin und Tagesplan. Dafür wurden
