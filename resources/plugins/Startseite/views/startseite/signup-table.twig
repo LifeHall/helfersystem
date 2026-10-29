@@ -146,8 +146,8 @@
     <span class="startseite-category" style="background-color: {{ category.color }}" title="{{ category.name }}">{{ category.name }}</span>
 {%- endmacro %}
 
-{# Compact marker in the cells, the name appears after 0.5 s (Bootstrap tooltip, initialised by the core) #}
+{# Compact marker in the cells, the name appears after 0.2 s (Bootstrap tooltip, initialised by the core) #}
 {% macro dot(category) -%}
     <span class="startseite-dot" style="background-color: {{ category.color }}" role="img" aria-label="{{ category.name }}"
-        data-bs-toggle="tooltip" data-bs-title="{{ category.name }}" data-bs-delay='{"show": 500, "hide": 0}'></span>
+        data-bs-toggle="tooltip" data-bs-title="{{ category.name }}" data-bs-delay='{"show": 200, "hide": 0}'></span>
 {%- endmacro %}
