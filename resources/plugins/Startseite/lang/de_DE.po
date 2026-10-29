@@ -229,3 +229,6 @@ msgstr "Wird oben auf der Login-Seite angezeigt, Markdown ist möglich (z. B. **
 msgid "startseite.login.no_account"
 msgstr "Noch kein Konto?"
 
+msgid "startseite.signup.legend.events"
+msgstr "Events"
+

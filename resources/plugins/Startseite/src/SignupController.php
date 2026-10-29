@@ -35,6 +35,9 @@ class SignupController extends BaseController
         'startseite.signup',
     ];
 
+    // Badge colors of the shift types (events), same as in the day plan
+    protected const CATEGORY_COLORS = ['#6f42c1', '#d63384', '#fd7e14', '#198754', '#0d6efd', '#795548'];
+
     /** @var Collection|UserAngelType[]|null Memberships of the user by angel type id */
     protected ?Collection $memberships = null;
 
@@ -209,6 +212,15 @@ class SignupController extends BaseController
         $cells = $this->cells($user, $choice);
         $locale = (string) session()->get('locale', 'de_DE');
 
+        // Shift type of most shifts, it is not marked
+        $mainShiftType = Shift::query()
+            ->toBase()
+            ->select('shift_type_id')
+            ->groupBy('shift_type_id')
+            ->orderByRaw('COUNT(*) DESC')
+            ->value('shift_type_id');
+        $cells = $cells->map(fn(array $cell) => $cell + ['category' => $this->category($cell['shift'], $mainShiftType)]);
+
         $tables = [];
         foreach ($cells->groupBy(fn(array $cell) => $cell['type']->id) as $typeCells) {
             /** @var AngelType $type */
@@ -242,8 +254,26 @@ class SignupController extends BaseController
 
         return $this->response->withView('startseite/signup-table', [
             'tables' => $tables,
+            'categories' => $cells->pluck('category')->filter()->unique('name')->sortBy('name')->values()->all(),
             'step' => 3,
         ]);
+    }
+
+    /**
+     * Shift type (event) to mark the slot with, null for the main shift type
+     *
+     * @return array|null ['name' => string, 'color' => string]
+     */
+    protected function category(Shift $shift, ?int $mainShiftType): ?array
+    {
+        if ($shift->shift_type_id == $mainShiftType) {
+            return null;
+        }
+
+        return [
+            'name' => $shift->shiftType->name,
+            'color' => self::CATEGORY_COLORS[$shift->shift_type_id % count(self::CATEGORY_COLORS)],
+        ];
     }
 
     /**

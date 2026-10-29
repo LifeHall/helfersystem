@@ -25,6 +25,7 @@
         .startseite-slots td.startseite-blocked-all { background-color: var(--ss-full); color: var(--bs-secondary-color); }
         .startseite-slots .form-check-input { margin-top: 0; vertical-align: middle; }
         .startseite-only-free .startseite-inactive { display: none; }
+        .startseite-category { display: inline-block; font-size: .7em; font-weight: 600; color: #fff; border-radius: .25rem; padding: 0 .3rem; margin-left: .25rem; vertical-align: middle; white-space: nowrap; }
         .startseite-actions { position: sticky; bottom: 0; z-index: 3; background: var(--bs-body-bg); border-top: 1px solid var(--bs-border-color); }
     </style>
 
@@ -49,6 +50,11 @@
                     </div>
                     <span><span class="badge text-bg-success">&nbsp;</span> {{ __('startseite.signup.legend.own') }}</span>
                     <span><span class="badge startseite-legend-full">&nbsp;</span> {{ __('startseite.signup.legend.full') }}</span>
+                    {% if categories %}
+                        <span>{{ __('startseite.signup.legend.events') }}:
+                            {% for category in categories %}{{ _self.category(category) }}{% endfor %}
+                        </span>
+                    {% endif %}
                 </div>
             {% endif %}
 
@@ -85,11 +91,12 @@
                                                             {# Full or not possible: no checkbox, only the reason #}
                                                             <span class="d-block small" title="{{ cell.reason }}">
                                                                 {{ cell.free == 0 ? __('startseite.signup.full_short') : '–' }}
+                                                                {{- cell.category ? _self.category(cell.category) }}
                                                             </span>
                                                         {% else %}
                                                             <label class="d-block"{% if cell.reason %} title="{{ cell.reason }}"{% endif %}>
                                                                 <input class="form-check-input" type="checkbox" name="slots[]" value="{{ cell.key }}"
-                                                                    aria-label="{{ table.type.name }}, {{ table.days[day] }}, {{ label }}"
+                                                                    aria-label="{{ table.type.name }}, {{ table.days[day] }}, {{ label }}{{ cell.category ? ', ' ~ cell.category.name }}"
                                                                     data-shift="{{ cell.shift.id }}" data-type="{{ cell.type.id }}"
                                                                     data-location="{{ cell.shift.location_id }}"
                                                                     data-start="{{ cell.shift.start.timestamp }}" data-end="{{ cell.shift.end.timestamp }}"
@@ -101,6 +108,7 @@
                                                                 {% elseif not cell.checked %}
                                                                     <span class="small text-muted startseite-free">{{ __('startseite.signup.free', [cell.free]) }}</span>
                                                                 {% endif %}
+                                                                {{- cell.category ? _self.category(cell.category) }}
                                                             </label>
                                                         {% endif %}
                                                     {% endfor %}
@@ -131,3 +139,8 @@
     {{ parent() }}
     <script src="{{ url('/startseite/startseite.js') }}"></script>
 {% endblock %}
+
+{# Badge of a shift type (event) that is not the main one #}
+{% macro category(category) -%}
+    <span class="startseite-category" style="background-color: {{ category.color }}" title="{{ category.name }}">{{ category.name }}</span>
+{%- endmacro %}
