@@ -81,7 +81,7 @@
         <form method="get" action="{{ url('/schichtimport') }}#loeschen" class="row g-2 align-items-end mb-3">
             <div class="col-auto">
                 <label for="si-del-day" class="form-label">{{ __('schichtimport.check.day') }}</label>
-                <select name="tag" id="si-del-day" class="form-select" required>
+                <select name="tag" id="si-del-day" class="form-select" style="min-width: 13rem" required>
                     <option value=""></option>
                     {% for value, label in delete.days %}
                         <option value="{{ value }}" {% if value == delete.day %}selected{% endif %}>{{ value|date('D') }}, {{ label }}</option>
@@ -90,7 +90,7 @@
             </div>
             <div class="col-auto">
                 <label for="si-del-location" class="form-label">{{ __('schichtimport.delete.location') }}</label>
-                <select name="ort" id="si-del-location" class="form-select">
+                <select name="ort" id="si-del-location" class="form-select" style="min-width: 13rem">
                     <option value="0">{{ __('schichtimport.delete.all_locations') }}</option>
                     {% for id, name in delete.locations %}
                         <option value="{{ id }}" {% if id == delete.location %}selected{% endif %}>{{ name }}</option>
