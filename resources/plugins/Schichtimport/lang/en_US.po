@@ -201,7 +201,7 @@ msgid "schichtimport.delete.title"
 msgstr "Delete shifts"
 
 msgid "schichtimport.delete.intro"
-msgstr "Delete all shifts of a day at a location (or at all locations). Signed up people are informed by mail as usual."
+msgstr "Delete all shifts of a day or a whole year at a location (or at all locations). Signed up people are informed by mail as usual."
 
 msgid "schichtimport.delete.location"
 msgstr "Location"
@@ -213,7 +213,7 @@ msgid "schichtimport.delete.show"
 msgstr "Show shifts"
 
 msgid "schichtimport.delete.none"
-msgstr "There are no shifts there on this day."
+msgstr "There are no shifts there in the chosen period."
 
 msgid "schichtimport.delete.summary"
 msgstr "%s shifts with %s sign-ups will be deleted."
@@ -231,5 +231,17 @@ msgid "schichtimport.delete.done"
 msgstr "%s shifts deleted."
 
 msgid "schichtimport.delete.choose_day"
-msgstr "Choose day"
+msgstr "Choose day or year"
+
+msgid "schichtimport.delete.period"
+msgstr "Period"
+
+msgid "schichtimport.delete.years"
+msgstr "Whole year"
+
+msgid "schichtimport.delete.days"
+msgstr "Single day"
+
+msgid "schichtimport.delete.whole_year"
+msgstr "Whole year %s"
 

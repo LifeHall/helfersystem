@@ -81,12 +81,19 @@
         <form method="get" action="{{ url('/schichtimport') }}#loeschen" class="row g-2 align-items-end mb-3">
             {# The core replaces selects (Choices.js), so the width is set on the column #}
             <div class="col-12 col-sm-auto" style="min-width: 15rem">
-                <label for="si-del-day" class="form-label">{{ __('schichtimport.check.day') }}</label>
+                <label for="si-del-day" class="form-label">{{ __('schichtimport.delete.period') }}</label>
                 <select name="tag" id="si-del-day" class="form-select" required>
                     <option value="">{{ __('schichtimport.delete.choose_day') }}</option>
-                    {% for value, label in delete.days %}
-                        <option value="{{ value }}" {% if value == delete.day %}selected{% endif %}>{{ value|date('D') }}, {{ label }}</option>
-                    {% endfor %}
+                    <optgroup label="{{ __('schichtimport.delete.years') }}">
+                        {% for year in delete.years %}
+                            <option value="{{ year }}" {% if year == delete.day %}selected{% endif %}>{{ __('schichtimport.delete.whole_year', [year]) }}</option>
+                        {% endfor %}
+                    </optgroup>
+                    <optgroup label="{{ __('schichtimport.delete.days') }}">
+                        {% for value, label in delete.days %}
+                            <option value="{{ value }}" {% if value == delete.day %}selected{% endif %}>{{ value|date('D') }}, {{ label }}</option>
+                        {% endfor %}
+                    </optgroup>
                 </select>
             </div>
             <div class="col-12 col-sm-auto" style="min-width: 15rem">
@@ -108,10 +115,14 @@
             {% if delete.shifts is empty %}
                 <div class="alert alert-info">{{ __('schichtimport.delete.none') }}</div>
             {% else %}
+                {# Long lists (e.g. a whole year) are collapsed #}
+                <details {% if delete.shifts|length <= 50 %}open{% endif %} class="mb-3">
+                <summary>{{ __('schichtimport.check.all_shifts', [delete.shifts|length]) }}</summary>
                 <div class="table-responsive">
                     <table class="table table-sm table-striped">
                         <thead>
                         <tr>
+                            <th>{{ __('schichtimport.check.day') }}</th>
                             <th>{{ __('schichtimport.check.time') }}</th>
                             <th>{{ __('schichtimport.delete.location') }}</th>
                             <th>Schichttyp</th>
@@ -123,6 +134,7 @@
                         <tbody>
                         {% for shift in delete.shifts %}
                             <tr>
+                                <td>{{ shift.start.format('d.m.Y') }}</td>
                                 <td>{{ shift.start.format('H:i') }} – {{ shift.end.format('H:i') }}</td>
                                 <td>{{ shift.location.name }}</td>
                                 <td>{{ shift.shiftType.name }}</td>
@@ -134,6 +146,7 @@
                         </tbody>
                     </table>
                 </div>
+                </details>
                 <form method="post" action="{{ url('/schichtimport/loeschen') }}" class="alert alert-danger">
                     {{ csrf() }}
                     <input type="hidden" name="tag" value="{{ delete.day }}">

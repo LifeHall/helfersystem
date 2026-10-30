@@ -272,7 +272,7 @@ class Controller extends BaseController
     }
 
     /**
-     * Deletes the shifts of a day at a location (or at all locations),
+     * Deletes the shifts of a day or a year at a location (or at all locations),
      * signed up people are informed like when deleting shifts in the core
      */
     public function delete(Request $request): Response
@@ -296,7 +296,7 @@ class Controller extends BaseController
             }
         });
         engelsystem_log(sprintf(
-            'Schichtimport: %d Schichten am %s gelöscht (%s, %d Eintragungen)',
+            'Schichtimport: %d Schichten (%s) gelöscht (%s, %d Eintragungen)',
             $shifts->count(),
             $day,
             $locationId ? Location::find($locationId)?->name : 'alle Orte',
@@ -316,6 +316,12 @@ class Controller extends BaseController
         $shifts = $day ? $this->shiftsOfDay($day, $locationId) : null;
 
         return [
+            'years' => Shift::query()->toBase()
+                ->selectRaw('DISTINCT YEAR(`start`) AS `year`')
+                ->orderBy('year')
+                ->pluck('year')
+                ->map(fn($year) => (string) $year)
+                ->all(),
             'days' => Shift::query()->toBase()
                 ->selectRaw('DISTINCT DATE(`start`) AS `day`')
                 ->orderBy('day')
@@ -331,21 +337,25 @@ class Controller extends BaseController
     }
 
     /**
-     * Shifts starting on the day, at one location or at all locations (0)
+     * Shifts starting on the day ("2027-11-24") or in the year ("2027"), at one location or at all locations (0)
      *
      * @return Collection|Shift[]|null
      */
     protected function shiftsOfDay(string $day, int $locationId): ?Collection
     {
-        if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $day)) {
+        if (preg_match('/^\d{4}$/', $day)) {
+            $start = Carbon::createFromFormat('Y-m-d H:i:s', $day . '-01-01 00:00:00');
+            $end = $start->copy()->addYear();
+        } elseif (preg_match('/^\d{4}-\d{2}-\d{2}$/', $day)) {
+            $start = Carbon::createFromFormat('Y-m-d H:i:s', $day . ' 00:00:00');
+            $end = $start->copy()->addDay();
+        } else {
             return null;
         }
 
-        $start = Carbon::createFromFormat('Y-m-d H:i:s', $day . ' 00:00:00');
-
         return Shift::with(['location', 'shiftType', 'neededAngelTypes.angelType', 'shiftEntries.user', 'shiftEntries.angelType'])
             ->where('start', '>=', $start)
-            ->where('start', '<', $start->copy()->addDay())
+            ->where('start', '<', $end)
             ->when($locationId, fn($query) => $query->where('location_id', $locationId))
             ->orderBy('start')
             ->get();

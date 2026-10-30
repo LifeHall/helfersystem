@@ -2,7 +2,7 @@
   "type": "engelsystem-plugin",
   "name": "helfersystem/schichtimport",
   "description": "Import der Schichten und benötigten Helfer aus einer Excel-Vorlage",
-  "version": "1.1.2",
+  "version": "1.2.0",
   "license": "GPL-2.0-or-later",
   "authors": [
     {

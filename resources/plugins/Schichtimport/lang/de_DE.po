@@ -201,7 +201,7 @@ msgid "schichtimport.delete.title"
 msgstr "Schichten löschen"
 
 msgid "schichtimport.delete.intro"
-msgstr "Alle Schichten eines Tages an einem Ort (oder an allen Orten) löschen. Eingetragene Personen werden wie beim Löschen im System per Mail informiert."
+msgstr "Alle Schichten eines Tages oder eines ganzen Jahres an einem Ort (oder an allen Orten) löschen. Eingetragene Personen werden wie beim Löschen im System per Mail informiert."
 
 msgid "schichtimport.delete.location"
 msgstr "Ort"
@@ -213,7 +213,7 @@ msgid "schichtimport.delete.show"
 msgstr "Schichten anzeigen"
 
 msgid "schichtimport.delete.none"
-msgstr "An diesem Tag gibt es dort keine Schichten."
+msgstr "Im gewählten Zeitraum gibt es dort keine Schichten."
 
 msgid "schichtimport.delete.summary"
 msgstr "%s Schichten mit %s Eintragungen werden gelöscht."
@@ -231,5 +231,17 @@ msgid "schichtimport.delete.done"
 msgstr "%s Schichten gelöscht."
 
 msgid "schichtimport.delete.choose_day"
-msgstr "Tag wählen"
+msgstr "Tag oder Jahr wählen"
+
+msgid "schichtimport.delete.period"
+msgstr "Zeitraum"
+
+msgid "schichtimport.delete.years"
+msgstr "Ganzes Jahr"
+
+msgid "schichtimport.delete.days"
+msgstr "Einzelner Tag"
+
+msgid "schichtimport.delete.whole_year"
+msgstr "Ganzes Jahr %s"
 
