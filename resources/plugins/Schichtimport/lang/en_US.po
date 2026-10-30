@@ -1,0 +1,247 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "schichtimport.menu"
+msgstr "Shift import"
+
+msgid "schichtimport.title"
+msgstr "Shift import"
+
+msgid "schichtimport.intro"
+msgstr "Create shifts and the needed people from an Excel file, e.g. for next year. The file is checked first, the shifts are created afterwards."
+
+msgid "schichtimport.step.template"
+msgstr "Download and fill in the template"
+
+msgid "schichtimport.template.text"
+msgstr "One needed angel type of a shift per row. The sheet \"Anleitung\" in the template explains the columns."
+
+msgid "schichtimport.template.empty"
+msgstr "Empty template"
+
+msgid "schichtimport.template.existing"
+msgstr "Or use the existing shifts (%s – %s) as template:"
+
+msgid "schichtimport.template.days"
+msgstr "Move dates by (days)"
+
+msgid "schichtimport.template.days_info"
+msgstr "364 days = same weekday one year later, 0 = unchanged."
+
+msgid "schichtimport.template.download_existing"
+msgstr "Template with existing shifts"
+
+msgid "schichtimport.step.upload"
+msgstr "Check and import the file"
+
+msgid "schichtimport.file"
+msgstr "File (Excel .xlsx or CSV)"
+
+msgid "schichtimport.default_shift_type"
+msgstr "Default shift type"
+
+msgid "schichtimport.default_shift_type.info"
+msgstr "For rows without shift type."
+
+msgid "schichtimport.create_missing"
+msgstr "Create missing locations, angel types and shift types"
+
+msgid "schichtimport.check"
+msgstr "Check"
+
+msgid "schichtimport.check.info"
+msgstr "Nothing is created yet."
+
+msgid "schichtimport.imports"
+msgstr "Previous imports"
+
+msgid "schichtimport.imports.none"
+msgstr "No imports yet."
+
+msgid "schichtimport.imports.date"
+msgstr "Imported"
+
+msgid "schichtimport.imports.period"
+msgstr "Period"
+
+msgid "schichtimport.imports.shifts"
+msgstr "Shifts"
+
+msgid "schichtimport.imports.entries"
+msgstr "Sign-ups"
+
+msgid "schichtimport.undo"
+msgstr "Undo"
+
+msgid "schichtimport.undo.confirm"
+msgstr "The %s shifts of this import will be deleted."
+
+msgid "schichtimport.undo.not_possible"
+msgstr "People signed up"
+
+msgid "schichtimport.undone"
+msgstr "%s shifts deleted."
+
+msgid "schichtimport.imported"
+msgstr "%s shifts imported."
+
+msgid "schichtimport.check.title"
+msgstr "Check import"
+
+msgid "schichtimport.check.errors"
+msgstr "%s errors – please correct the file and check again:"
+
+msgid "schichtimport.check.warnings"
+msgstr "%s notes:"
+
+msgid "schichtimport.check.new"
+msgstr "Will be created:"
+
+msgid "schichtimport.check.new.locations"
+msgstr "Locations"
+
+msgid "schichtimport.check.new.angel_types"
+msgstr "Angel types (without confirmation)"
+
+msgid "schichtimport.check.new.shift_types"
+msgstr "Shift types"
+
+msgid "schichtimport.check.ready"
+msgstr "Ready: %s shifts with %s positions in total will be created."
+
+msgid "schichtimport.import"
+msgstr "Import now"
+
+msgid "schichtimport.cancel"
+msgstr "Cancel"
+
+msgid "schichtimport.back"
+msgstr "Back"
+
+msgid "schichtimport.check.days"
+msgstr "Overview per day"
+
+msgid "schichtimport.check.day"
+msgstr "Day"
+
+msgid "schichtimport.check.positions"
+msgstr "Positions"
+
+msgid "schichtimport.check.locations"
+msgstr "Locations"
+
+msgid "schichtimport.check.existing"
+msgstr "Already existing"
+
+msgid "schichtimport.check.all_shifts"
+msgstr "Show all %s shifts"
+
+msgid "schichtimport.check.time"
+msgstr "Time"
+
+msgid "schichtimport.check.needs"
+msgstr "Needed"
+
+msgid "schichtimport.check.lines"
+msgstr "Rows"
+
+msgid "schichtimport.error.upload"
+msgstr "Please choose a file."
+
+msgid "schichtimport.error.file"
+msgstr "The file could not be read. Please save it as Excel (.xlsx) or CSV."
+
+msgid "schichtimport.error.empty"
+msgstr "The file contains no shifts."
+
+msgid "schichtimport.error.expired"
+msgstr "The checked file is no longer available. Please check again."
+
+msgid "schichtimport.error.import"
+msgstr "Import failed, nothing was created: %s"
+
+msgid "schichtimport.error.not_found"
+msgstr "Import not found."
+
+msgid "schichtimport.error.has_entries"
+msgstr "People already signed up for these shifts, the import can not be undone."
+
+msgid "schichtimport.error.header"
+msgstr "No header row found. Expected columns: %s"
+
+msgid "schichtimport.error.columns"
+msgstr "Missing columns: %s"
+
+msgid "schichtimport.error.missing"
+msgstr "Row %s: %s is missing."
+
+msgid "schichtimport.error.value"
+msgstr "Row %s: %s \"%s\" is invalid."
+
+msgid "schichtimport.error.duplicate"
+msgstr "Row %s: angel type \"%s\" is already in another row of this shift."
+
+msgid "schichtimport.error.unknown.locations"
+msgstr "Row %s: location \"%s\" does not exist."
+
+msgid "schichtimport.error.unknown.angel_types"
+msgstr "Row %s: angel type \"%s\" does not exist."
+
+msgid "schichtimport.error.unknown.shift_types"
+msgstr "Row %s: shift type \"%s\" does not exist."
+
+msgid "schichtimport.warning.zero"
+msgstr "Row %s: count 0 for \"%s\", row is ignored."
+
+msgid "schichtimport.warning.exists"
+msgstr "Row %s: the shift already exists and is skipped."
+
+msgid "schichtimport.delete.title"
+msgstr "Delete shifts"
+
+msgid "schichtimport.delete.intro"
+msgstr "Delete all shifts of a day or a whole year at a location (or at all locations). Signed up people are informed by mail as usual."
+
+msgid "schichtimport.delete.location"
+msgstr "Location"
+
+msgid "schichtimport.delete.all_locations"
+msgstr "All locations"
+
+msgid "schichtimport.delete.show"
+msgstr "Show shifts"
+
+msgid "schichtimport.delete.none"
+msgstr "There are no shifts there in the chosen period."
+
+msgid "schichtimport.delete.summary"
+msgstr "%s shifts with %s sign-ups will be deleted."
+
+msgid "schichtimport.delete.with_entries"
+msgstr "Also delete the %s sign-ups (the people are informed)"
+
+msgid "schichtimport.delete.button"
+msgstr "Delete %s shifts"
+
+msgid "schichtimport.delete.confirm"
+msgstr "%s shifts will be deleted permanently."
+
+msgid "schichtimport.delete.done"
+msgstr "%s shifts deleted."
+
+msgid "schichtimport.delete.choose_day"
+msgstr "Choose day or year"
+
+msgid "schichtimport.delete.period"
+msgstr "Period"
+
+msgid "schichtimport.delete.years"
+msgstr "Whole year"
+
+msgid "schichtimport.delete.days"
+msgstr "Single day"
+
+msgid "schichtimport.delete.whole_year"
+msgstr "Whole year %s"
+
