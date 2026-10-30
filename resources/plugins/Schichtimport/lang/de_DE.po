@@ -230,3 +230,6 @@ msgstr "%s Schichten werden endgültig gelöscht."
 msgid "schichtimport.delete.done"
 msgstr "%s Schichten gelöscht."
 
+msgid "schichtimport.delete.choose_day"
+msgstr "Tag wählen"
+

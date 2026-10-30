@@ -230,3 +230,6 @@ msgstr "%s shifts will be deleted permanently."
 msgid "schichtimport.delete.done"
 msgstr "%s shifts deleted."
 
+msgid "schichtimport.delete.choose_day"
+msgstr "Choose day"
+

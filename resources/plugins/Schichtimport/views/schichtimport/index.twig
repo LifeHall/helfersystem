@@ -79,18 +79,19 @@
         <h3 class="mt-4" id="loeschen">{{ __('schichtimport.delete.title') }}</h3>
         <p>{{ __('schichtimport.delete.intro') }}</p>
         <form method="get" action="{{ url('/schichtimport') }}#loeschen" class="row g-2 align-items-end mb-3">
-            <div class="col-auto">
+            {# The core replaces selects (Choices.js), so the width is set on the column #}
+            <div class="col-12 col-sm-auto" style="min-width: 15rem">
                 <label for="si-del-day" class="form-label">{{ __('schichtimport.check.day') }}</label>
-                <select name="tag" id="si-del-day" class="form-select" style="min-width: 13rem" required>
-                    <option value=""></option>
+                <select name="tag" id="si-del-day" class="form-select" required>
+                    <option value="">{{ __('schichtimport.delete.choose_day') }}</option>
                     {% for value, label in delete.days %}
                         <option value="{{ value }}" {% if value == delete.day %}selected{% endif %}>{{ value|date('D') }}, {{ label }}</option>
                     {% endfor %}
                 </select>
             </div>
-            <div class="col-auto">
+            <div class="col-12 col-sm-auto" style="min-width: 15rem">
                 <label for="si-del-location" class="form-label">{{ __('schichtimport.delete.location') }}</label>
-                <select name="ort" id="si-del-location" class="form-select" style="min-width: 13rem">
+                <select name="ort" id="si-del-location" class="form-select">
                     <option value="0">{{ __('schichtimport.delete.all_locations') }}</option>
                     {% for id, name in delete.locations %}
                         <option value="{{ id }}" {% if id == delete.location %}selected{% endif %}>{{ name }}</option>
