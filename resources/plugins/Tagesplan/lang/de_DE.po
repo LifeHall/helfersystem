@@ -150,3 +150,21 @@ msgstr "PDF-Export"
 
 msgid "tagesplan.pdf.date"
 msgstr "Stand: %s"
+
+msgid "config.tagesplan_show_colleagues"
+msgstr "Helfer sehen Personen am gleichen Ort zur gleichen Zeit"
+
+msgid "config.tagesplan_show_colleagues.info"
+msgstr "Helfer sehen im Tagesplan nur ihre eigenen Schichten. Eingeschaltet sehen sie zusätzlich, wer am gleichen Ort zur gleichen Zeit arbeitet. Admins und Schichteinteiler (Recht „tagesplan.manage“) sehen immer alles."
+
+msgid "tagesplan.own_only"
+msgstr "Du siehst nur deine eigenen Schichten."
+
+msgid "tagesplan.own_only.colleagues"
+msgstr "Du siehst deine eigenen Schichten und wer zur gleichen Zeit am gleichen Ort arbeitet."
+
+msgid "tagesplan.no_own_shifts"
+msgstr "Du bist noch für keine Schicht eingetragen."
+
+msgid "tagesplan.signup_link"
+msgstr "Jetzt geführt eintragen"

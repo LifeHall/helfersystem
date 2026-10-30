@@ -47,6 +47,12 @@ class Controller extends BaseController
     {
         $days = $this->days();
 
+        // Helpers only see the days with their own shifts
+        $own = OwnShifts::restricted() ? new OwnShifts(auth()->user()) : null;
+        if ($own) {
+            $days = array_values(array_intersect($days, $own->days()));
+        }
+
         $day = $request->input('day');
         if (!in_array($day, $days, true)) {
             $day = $this->defaultDay($days);
@@ -58,7 +64,7 @@ class Controller extends BaseController
         $groups = [];
         $categories = [];
         if ($day) {
-            [$shifts, $columns, $groups] = $this->dayPlan($day);
+            [$shifts, $columns, $groups] = $this->dayPlan($day, $own);
             $categories = $shifts
                 ->map(fn(Shift $shift) => $this->category($shift))
                 ->filter()
@@ -86,6 +92,7 @@ class Controller extends BaseController
             'columns' => $columns,
             'groups' => $groups,
             'categories' => $categories,
+            'own_only' => (bool) $own,
             // Shift popup to re-open after signing up / off
             'open_shift' => (int) $request->input('shift') ?: null,
             'open_type' => (int) $request->input('type') ?: null,
@@ -142,7 +149,7 @@ class Controller extends BaseController
      *
      * @return array [Collection|Shift[] $shifts, array[] $columns, array[] $groups]
      */
-    protected function dayPlan(string $day): array
+    protected function dayPlan(string $day, ?OwnShifts $own = null): array
     {
         $start = Carbon::createFromFormat('Y-m-d H:i:s', $day . ' 00:00:00');
         $shifts = $this->shift->newQuery()
@@ -152,8 +159,17 @@ class Controller extends BaseController
             ->orderBy('start')
             ->get();
 
+        // Helpers only see their own places (and optionally the people next to them)
+        $needs = [];
+        foreach ($shifts as $shift) {
+            $needs[$shift->id] = $own ? $own->filter($shift, $this->needs($shift)) : $this->needs($shift);
+        }
+        if ($own) {
+            $shifts = $shifts->filter(fn(Shift $shift) => $needs[$shift->id])->values();
+        }
+
         $columns = $this->columns($shifts);
-        $groups = $this->groups($shifts, $columns);
+        $groups = $this->groups($shifts, $columns, $needs);
 
         return [$shifts, $columns, $groups];
     }
@@ -213,14 +229,10 @@ class Controller extends BaseController
     /**
      * @param Collection|Shift[] $shifts
      * @param array[] $columns Handover columns get marked
+     * @param array[] $needs Needed angel types by shift id, see needs()
      */
-    protected function groups(Collection $shifts, array &$columns): array
+    protected function groups(Collection $shifts, array &$columns, array $needs): array
     {
-        $needs = [];
-        foreach ($shifts as $shift) {
-            $needs[$shift->id] = $this->needs($shift);
-        }
-
         // Fixed position per location across all days, used for sorting and colors
         $positions = $this->location->newQuery()
             ->get()

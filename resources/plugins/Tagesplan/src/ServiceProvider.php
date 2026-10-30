@@ -19,6 +19,9 @@ class ServiceProvider extends BaseServiceProvider
         if ($config->get('tagesplan_helpers_visible') === null) {
             $config->set('tagesplan_helpers_visible', true);
         }
+        if ($config->get('tagesplan_show_colleagues') === null) {
+            $config->set('tagesplan_show_colleagues', false);
+        }
 
         // Adds the "Tagesplan" tab to the main navigation, only for the managers if it is hidden from the helpers
         $config->set('header_items', [
