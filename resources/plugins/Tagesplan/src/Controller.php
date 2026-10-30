@@ -263,6 +263,7 @@ class Controller extends BaseController
                         $slots = max($slots, max($need['count'], count($need['entries'])));
                     }
 
+                    $this->arrange($lane, $typeId, $slots, $needs);
                     for ($slot = 0; $slot < $slots; $slot++) {
                         $typeRows[] = $this->cells($lane, $typeId, $slot, $columns, $needs);
                     }
@@ -290,6 +291,53 @@ class Controller extends BaseController
         }
 
         return $groups;
+    }
+
+    /**
+     * Distributes the entries of the lane's shifts to its rows ($needs[shift][type]['slots']: entry, 'open' or null),
+     * a person stays in the row of their previous shift in this lane (e.g. consecutive shifts)
+     *
+     * @param Shift[] $lane
+     */
+    protected function arrange(array $lane, int $typeId, int $slots, array &$needs): void
+    {
+        $rows = [];
+        foreach ($lane as $shift) {
+            $need = &$needs[$shift->id][$typeId];
+            $assigned = array_fill(0, $slots, null);
+
+            $others = [];
+            foreach ($need['entries'] as $entry) {
+                $row = $rows[$entry->user_id] ?? null;
+                if ($row !== null && $assigned[$row] === null) {
+                    $assigned[$row] = $entry;
+                } else {
+                    $others[] = $entry;
+                }
+            }
+
+            $open = max(0, $need['count'] - count($need['entries']));
+            foreach ($assigned as $row => $value) {
+                if ($value !== null) {
+                    continue;
+                }
+                if ($others) {
+                    $assigned[$row] = array_shift($others);
+                } elseif ($open) {
+                    $assigned[$row] = 'open';
+                    $open--;
+                }
+            }
+
+            foreach ($assigned as $row => $value) {
+                if ($value instanceof ShiftEntry) {
+                    $rows[$value->user_id] = $row;
+                }
+            }
+
+            $need['slots'] = $assigned;
+            unset($need);
+        }
     }
 
     /**
@@ -450,12 +498,12 @@ class Controller extends BaseController
 
     protected function slot(Shift $shift, int $typeId, int $slot, array $needs): array
     {
-        $need = $needs[$shift->id][$typeId] ?? null;
+        $value = $needs[$shift->id][$typeId]['slots'][$slot] ?? null;
         /** @var ShiftEntry|null $entry */
-        $entry = $need['entries'][$slot] ?? null;
+        $entry = $value instanceof ShiftEntry ? $value : null;
 
         return [
-            'state' => $entry ? 'filled' : ($need && $slot < $need['count'] ? 'open' : 'none'),
+            'state' => $entry ? 'filled' : ($value === 'open' ? 'open' : 'none'),
             'name' => $entry?->user->displayName,
             'shift_id' => $shift->id,
             'type_id' => $typeId,

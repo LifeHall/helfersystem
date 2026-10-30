@@ -144,3 +144,9 @@ msgstr "Send the shift plan to the selected person?"
 
 msgid "tagesplan.send.info"
 msgstr "The selected person gets a mail with their current shift plan as PDF."
+
+msgid "tagesplan.pdf"
+msgstr "PDF export"
+
+msgid "tagesplan.pdf.date"
+msgstr "As of: %s"

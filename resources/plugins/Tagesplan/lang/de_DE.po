@@ -144,3 +144,9 @@ msgstr "Dienstplan an die ausgewählte Person senden?"
 
 msgid "tagesplan.send.info"
 msgstr "Die ausgewählte Person erhält eine Mail mit ihrem aktuellen Dienstplan als PDF."
+
+msgid "tagesplan.pdf"
+msgstr "PDF-Export"
+
+msgid "tagesplan.pdf.date"
+msgstr "Stand: %s"

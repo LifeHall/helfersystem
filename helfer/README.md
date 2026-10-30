@@ -43,6 +43,11 @@ bekommen im Tagesplan ein farbiges Etikett, im Popup steht die Kategorie.
   früheren Einsatzplans (`import/einsatzplan.xlsx`): ein Blatt pro Tag, Titel „Einsatzplan <Event-Name>“, Datum,
   Zeitfenster als Spalten, eine Zeile pro Platz mit den Namen, Farben der Orte, nicht benötigte Felder grau.
   Eigener kleiner XLSX-Schreiber (`Xlsx.php`), weil im Container die Zip-Erweiterung fehlt.
+- **PDF-Export** (`/tagesplan/einsatzplan.pdf`, gleiche Berechtigung): gleicher Aufbau, ein Tag pro A4-Seite (quer),
+  Zeilenhöhe und Schrift werden an die Anzahl Plätze angepasst. `Pdf.php` ist eine Kopie des PDF-Schreibers aus
+  „Startseite“ (Querformat, farbige Felder), damit die Plugins unabhängig bleiben.
+- **Gleiche Person, gleiche Zeile:** Innerhalb eines Helfertyps bleibt eine Person in der Zeile ihrer vorherigen Schicht
+  (`Controller::arrange()`), z. B. bei aufeinanderfolgenden Diensten. Gilt im Tagesplan, im Excel und im PDF.
 - **Dienstplan an eine Person senden** (oben rechts, nur mit `startseite.send_shifts` aus dem Plugin „Startseite“):
   Auswahl unter allen Personen mit Schichteinträgen, schickt dieselbe Mail mit PDF wie „Dienstpläne versenden“,
   aber nur an diese Person (Route `/startseite/dienste/versenden/person`).

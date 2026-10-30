@@ -144,6 +144,7 @@
                         {% endif %}
                         {% if can('tagesplan.manage') %}
                             {{ m.button(__('tagesplan.excel'), url('/tagesplan/einsatzplan.xlsx'), {'icon_left': 'file-earmark-spreadsheet', 'size': 'sm'}) }}
+                            {{ m.button(__('tagesplan.pdf'), url('/tagesplan/einsatzplan.pdf'), {'icon_left': 'file-earmark-pdf', 'size': 'sm'}) }}
                         {% endif %}
                     </div>
                 {% endif %}

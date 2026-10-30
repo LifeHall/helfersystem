@@ -2,7 +2,7 @@
   "type": "engelsystem-plugin",
   "name": "helfersystem/tagesplan",
   "description": "Tagesansicht der Schichten, gruppiert nach Ort",
-  "version": "1.12.0",
+  "version": "1.13.0",
   "license": "GPL-2.0-or-later",
   "authors": [
     {
@@ -26,6 +26,7 @@
         "POST"
       ],
       "/tagesplan/einsatzplan.xlsx": "Helfersystem\\Tagesplan\\ExportController@excel",
+      "/tagesplan/einsatzplan.pdf": "Helfersystem\\Tagesplan\\ExportController@pdf",
       "/tagesplan/tagesplan.js": "Helfersystem\\Tagesplan\\ShiftPopupController@script",
       "/tagesplan/freigabe": [
         "Helfersystem\\Tagesplan\\ShiftPopupController@requestApproval",
