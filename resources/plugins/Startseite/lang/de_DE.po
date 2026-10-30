@@ -208,6 +208,12 @@ msgstr "Du bist für %1$s Dienste mit insgesamt %2$s Stunden eingetragen.\n\nDei
 msgid "startseite.send.success"
 msgstr "Dienstplan an %s Personen versendet."
 
+msgid "startseite.send.success_one"
+msgstr "Dienstplan an %s versendet."
+
+msgid "startseite.send.no_user"
+msgstr "Für die ausgewählte Person sind keine Dienste eingetragen."
+
 msgid "startseite.send.failed"
 msgstr "%s Mails konnten nicht versendet werden, Details im Log."
 

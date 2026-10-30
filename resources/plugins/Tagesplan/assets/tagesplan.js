@@ -58,7 +58,12 @@
       .then((html) => {
         const page = new DOMParser().parseFromString(html, 'text/html').getElementById('tp-page');
         if (page) {
+          // The tools keep their event handlers (confirmation of the core)
+          const tools = document.querySelector('#tp-page .tp-tools');
           document.getElementById('tp-page').innerHTML = page.innerHTML;
+          if (tools) {
+            document.querySelector('#tp-page .tp-tools')?.replaceWith(tools);
+          }
           markJoins();
           initDaySelect();
         }

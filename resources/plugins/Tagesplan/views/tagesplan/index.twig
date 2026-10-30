@@ -1,5 +1,6 @@
 {% extends 'layouts/app.twig' %}
 {% import 'macros/base.twig' as m %}
+{% import 'macros/form.twig' as f %}
 
 {% block title %}{{ __('tagesplan.title') }}{% endblock %}
 
@@ -84,36 +85,69 @@
         {% endif %}
 
         {% if days is not empty %}
-            <form method="get" action="{{ url('/tagesplan') }}" class="row g-2 align-items-center mb-2 d-print-none">
-                <div class="col-auto">
-                    {% if previous_day %}
-                        <a href="{{ url('/tagesplan', {'day': previous_day}) }}" class="btn btn-sm btn-secondary"
-                            title="{{ __('tagesplan.previous') }}">{{ m.icon('chevron-left') }}</a>
-                    {% else %}
-                        <span class="btn btn-sm btn-secondary disabled">{{ m.icon('chevron-left') }}</span>
-                    {% endif %}
-                </div>
-                <div class="col-auto">
-                    <label class="visually-hidden" for="tagesplan-day">{{ __('tagesplan.day') }}</label>
-                    <select name="day" id="tagesplan-day" class="form-select form-select-sm">
-                        {% for value, label in days %}
-                            <option value="{{ value }}" {% if value == day %}selected{% endif %}>{{ label }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div class="col-auto">
-                    {# Hidden by the script, the day changes on selection #}
-                    <button type="submit" class="btn btn-sm btn-primary tp-day-submit">{{ __('tagesplan.show') }}</button>
-                </div>
-                <div class="col-auto">
-                    {% if next_day %}
-                        <a href="{{ url('/tagesplan', {'day': next_day}) }}" class="btn btn-sm btn-secondary"
-                            title="{{ __('tagesplan.next') }}">{{ m.icon('chevron-right') }}</a>
-                    {% else %}
-                        <span class="btn btn-sm btn-secondary disabled">{{ m.icon('chevron-right') }}</span>
-                    {% endif %}
-                </div>
-            </form>
+            <div class="d-flex flex-wrap align-items-center gap-2 mb-2 d-print-none">
+                <form method="get" action="{{ url('/tagesplan') }}" class="row g-2 align-items-center">
+                    <div class="col-auto">
+                        {% if previous_day %}
+                            <a href="{{ url('/tagesplan', {'day': previous_day}) }}" class="btn btn-sm btn-secondary"
+                                title="{{ __('tagesplan.previous') }}">{{ m.icon('chevron-left') }}</a>
+                        {% else %}
+                            <span class="btn btn-sm btn-secondary disabled">{{ m.icon('chevron-left') }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="col-auto">
+                        <label class="visually-hidden" for="tagesplan-day">{{ __('tagesplan.day') }}</label>
+                        <select name="day" id="tagesplan-day" class="form-select form-select-sm">
+                            {% for value, label in days %}
+                                <option value="{{ value }}" {% if value == day %}selected{% endif %}>{{ label }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-auto">
+                        {# Hidden by the script, the day changes on selection #}
+                        <button type="submit" class="btn btn-sm btn-primary tp-day-submit">{{ __('tagesplan.show') }}</button>
+                    </div>
+                    <div class="col-auto">
+                        {% if next_day %}
+                            <a href="{{ url('/tagesplan', {'day': next_day}) }}" class="btn btn-sm btn-secondary"
+                                title="{{ __('tagesplan.next') }}">{{ m.icon('chevron-right') }}</a>
+                        {% else %}
+                            <span class="btn btn-sm btn-secondary disabled">{{ m.icon('chevron-right') }}</span>
+                        {% endif %}
+                    </div>
+                </form>
+
+                {# Admins and shift coordinators #}
+                {% if can('tagesplan.manage') or send_users %}
+                    <div class="tp-tools ms-auto d-flex flex-wrap align-items-center gap-2">
+                        {% if send_users %}
+                            <form method="post" action="{{ url('/startseite/dienste/versenden/person') }}" class="d-flex align-items-center gap-2">
+                                {{ csrf() }}
+                                <label class="visually-hidden" for="tp-send-user">{{ __('tagesplan.send.person') }}</label>
+                                <select name="user_id" id="tp-send-user" class="form-select form-select-sm" required>
+                                    <option value="">{{ __('tagesplan.send.person') }}</option>
+                                    {% for id, name in send_users %}
+                                        <option value="{{ id }}">{{ name }}</option>
+                                    {% endfor %}
+                                </select>
+                                {{ f.button(__('tagesplan.send.button'), {
+                                    'type': 'submit',
+                                    'size': 'sm',
+                                    'btn_type': 'outline-primary',
+                                    'icon_left': 'envelope-paper',
+                                    'title': __('tagesplan.send.info'),
+                                    'confirm_title': __('tagesplan.send.confirm_title'),
+                                    'confirm_text': __('tagesplan.send.info'),
+                                    'confirm_button_text': __('tagesplan.send.button'),
+                                }) }}
+                            </form>
+                        {% endif %}
+                        {% if can('tagesplan.manage') %}
+                            {{ m.button(__('tagesplan.excel'), url('/tagesplan/einsatzplan.xlsx'), {'icon_left': 'file-earmark-spreadsheet', 'size': 'sm'}) }}
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </div>
         {% endif %}
 
         {% if groups is empty %}

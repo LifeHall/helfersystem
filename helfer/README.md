@@ -39,6 +39,13 @@ werden, solange Start- und Endzeit nicht identisch sind (`ShiftPopupController::
 Schichteinteiler (und Supporter des Helfertyps) dürfen sich und andere auch in parallele Schichten eintragen.
 Kategorien: Schichten mit einem anderen Schichttyp als dem meistverwendeten (z. B. „Raclette-Plausch“, „Private Events“)
 bekommen im Tagesplan ein farbiges Etikett, im Popup steht die Kategorie.
+- **Excel-Export** (Knopf oben rechts, nur mit `tagesplan.manage`, `/tagesplan/einsatzplan.xlsx`): alle Tage im Aufbau des
+  früheren Einsatzplans (`import/einsatzplan.xlsx`): ein Blatt pro Tag, Titel „Einsatzplan <Event-Name>“, Datum,
+  Zeitfenster als Spalten, eine Zeile pro Platz mit den Namen, Farben der Orte, nicht benötigte Felder grau.
+  Eigener kleiner XLSX-Schreiber (`Xlsx.php`), weil im Container die Zip-Erweiterung fehlt.
+- **Dienstplan an eine Person senden** (oben rechts, nur mit `startseite.send_shifts` aus dem Plugin „Startseite“):
+  Auswahl unter allen Personen mit Schichteinträgen, schickt dieselbe Mail mit PDF wie „Dienstpläne versenden“,
+  aber nur an diese Person (Route `/startseite/dienste/versenden/person`).
 
 Auf einer neuen Installation unter **Admin → Plugins** installieren und aktivieren.
 

@@ -126,3 +126,21 @@ msgstr "Tagesplan für Helfer sichtbar"
 
 msgid "config.tagesplan_helpers_visible.info"
 msgstr "Ausgeschaltet sehen nur Admins und Schichteinteiler (Recht „tagesplan.manage“) den Tagesplan."
+
+msgid "tagesplan.excel"
+msgstr "Excel-Export"
+
+msgid "tagesplan.excel.title"
+msgstr "Einsatzplan %s"
+
+msgid "tagesplan.send.person"
+msgstr "Person wählen …"
+
+msgid "tagesplan.send.button"
+msgstr "Dienstplan senden"
+
+msgid "tagesplan.send.confirm_title"
+msgstr "Dienstplan an die ausgewählte Person senden?"
+
+msgid "tagesplan.send.info"
+msgstr "Die ausgewählte Person erhält eine Mail mit ihrem aktuellen Dienstplan als PDF."

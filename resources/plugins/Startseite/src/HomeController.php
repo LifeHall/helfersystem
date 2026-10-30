@@ -11,6 +11,7 @@ use Engelsystem\Controllers\NotificationType;
 use Engelsystem\Helpers\Authenticator;
 use Engelsystem\Helpers\Carbon;
 use Engelsystem\Helpers\Translation\Translator;
+use Engelsystem\Http\Redirector;
 use Engelsystem\Http\Request;
 use Engelsystem\Http\Response;
 use Engelsystem\Models\News;
@@ -32,6 +33,7 @@ class HomeController extends BaseController
         'pin' => 'admin_news',
         'move' => 'admin_news',
         'send' => 'startseite.send_shifts',
+        'sendOne' => 'startseite.send_shifts',
     ];
 
     public function __construct(
@@ -40,7 +42,8 @@ class HomeController extends BaseController
         protected Config $config,
         protected News $news,
         protected ShiftPlanMailer $mailer,
-        protected Translator $translator
+        protected Translator $translator,
+        protected Redirector $redirect
     ) {
     }
 
@@ -149,18 +152,11 @@ class HomeController extends BaseController
         // Many recipients can take a while
         set_time_limit(0);
 
-        $activeLocale = $this->translator->getLocale();
         $sent = 0;
         $failed = 0;
         foreach ($this->recipients()->with(['contact', 'personalData', 'settings'])->get() as $user) {
-            $locale = in_array($user->settings?->language, $this->translator->getLocales())
-                ? $user->settings->language
-                : $activeLocale;
-            $this->translator->setLocale($locale);
-
-            $this->mailer->send($user, $this->shiftDays($user, $locale)) ? $sent++ : $failed++;
+            $this->sendTo($user) ? $sent++ : $failed++;
         }
-        $this->translator->setLocale($activeLocale);
 
         engelsystem_log(sprintf('Sent the shift plans as PDF: %d mails, %d failed', $sent, $failed));
         $this->addNotification(__('startseite.send.success', [$sent]));
@@ -169,6 +165,47 @@ class HomeController extends BaseController
         }
 
         return $this->response->redirectTo(url('/news'));
+    }
+
+    /**
+     * Mails one person (e.g. after changes to their shifts) their shifts as PDF,
+     * back to the page with the form (day plan)
+     */
+    public function sendOne(Request $request): Response
+    {
+        $user = $this->recipients()
+            ->with(['contact', 'personalData', 'settings'])
+            ->find((int) $request->postData('user_id'));
+
+        if (!$this->mailer->isEnabled()) {
+            $this->addNotification('startseite.send.disabled', NotificationType::ERROR);
+        } elseif (!$user) {
+            $this->addNotification('startseite.send.no_user', NotificationType::ERROR);
+        } elseif ($this->sendTo($user)) {
+            engelsystem_log(sprintf('Sent the shift plan as PDF to %s', User_Nick_render($user, true)));
+            $this->addNotification(__('startseite.send.success_one', [$user->displayName]));
+        } else {
+            $this->addNotification(__('startseite.send.failed', [1]), NotificationType::ERROR);
+        }
+
+        return $this->redirect->back();
+    }
+
+    /**
+     * Mails the shifts in the language of the user
+     */
+    protected function sendTo(User $user): bool
+    {
+        $activeLocale = $this->translator->getLocale();
+        $locale = in_array($user->settings?->language, $this->translator->getLocales())
+            ? $user->settings->language
+            : $activeLocale;
+        $this->translator->setLocale($locale);
+
+        $sent = $this->mailer->send($user, $this->shiftDays($user, $locale));
+        $this->translator->setLocale($activeLocale);
+
+        return $sent;
     }
 
     public function script(): Response

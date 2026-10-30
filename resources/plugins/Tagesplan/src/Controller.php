@@ -11,6 +11,7 @@ use Engelsystem\Http\Response;
 use Engelsystem\Models\Location;
 use Engelsystem\Models\Shifts\Shift;
 use Engelsystem\Models\Shifts\ShiftEntry;
+use Engelsystem\Models\User\User;
 use Illuminate\Support\Collection;
 
 /**
@@ -44,40 +45,20 @@ class Controller extends BaseController
 
     public function index(Request $request): Response
     {
-        $days = $this->shift->newQuery()
-            ->toBase()
-            ->selectRaw('DISTINCT DATE(`start`) AS `day`')
-            ->orderBy('day')
-            ->pluck('day')
-            ->map(fn($day) => (string) $day)
-            ->all();
+        $days = $this->days();
 
         $day = $request->input('day');
         if (!in_array($day, $days, true)) {
             $day = $this->defaultDay($days);
         }
 
-        $this->mainShiftType = $this->shift->newQuery()
-            ->toBase()
-            ->select('shift_type_id')
-            ->groupBy('shift_type_id')
-            ->orderByRaw('COUNT(*) DESC')
-            ->value('shift_type_id');
+        $this->loadMainShiftType();
 
         $columns = [];
         $groups = [];
         $categories = [];
         if ($day) {
-            $start = Carbon::createFromFormat('Y-m-d H:i:s', $day . ' 00:00:00');
-            $shifts = $this->shift->newQuery()
-                ->with(['location', 'schedule', 'shiftType'])
-                ->where('start', '>=', $start)
-                ->where('start', '<', $start->copy()->addDay())
-                ->orderBy('start')
-                ->get();
-
-            $columns = $this->columns($shifts);
-            $groups = $this->groups($shifts, $columns);
+            [$shifts, $columns, $groups] = $this->dayPlan($day);
             $categories = $shifts
                 ->map(fn(Shift $shift) => $this->category($shift))
                 ->filter()
@@ -108,7 +89,73 @@ class Controller extends BaseController
             // Shift popup to re-open after signing up / off
             'open_shift' => (int) $request->input('shift') ?: null,
             'open_type' => (int) $request->input('type') ?: null,
+            // Shift plan mail to a single person (plugin Startseite)
+            'send_users' => auth()->can('startseite.send_shifts') ? $this->sendUsers() : [],
         ]);
+    }
+
+    /**
+     * Users with shift entries, sorted by name
+     *
+     * @return string[] [user_id => name]
+     */
+    protected function sendUsers(): array
+    {
+        $users = User::with('personalData')
+            ->whereHas('shiftEntries')
+            ->get()
+            ->mapWithKeys(fn(User $user) => [$user->id => $user->displayName])
+            ->all();
+        natcasesort($users);
+
+        return $users;
+    }
+
+    /**
+     * Days with shifts (Y-m-d)
+     *
+     * @return string[]
+     */
+    protected function days(): array
+    {
+        return $this->shift->newQuery()
+            ->toBase()
+            ->selectRaw('DISTINCT DATE(`start`) AS `day`')
+            ->orderBy('day')
+            ->pluck('day')
+            ->map(fn($day) => (string) $day)
+            ->all();
+    }
+
+    protected function loadMainShiftType(): void
+    {
+        $this->mainShiftType = $this->shift->newQuery()
+            ->toBase()
+            ->select('shift_type_id')
+            ->groupBy('shift_type_id')
+            ->orderByRaw('COUNT(*) DESC')
+            ->value('shift_type_id');
+    }
+
+    /**
+     * Shifts, time slots and rows of a day
+     *
+     * @return array [Collection|Shift[] $shifts, array[] $columns, array[] $groups]
+     */
+    protected function dayPlan(string $day): array
+    {
+        $start = Carbon::createFromFormat('Y-m-d H:i:s', $day . ' 00:00:00');
+        $shifts = $this->shift->newQuery()
+            ->with(['location', 'schedule', 'shiftType'])
+            ->where('start', '>=', $start)
+            ->where('start', '<', $start->copy()->addDay())
+            ->orderBy('start')
+            ->get();
+
+        $columns = $this->columns($shifts);
+        $groups = $this->groups($shifts, $columns);
+
+        return [$shifts, $columns, $groups];
     }
 
     /**

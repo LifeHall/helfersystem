@@ -126,3 +126,21 @@ msgstr "Day plan visible for helpers"
 
 msgid "config.tagesplan_helpers_visible.info"
 msgstr "If switched off, only admins and shift coordinators (privilege \"tagesplan.manage\") can see the day plan."
+
+msgid "tagesplan.excel"
+msgstr "Excel export"
+
+msgid "tagesplan.excel.title"
+msgstr "Shift plan %s"
+
+msgid "tagesplan.send.person"
+msgstr "Choose person …"
+
+msgid "tagesplan.send.button"
+msgstr "Send shift plan"
+
+msgid "tagesplan.send.confirm_title"
+msgstr "Send the shift plan to the selected person?"
+
+msgid "tagesplan.send.info"
+msgstr "The selected person gets a mail with their current shift plan as PDF."

@@ -2,7 +2,7 @@
   "type": "engelsystem-plugin",
   "name": "helfersystem/startseite",
   "description": "Startseite: angepinnte News, eigene Dienste mit PDF-Download, geführtes Eintragen",
-  "version": "1.8.2",
+  "version": "1.9.0",
   "license": "GPL-2.0-or-later",
   "authors": [
     {
@@ -43,6 +43,10 @@
       "/startseite/dienste.pdf": "Helfersystem\\Startseite\\HomeController@pdf",
       "/startseite/dienste/versenden": [
         "Helfersystem\\Startseite\\HomeController@send",
+        "POST"
+      ],
+      "/startseite/dienste/versenden/person": [
+        "Helfersystem\\Startseite\\HomeController@sendOne",
         "POST"
       ],
       "/startseite/startseite.js": "Helfersystem\\Startseite\\HomeController@script",

@@ -208,6 +208,12 @@ msgstr "You are signed up for %1$s shifts with %2$s hours in total.\n\nYou can v
 msgid "startseite.send.success"
 msgstr "Shift plan sent to %s people."
 
+msgid "startseite.send.success_one"
+msgstr "Sent the shift plan to %s."
+
+msgid "startseite.send.no_user"
+msgstr "The selected person has no shifts."
+
 msgid "startseite.send.failed"
 msgstr "%s mails could not be sent, see the log for details."
 
