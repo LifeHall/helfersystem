@@ -1,0 +1,119 @@
+{% extends 'layouts/app.twig' %}
+{% import 'macros/base.twig' as m %}
+
+{% block title %}{{ __('schichtimport.check.title') }}{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <h1>{{ block('title') }} <small class="text-muted">{{ filename }}</small></h1>
+
+        {% if errors %}
+            <div class="alert alert-danger">
+                <strong>{{ __('schichtimport.check.errors', [errors|length]) }}</strong>
+                <ul class="mb-0">
+                    {% for error in errors|slice(0, 100) %}<li>{{ error }}</li>{% endfor %}
+                    {% if errors|length > 100 %}<li>…</li>{% endif %}
+                </ul>
+            </div>
+        {% endif %}
+
+        {% if warnings %}
+            <div class="alert alert-warning">
+                <strong>{{ __('schichtimport.check.warnings', [warnings|length]) }}</strong>
+                <ul class="mb-0">
+                    {% for warning in warnings|slice(0, 50) %}<li>{{ warning }}</li>{% endfor %}
+                    {% if warnings|length > 50 %}<li>…</li>{% endif %}
+                </ul>
+            </div>
+        {% endif %}
+
+        {% if create and (new_names.locations or new_names.angel_types or new_names.shift_types) %}
+            <div class="alert alert-info">
+                <strong>{{ __('schichtimport.check.new') }}</strong>
+                <ul class="mb-0">
+                    {% if new_names.locations %}<li>{{ __('schichtimport.check.new.locations') }}: {{ new_names.locations|join(', ') }}</li>{% endif %}
+                    {% if new_names.angel_types %}<li>{{ __('schichtimport.check.new.angel_types') }}: {{ new_names.angel_types|join(', ') }}</li>{% endif %}
+                    {% if new_names.shift_types %}<li>{{ __('schichtimport.check.new.shift_types') }}: {{ new_names.shift_types|join(', ') }}</li>{% endif %}
+                </ul>
+            </div>
+        {% endif %}
+
+        {% if token %}
+            <div class="alert alert-success d-flex flex-wrap align-items-center gap-3">
+                <div class="flex-grow-1">{{ __('schichtimport.check.ready', [total_shifts, total_positions]) }}</div>
+                <form method="post" action="{{ url('/schichtimport/importieren') }}" class="m-0">
+                    {{ csrf() }}
+                    <input type="hidden" name="token" value="{{ token }}">
+                    <button type="submit" class="btn btn-primary" {% if total_shifts == 0 %}disabled{% endif %}>
+                        {{ m.icon('upload') }} {{ __('schichtimport.import') }}
+                    </button>
+                </form>
+                <a href="{{ url('/schichtimport') }}" class="btn btn-secondary">{{ __('schichtimport.cancel') }}</a>
+            </div>
+        {% else %}
+            <p>
+                <a href="{{ url('/schichtimport') }}" class="btn btn-secondary">{{ m.icon('arrow-left') }} {{ __('schichtimport.back') }}</a>
+            </p>
+        {% endif %}
+
+        {% if days %}
+            <h3>{{ __('schichtimport.check.days') }}</h3>
+            <div class="table-responsive">
+                <table class="table table-sm table-striped">
+                    <thead>
+                    <tr>
+                        <th>{{ __('schichtimport.check.day') }}</th>
+                        <th class="text-end">{{ __('schichtimport.imports.shifts') }}</th>
+                        <th class="text-end">{{ __('schichtimport.check.positions') }}</th>
+                        <th>{{ __('schichtimport.check.locations') }}</th>
+                        <th class="text-end">{{ __('schichtimport.check.existing') }}</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for day, info in days %}
+                        <tr>
+                            <td>{{ day|date('D, d.m.Y') }}</td>
+                            <td class="text-end">{{ info.shifts }}</td>
+                            <td class="text-end">{{ info.positions }}</td>
+                            <td>{{ info.locations|keys|join(', ') }}</td>
+                            <td class="text-end">{{ info.existing ?: '' }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <details class="mb-4">
+                <summary>{{ __('schichtimport.check.all_shifts', [shifts|length]) }}</summary>
+                <div class="table-responsive mt-2">
+                    <table class="table table-sm table-striped">
+                        <thead>
+                        <tr>
+                            <th>{{ __('schichtimport.check.day') }}</th>
+                            <th>{{ __('schichtimport.check.time') }}</th>
+                            <th>Ort</th>
+                            <th>Schichttyp</th>
+                            <th>Titel</th>
+                            <th>{{ __('schichtimport.check.needs') }}</th>
+                            <th>{{ __('schichtimport.check.lines') }}</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for shift in shifts %}
+                            <tr {% if shift.exists %}class="text-muted text-decoration-line-through"{% endif %}>
+                                <td>{{ shift.start|date('d.m.Y') }}</td>
+                                <td>{{ shift.start|date('H:i') }} – {{ shift.end|date('H:i') }}</td>
+                                <td>{{ shift.location }}</td>
+                                <td>{{ shift.shift_type }}</td>
+                                <td>{{ shift.title }}</td>
+                                <td>{% for name, count in shift.needs %}{{ name }} {{ count }}{% if not loop.last %}, {% endif %}{% endfor %}</td>
+                                <td>{{ shift.lines|join(', ') }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </details>
+        {% endif %}
+    </div>
+{% endblock %}

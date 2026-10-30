@@ -138,3 +138,18 @@ auf 8 Orte mit mehreren Helfertypen (Atelier, Aussenbereich, Bistro, Kasse, Kerz
 Parkplatz, Wachsküche, Wachsschalen). Gleichzeitige Schichten eines Ortes werden zu einer Schicht
 mit mehreren Helfertypen zusammengelegt; setzt auch die Reihenfolge im Tagesplan.
 Aufruf siehe Kopf des Skripts (`--dry-run` für einen Testlauf).
+
+## Plugin „Schichtimport“
+
+`resources/plugins/Schichtimport/` – Menüpunkt „Schichtimport“ (`/schichtimport`, Recht `admin_shifts`,
+also Schichteinteiler): Schichten und benötigte Personen aus einer Excel-Vorlage anlegen.
+
+- Vorlage herunterladen: leer oder mit den bestehenden Schichten, Datum um n Tage verschoben
+  (364 = gleicher Wochentag im Folgejahr). Blätter „Schichten“, „Listen“ (Auswahllisten) und „Anleitung“.
+- Eine Zeile pro benötigtem Helfertyp; gleiche Zeit + Ort + Schichttyp + Titel = eine Schicht.
+- Hochladen (xlsx oder CSV) → Prüfung mit Fehlern/Hinweisen und Übersicht pro Tag → „Jetzt importieren“.
+- Bereits vorhandene gleiche Schichten werden übersprungen; fehlende Orte/Helfertypen/Schichttypen
+  werden nur auf Wunsch angelegt.
+- Jeder Import bekommt eine eigene `transaction_id` (Tabelle `schichtimport_imports`) und kann rückgängig
+  gemacht werden, solange niemand eingetragen ist.
+- Kein Zip-Modul im Container: xlsx wird mit eigenem Leser/Schreiber über zlib verarbeitet.

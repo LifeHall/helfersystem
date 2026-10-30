@@ -1,0 +1,120 @@
+{% extends 'layouts/app.twig' %}
+{% import 'macros/base.twig' as m %}
+
+{% block title %}{{ __('schichtimport.title') }}{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <h1>{{ block('title') }}</h1>
+        {% include 'layouts/parts/messages.twig' %}
+
+        <p>{{ __('schichtimport.intro') }}</p>
+
+        <div class="row g-4">
+            <div class="col-lg-6">
+                <div class="card h-100 {{ m.type_bg_class() }}">
+                    <div class="card-body">
+                        <h4 class="card-title">{{ m.icon('1-circle') }} {{ __('schichtimport.step.template') }}</h4>
+                        <p>{{ __('schichtimport.template.text') }}</p>
+                        <p>
+                            <a href="{{ url('/schichtimport/vorlage.xlsx') }}" class="btn btn-primary">
+                                {{ m.icon('file-earmark-excel') }} {{ __('schichtimport.template.empty') }}
+                            </a>
+                        </p>
+                        {% if first %}
+                            <hr>
+                            <p class="mb-2">{{ __('schichtimport.template.existing', [first.format('d.m.Y'), last.format('d.m.Y')]) }}</p>
+                            <form method="get" action="{{ url('/schichtimport/vorlage.xlsx') }}" class="row g-2 align-items-end">
+                                <input type="hidden" name="inhalt" value="schichten">
+                                <div class="col-auto">
+                                    <label for="si-days" class="form-label">{{ __('schichtimport.template.days') }}</label>
+                                    <input type="number" name="tage" id="si-days" value="364" step="1" class="form-control" style="width: 8rem">
+                                </div>
+                                <div class="col-auto">
+                                    <button type="submit" class="btn btn-secondary">
+                                        {{ m.icon('file-earmark-arrow-down') }} {{ __('schichtimport.template.download_existing') }}
+                                    </button>
+                                </div>
+                                <div class="col-12 form-text">{{ __('schichtimport.template.days_info') }}</div>
+                            </form>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <div class="card h-100 {{ m.type_bg_class() }}">
+                    <div class="card-body">
+                        <h4 class="card-title">{{ m.icon('2-circle') }} {{ __('schichtimport.step.upload') }}</h4>
+                        <form method="post" action="{{ url('/schichtimport/pruefen') }}" enctype="multipart/form-data">
+                            {{ csrf() }}
+                            <div class="mb-3">
+                                <label for="si-file" class="form-label">{{ __('schichtimport.file') }}</label>
+                                <input type="file" name="datei" id="si-file" class="form-control" accept=".xlsx,.csv" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="si-type" class="form-label">{{ __('schichtimport.default_shift_type') }}</label>
+                                <select name="schichttyp" id="si-type" class="form-select">
+                                    {% for id, name in shift_types %}
+                                        <option value="{{ id }}" {% if id == default_shift_type %}selected{% endif %}>{{ name }}</option>
+                                    {% endfor %}
+                                </select>
+                                <div class="form-text">{{ __('schichtimport.default_shift_type.info') }}</div>
+                            </div>
+                            <div class="form-check mb-3">
+                                <input type="checkbox" name="anlegen" value="1" id="si-create" class="form-check-input">
+                                <label for="si-create" class="form-check-label">{{ __('schichtimport.create_missing') }}</label>
+                            </div>
+                            <button type="submit" class="btn btn-primary">{{ m.icon('search') }} {{ __('schichtimport.check') }}</button>
+                            <div class="form-text">{{ __('schichtimport.check.info') }}</div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h3 class="mt-4">{{ __('schichtimport.imports') }}</h3>
+        {% if imports is empty %}
+            <p class="text-muted">{{ __('schichtimport.imports.none') }}</p>
+        {% else %}
+            <div class="table-responsive">
+                <table class="table table-striped align-middle">
+                    <thead>
+                    <tr>
+                        <th>{{ __('schichtimport.imports.date') }}</th>
+                        <th>{{ __('schichtimport.file') }}</th>
+                        <th>{{ __('schichtimport.imports.period') }}</th>
+                        <th class="text-end">{{ __('schichtimport.imports.shifts') }}</th>
+                        <th class="text-end">{{ __('schichtimport.imports.entries') }}</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for import in imports %}
+                        <tr>
+                            <td>{{ import.created_at|date('d.m.Y H:i') }}</td>
+                            <td>{{ import.filename }}</td>
+                            <td>{% if import.first %}{{ import.first|date('d.m.Y') }} – {{ import.last|date('d.m.Y') }}{% endif %}</td>
+                            <td class="text-end">{{ import.remaining }} / {{ import.shifts }}</td>
+                            <td class="text-end">{{ import.entries }}</td>
+                            <td class="text-end">
+                                {% if import.remaining > 0 and import.entries == 0 %}
+                                    <form method="post" action="{{ url('/schichtimport/rueckgaengig') }}" class="m-0">
+                                        {{ csrf() }}
+                                        <input type="hidden" name="transaction_id" value="{{ import.transaction_id }}">
+                                        <button type="submit" class="btn btn-sm btn-danger"
+                                            data-confirm_submit_title="{{ __('schichtimport.undo') }}"
+                                            data-confirm_submit_text="{{ __('schichtimport.undo.confirm', [import.remaining]) }}">{{ m.icon('arrow-counterclockwise') }} {{ __('schichtimport.undo') }}</button>
+                                    </form>
+                                {% elseif import.entries > 0 %}
+                                    <span class="small text-muted">{{ __('schichtimport.undo.not_possible') }}</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

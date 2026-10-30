@@ -1,0 +1,39 @@
+{
+  "type": "engelsystem-plugin",
+  "name": "helfersystem/schichtimport",
+  "description": "Import der Schichten und benötigten Helfer aus einer Excel-Vorlage",
+  "version": "1.0.0",
+  "license": "GPL-2.0-or-later",
+  "authors": [
+    {
+      "name": "befritscht",
+      "email": "beat.fritschi@brutsch.com"
+    }
+  ],
+  "extra": {
+    "providers": [
+      "Helfersystem\\Schichtimport\\ServiceProvider"
+    ],
+    "routes": {
+      "/schichtimport": "Helfersystem\\Schichtimport\\Controller@index",
+      "/schichtimport/vorlage.xlsx": "Helfersystem\\Schichtimport\\Controller@template",
+      "/schichtimport/pruefen": [
+        "Helfersystem\\Schichtimport\\Controller@check",
+        "POST"
+      ],
+      "/schichtimport/importieren": [
+        "Helfersystem\\Schichtimport\\Controller@import",
+        "POST"
+      ],
+      "/schichtimport/rueckgaengig": [
+        "Helfersystem\\Schichtimport\\Controller@undo",
+        "POST"
+      ]
+    }
+  },
+  "autoload": {
+    "psr-4": {
+      "Helfersystem\\Schichtimport\\": "src/"
+    }
+  }
+}
