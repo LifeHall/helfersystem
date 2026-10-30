@@ -197,3 +197,36 @@ msgstr "Row %s: count 0 for \"%s\", row is ignored."
 msgid "schichtimport.warning.exists"
 msgstr "Row %s: the shift already exists and is skipped."
 
+msgid "schichtimport.delete.title"
+msgstr "Delete shifts"
+
+msgid "schichtimport.delete.intro"
+msgstr "Delete all shifts of a day at a location (or at all locations). Signed up people are informed by mail as usual."
+
+msgid "schichtimport.delete.location"
+msgstr "Location"
+
+msgid "schichtimport.delete.all_locations"
+msgstr "All locations"
+
+msgid "schichtimport.delete.show"
+msgstr "Show shifts"
+
+msgid "schichtimport.delete.none"
+msgstr "There are no shifts there on this day."
+
+msgid "schichtimport.delete.summary"
+msgstr "%s shifts with %s sign-ups will be deleted."
+
+msgid "schichtimport.delete.with_entries"
+msgstr "Also delete the %s sign-ups (the people are informed)"
+
+msgid "schichtimport.delete.button"
+msgstr "Delete %s shifts"
+
+msgid "schichtimport.delete.confirm"
+msgstr "%s shifts will be deleted permanently."
+
+msgid "schichtimport.delete.done"
+msgstr "%s shifts deleted."
+

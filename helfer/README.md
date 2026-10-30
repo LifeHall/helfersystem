@@ -152,4 +152,6 @@ also Schichteinteiler): Schichten und benötigte Personen aus einer Excel-Vorlag
   werden nur auf Wunsch angelegt.
 - Jeder Import bekommt eine eigene `transaction_id` (Tabelle `schichtimport_imports`) und kann rückgängig
   gemacht werden, solange niemand eingetragen ist.
+- „Schichten löschen“: alle Schichten eines Tages an einem Ort (oder allen Orten) mit Vorschau löschen;
+  Eingetragene werden wie im Kern informiert (Ereignis `shift.deleting`), dafür ist ein Häkchen nötig.
 - Kein Zip-Modul im Container: xlsx wird mit eigenem Leser/Schreiber über zlib verarbeitet.

@@ -197,3 +197,36 @@ msgstr "Zeile %s: Anzahl 0 bei „%s“, Zeile wird ignoriert."
 msgid "schichtimport.warning.exists"
 msgstr "Zeile %s: Die Schicht gibt es schon, sie wird übersprungen."
 
+msgid "schichtimport.delete.title"
+msgstr "Schichten löschen"
+
+msgid "schichtimport.delete.intro"
+msgstr "Alle Schichten eines Tages an einem Ort (oder an allen Orten) löschen. Eingetragene Personen werden wie beim Löschen im System per Mail informiert."
+
+msgid "schichtimport.delete.location"
+msgstr "Ort"
+
+msgid "schichtimport.delete.all_locations"
+msgstr "Alle Orte"
+
+msgid "schichtimport.delete.show"
+msgstr "Schichten anzeigen"
+
+msgid "schichtimport.delete.none"
+msgstr "An diesem Tag gibt es dort keine Schichten."
+
+msgid "schichtimport.delete.summary"
+msgstr "%s Schichten mit %s Eintragungen werden gelöscht."
+
+msgid "schichtimport.delete.with_entries"
+msgstr "Auch die %s Eintragungen löschen (die Personen werden informiert)"
+
+msgid "schichtimport.delete.button"
+msgstr "%s Schichten löschen"
+
+msgid "schichtimport.delete.confirm"
+msgstr "%s Schichten werden endgültig gelöscht."
+
+msgid "schichtimport.delete.done"
+msgstr "%s Schichten gelöscht."
+

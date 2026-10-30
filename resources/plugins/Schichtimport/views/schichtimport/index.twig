@@ -75,6 +75,84 @@
             </div>
         </div>
 
+
+        <h3 class="mt-4" id="loeschen">{{ __('schichtimport.delete.title') }}</h3>
+        <p>{{ __('schichtimport.delete.intro') }}</p>
+        <form method="get" action="{{ url('/schichtimport') }}#loeschen" class="row g-2 align-items-end mb-3">
+            <div class="col-auto">
+                <label for="si-del-day" class="form-label">{{ __('schichtimport.check.day') }}</label>
+                <select name="tag" id="si-del-day" class="form-select" required>
+                    <option value=""></option>
+                    {% for value, label in delete.days %}
+                        <option value="{{ value }}" {% if value == delete.day %}selected{% endif %}>{{ value|date('D') }}, {{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-auto">
+                <label for="si-del-location" class="form-label">{{ __('schichtimport.delete.location') }}</label>
+                <select name="ort" id="si-del-location" class="form-select">
+                    <option value="0">{{ __('schichtimport.delete.all_locations') }}</option>
+                    {% for id, name in delete.locations %}
+                        <option value="{{ id }}" {% if id == delete.location %}selected{% endif %}>{{ name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-auto">
+                {# Without type attribute, see above #}
+                <button class="btn btn-secondary">{{ m.icon('search') }} {{ __('schichtimport.delete.show') }}</button>
+            </div>
+        </form>
+
+        {% if delete.shifts is not null %}
+            {% if delete.shifts is empty %}
+                <div class="alert alert-info">{{ __('schichtimport.delete.none') }}</div>
+            {% else %}
+                <div class="table-responsive">
+                    <table class="table table-sm table-striped">
+                        <thead>
+                        <tr>
+                            <th>{{ __('schichtimport.check.time') }}</th>
+                            <th>{{ __('schichtimport.delete.location') }}</th>
+                            <th>Schichttyp</th>
+                            <th>Titel</th>
+                            <th>{{ __('schichtimport.check.needs') }}</th>
+                            <th>{{ __('schichtimport.imports.entries') }}</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for shift in delete.shifts %}
+                            <tr>
+                                <td>{{ shift.start.format('H:i') }} – {{ shift.end.format('H:i') }}</td>
+                                <td>{{ shift.location.name }}</td>
+                                <td>{{ shift.shiftType.name }}</td>
+                                <td>{{ shift.title }}</td>
+                                <td>{% for need in shift.neededAngelTypes %}{{ need.angelType.name }} {{ need.count }}{% if not loop.last %}, {% endif %}{% endfor %}</td>
+                                <td>{% for entry in shift.shiftEntries %}{{ entry.user.displayName }} ({{ entry.angelType.name }}){% if not loop.last %}, {% endif %}{% endfor %}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <form method="post" action="{{ url('/schichtimport/loeschen') }}" class="alert alert-danger">
+                    {{ csrf() }}
+                    <input type="hidden" name="tag" value="{{ delete.day }}">
+                    <input type="hidden" name="ort" value="{{ delete.location }}">
+                    <p class="mb-2">{{ __('schichtimport.delete.summary', [delete.shifts|length, delete.entries]) }}</p>
+                    {% if delete.entries > 0 %}
+                        <div class="form-check mb-2">
+                            <input type="checkbox" name="mit_eintragungen" value="1" id="si-del-entries" class="form-check-input" required>
+                            <label for="si-del-entries" class="form-check-label">{{ __('schichtimport.delete.with_entries', [delete.entries]) }}</label>
+                        </div>
+                    {% endif %}
+                    <button class="btn btn-danger"
+                        data-confirm_submit_title="{{ __('schichtimport.delete.title') }}"
+                        data-confirm_submit_text="{{ __('schichtimport.delete.confirm', [delete.shifts|length]) }}">
+                        {{ m.icon('trash') }} {{ __('schichtimport.delete.button', [delete.shifts|length]) }}
+                    </button>
+                </form>
+            {% endif %}
+        {% endif %}
+
         <h3 class="mt-4">{{ __('schichtimport.imports') }}</h3>
         {% if imports is empty %}
             <p class="text-muted">{{ __('schichtimport.imports.none') }}</p>

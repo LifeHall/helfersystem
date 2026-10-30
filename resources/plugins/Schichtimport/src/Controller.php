@@ -17,6 +17,7 @@ use Engelsystem\Models\Shifts\Shift;
 use Engelsystem\Models\Shifts\ShiftEntry;
 use Engelsystem\Models\Shifts\ShiftType;
 use Illuminate\Database\Capsule\Manager as Capsule;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Throwable;
@@ -38,7 +39,7 @@ class Controller extends BaseController
     ) {
     }
 
-    public function index(): Response
+    public function index(Request $request): Response
     {
         $imports = Capsule::table('schichtimport_imports')->orderByDesc('id')->get()
             ->map(function ($import) {
@@ -56,6 +57,7 @@ class Controller extends BaseController
             'imports' => $imports,
             'shift_types' => ShiftType::orderBy('name')->pluck('name', 'id'),
             'default_shift_type' => $this->mainShiftType(),
+            'delete' => $this->deletePreview($request),
             'first' => $range?->first ? Carbon::make($range->first) : null,
             'last' => $range?->last ? Carbon::make($range->last) : null,
         ]);
@@ -267,6 +269,86 @@ class Controller extends BaseController
         engelsystem_log(sprintf('Schichtimport: %d Schichten des Imports %s gelöscht', $shifts->count(), $transactionId));
 
         return $this->back(__('schichtimport.undone', [$shifts->count()]));
+    }
+
+    /**
+     * Deletes the shifts of a day at a location (or at all locations),
+     * signed up people are informed like when deleting shifts in the core
+     */
+    public function delete(Request $request): Response
+    {
+        $day = (string) $request->postData('tag');
+        $locationId = (int) $request->postData('ort');
+        $shifts = $this->shiftsOfDay($day, $locationId);
+        if ($shifts === null || $shifts->isEmpty()) {
+            return $this->back(__('schichtimport.delete.none'), NotificationType::ERROR);
+        }
+
+        $entries = $shifts->sum(fn(Shift $shift) => $shift->shiftEntries->count());
+        if ($entries > 0 && !$request->postData('mit_eintragungen')) {
+            return $this->response->redirectTo(url('/schichtimport', ['tag' => $day, 'ort' => $locationId]) . '#loeschen');
+        }
+
+        Capsule::connection()->transaction(function () use ($shifts): void {
+            foreach ($shifts as $shift) {
+                event('shift.deleting', ['shift' => $shift]);
+                $shift->delete();
+            }
+        });
+        engelsystem_log(sprintf(
+            'Schichtimport: %d Schichten am %s gelöscht (%s, %d Eintragungen)',
+            $shifts->count(),
+            $day,
+            $locationId ? Location::find($locationId)?->name : 'alle Orte',
+            $entries
+        ));
+
+        return $this->back(__('schichtimport.delete.done', [$shifts->count()]));
+    }
+
+    /**
+     * Days and locations to choose and the shifts that would be deleted
+     */
+    protected function deletePreview(Request $request): array
+    {
+        $day = (string) $request->input('tag');
+        $locationId = (int) $request->input('ort');
+        $shifts = $day ? $this->shiftsOfDay($day, $locationId) : null;
+
+        return [
+            'days' => Shift::query()->toBase()
+                ->selectRaw('DISTINCT DATE(`start`) AS `day`')
+                ->orderBy('day')
+                ->pluck('day')
+                ->mapWithKeys(fn($value) => [(string) $value => Carbon::make($value)->format('d.m.Y')])
+                ->all(),
+            'locations' => Location::orderBy('name')->pluck('name', 'id')->all(),
+            'day' => $day,
+            'location' => $locationId,
+            'shifts' => $shifts,
+            'entries' => $shifts?->sum(fn(Shift $shift) => $shift->shiftEntries->count()) ?? 0,
+        ];
+    }
+
+    /**
+     * Shifts starting on the day, at one location or at all locations (0)
+     *
+     * @return Collection|Shift[]|null
+     */
+    protected function shiftsOfDay(string $day, int $locationId): ?Collection
+    {
+        if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $day)) {
+            return null;
+        }
+
+        $start = Carbon::createFromFormat('Y-m-d H:i:s', $day . ' 00:00:00');
+
+        return Shift::with(['location', 'shiftType', 'neededAngelTypes.angelType', 'shiftEntries.user', 'shiftEntries.angelType'])
+            ->where('start', '>=', $start)
+            ->where('start', '<', $start->copy()->addDay())
+            ->when($locationId, fn($query) => $query->where('location_id', $locationId))
+            ->orderBy('start')
+            ->get();
     }
 
     protected function instructions(TemplateWriter $xlsx): void
