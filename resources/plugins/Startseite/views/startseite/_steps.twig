@@ -3,7 +3,7 @@
     {% for number, label in {
         1: __('startseite.signup.step.types'),
         2: __('startseite.signup.step.days'),
-        3: __('startseite.signup.step.table')
+        3: auto|default(false) ? __('startseite.auto.step.wishes') : __('startseite.signup.step.table')
     } %}
         <li class="badge rounded-pill fs-6 fw-normal {{ number == step ? 'bg-primary' : (number < step ? 'bg-success' : 'bg-secondary') }}">
             {% if number < step %}{{ m.icon('check-lg') }}{% else %}{{ number }}.{% endif %}

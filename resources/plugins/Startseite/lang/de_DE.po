@@ -242,3 +242,87 @@ msgstr "Events"
 # Link on the login page, the key exists in the core only since 2026-10
 msgid "angeltype.about"
 msgstr "Teams-/Aufgabenbeschreibung"
+
+msgid "startseite.auto.title"
+msgstr "Automatisch einteilen lassen"
+
+msgid "startseite.auto.start"
+msgstr "Automatisch einteilen lassen"
+
+msgid "startseite.auto.adjust"
+msgstr "Wünsche anpassen"
+
+msgid "startseite.auto.step.wishes"
+msgstr "Zeiten und Anzahl"
+
+msgid "startseite.auto.info"
+msgstr "Gib pro Tag an, von wann bis wann du Zeit hast, und wie viele Dienste du insgesamt übernehmen möchtest. Das System teilt dich in passende Dienste ein. Damit möglichst viele Helfer ihre Wünsche erfüllt bekommen, kann ein automatisch eingeteilter Dienst später innerhalb deiner Angaben verschoben werden – du bekommst dann eine Mail."
+
+msgid "startseite.auto.windows"
+msgstr "Zeitfenster pro Tag"
+
+msgid "startseite.auto.from"
+msgstr "Von"
+
+msgid "startseite.auto.to"
+msgstr "Bis"
+
+msgid "startseite.auto.count"
+msgstr "Anzahl Dienste insgesamt"
+
+msgid "startseite.auto.count.info"
+msgstr "Dienste, für die du schon eingetragen bist, zählen dazu."
+
+msgid "startseite.auto.submit"
+msgstr "Einteilen"
+
+msgid "startseite.auto.invalid_window"
+msgstr "Das Zeitfenster für %s ist ungültig: „Bis“ muss nach „Von“ liegen."
+
+msgid "startseite.auto.result"
+msgstr "Du bist für %1$s von %2$s gewünschten Diensten eingeteilt."
+
+msgid "startseite.auto.open_info"
+msgstr "Sobald ein passender Platz frei wird, teilt dich das System automatisch ein. Du kannst auch dein Zeitfenster oder deine Helferdienste erweitern."
+
+msgid "startseite.auto.status"
+msgstr "Automatische Einteilung: %1$s von %2$s gewünschten Diensten. Sobald ein passender Platz frei wird, wirst du eingeteilt."
+
+msgid "startseite.auto.delete"
+msgstr "Automatische Einteilung beenden"
+
+msgid "startseite.auto.delete.info"
+msgstr "Deine Dienste bleiben bestehen, werden aber nicht mehr automatisch verschoben oder ergänzt."
+
+msgid "startseite.auto.deleted"
+msgstr "Die automatische Einteilung ist beendet. Deine Dienste bleiben bestehen."
+
+msgid "startseite.auto.fill"
+msgstr "Offene Wünsche einteilen"
+
+msgid "startseite.auto.fill.info"
+msgstr "Teilt alle Helfer ein, deren automatische Einteilung noch nicht erfüllt ist (z. B. nach neuen Schichten)."
+
+msgid "startseite.auto.filled"
+msgstr "Offene Wünsche eingeteilt: %s Dienste vergeben."
+
+msgid "startseite.signup.rebook"
+msgstr "Umbuchung"
+
+msgid "startseite.signup.rebook.info"
+msgstr "Voll, aber ein automatisch eingeteilter Helfer kann für dich auf einen anderen Dienst wechseln."
+
+msgid "startseite.signup.legend.rebook"
+msgstr "Frei durch Umbuchung"
+
+msgid "startseite.rebooked.subject"
+msgstr "Dein Dienst wurde verschoben"
+
+msgid "startseite.rebooked.introduction"
+msgstr "damit ein weiterer Helfer mitarbeiten kann, hat die automatische Einteilung von %s einen deiner Dienste innerhalb deiner Angaben verschoben:"
+
+msgid "startseite.rebooked.move"
+msgstr "%1$s → neu: %2$s"
+
+msgid "startseite.rebooked.text"
+msgstr "Du bist jetzt für %1$s Dienste mit insgesamt %2$s Stunden eingetragen, dein aktueller Dienstplan ist im Anhang.\n\nDeine Dienste kannst du jederzeit hier ansehen:\n%3$s"

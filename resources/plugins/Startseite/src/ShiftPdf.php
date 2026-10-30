@@ -23,7 +23,7 @@ class ShiftPdf
     protected array $columns = [];
 
     /**
-     * @param array[] $days Shift days from HomeController::shiftDays()
+     * @param array[] $days Shift days from ShiftDays::forUser()
      */
     public function render(string $name, string $appName, array $days): string
     {

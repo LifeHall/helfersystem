@@ -2,7 +2,7 @@
   "type": "engelsystem-plugin",
   "name": "helfersystem/startseite",
   "description": "Startseite: angepinnte News, eigene Dienste mit PDF-Download, geführtes Eintragen",
-  "version": "1.9.2",
+  "version": "1.10.0",
   "license": "GPL-2.0-or-later",
   "authors": [
     {
@@ -67,6 +67,19 @@
       "/startseite/eintragen/auswahl": "Helfersystem\\Startseite\\SignupController@table",
       "/startseite/eintragen/auswahl/speichern": [
         "Helfersystem\\Startseite\\SignupController@saveTable",
+        "POST"
+      ],
+      "/startseite/automatisch": "Helfersystem\\Startseite\\AutoController@wishes",
+      "/startseite/automatisch/speichern": [
+        "Helfersystem\\Startseite\\AutoController@save",
+        "POST"
+      ],
+      "/startseite/automatisch/loeschen": [
+        "Helfersystem\\Startseite\\AutoController@delete",
+        "POST"
+      ],
+      "/startseite/automatisch/offene": [
+        "Helfersystem\\Startseite\\AutoController@fill",
         "POST"
       ]
     }

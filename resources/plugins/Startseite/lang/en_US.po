@@ -242,3 +242,87 @@ msgstr "Events"
 # Link on the login page, the key exists in the core only since 2026-10
 msgid "angeltype.about"
 msgstr "Team/Task description"
+
+msgid "startseite.auto.title"
+msgstr "Get assigned automatically"
+
+msgid "startseite.auto.start"
+msgstr "Get assigned automatically"
+
+msgid "startseite.auto.adjust"
+msgstr "Adjust wishes"
+
+msgid "startseite.auto.step.wishes"
+msgstr "Times and number"
+
+msgid "startseite.auto.info"
+msgstr "For each day, choose when you are available and how many shifts you want to do in total. The system assigns you to matching shifts. So that as many helpers as possible get their wishes, an automatically assigned shift may later be moved within your choices – you will get a mail then."
+
+msgid "startseite.auto.windows"
+msgstr "Time window per day"
+
+msgid "startseite.auto.from"
+msgstr "From"
+
+msgid "startseite.auto.to"
+msgstr "To"
+
+msgid "startseite.auto.count"
+msgstr "Number of shifts in total"
+
+msgid "startseite.auto.count.info"
+msgstr "Shifts you are already signed up for count too."
+
+msgid "startseite.auto.submit"
+msgstr "Assign"
+
+msgid "startseite.auto.invalid_window"
+msgstr "The time window for %s is invalid: \"To\" must be after \"From\"."
+
+msgid "startseite.auto.result"
+msgstr "You are assigned to %1$s of %2$s wanted shifts."
+
+msgid "startseite.auto.open_info"
+msgstr "As soon as a matching place becomes free, the system assigns you automatically. You can also widen your time windows or helper types."
+
+msgid "startseite.auto.status"
+msgstr "Automatic assignment: %1$s of %2$s wanted shifts. You will be assigned as soon as a matching place becomes free."
+
+msgid "startseite.auto.delete"
+msgstr "Stop the automatic assignment"
+
+msgid "startseite.auto.delete.info"
+msgstr "Your shifts stay, but they are no longer moved or added automatically."
+
+msgid "startseite.auto.deleted"
+msgstr "The automatic assignment is stopped. Your shifts stay."
+
+msgid "startseite.auto.fill"
+msgstr "Assign open wishes"
+
+msgid "startseite.auto.fill.info"
+msgstr "Assigns all helpers whose automatic assignment is not fulfilled yet (e.g. after new shifts)."
+
+msgid "startseite.auto.filled"
+msgstr "Open wishes assigned: %s shifts given."
+
+msgid "startseite.signup.rebook"
+msgstr "Rebooking"
+
+msgid "startseite.signup.rebook.info"
+msgstr "Full, but an automatically assigned helper can switch to another shift for you."
+
+msgid "startseite.signup.legend.rebook"
+msgstr "Free by rebooking"
+
+msgid "startseite.rebooked.subject"
+msgstr "Your shift was moved"
+
+msgid "startseite.rebooked.introduction"
+msgstr "so another helper can join, the automatic assignment of %s moved one of your shifts within your choices:"
+
+msgid "startseite.rebooked.move"
+msgstr "%1$s → new: %2$s"
+
+msgid "startseite.rebooked.text"
+msgstr "You are now signed up for %1$s shifts with %2$s hours in total, your current shift plan is attached.\n\nYou can see your shifts here at any time:\n%3$s"

@@ -12,7 +12,6 @@ use Engelsystem\Helpers\Carbon;
 use Engelsystem\Http\Request;
 use Engelsystem\Http\Response;
 use Engelsystem\Models\AngelType;
-use Engelsystem\Models\Shifts\NeededAngelType;
 use Engelsystem\Models\Shifts\Shift;
 use Engelsystem\Models\Shifts\ShiftEntry;
 use Engelsystem\Models\Shifts\ShiftSignupStatus;
@@ -44,17 +43,33 @@ class SignupController extends BaseController
     /** @var bool[] Can manage by angel type id */
     protected array $manage = [];
 
+    protected bool $assignerLoaded = false;
+
     public function __construct(
         protected Authenticator $auth,
         protected Response $response,
-        protected ApprovalNotifier $notifier
+        protected ApprovalNotifier $notifier,
+        protected AutoAssigner $assigner
     ) {
+    }
+
+    /**
+     * Steps 1 and 2 are shared with the automatic assignment, which goes on to its wishes instead of the table
+     */
+    protected function isAuto(Request $request): bool
+    {
+        return $request->input('modus') === 'auto';
+    }
+
+    protected function stepUrl(string $path, bool $auto): string
+    {
+        return url($path, $auto ? ['modus' => 'auto'] : []);
     }
 
     /**
      * Step 1: helper types
      */
-    public function types(): Response
+    public function types(Request $request): Response
     {
         $user = $this->auth->user();
         $choice = $this->choice($user);
@@ -91,6 +106,7 @@ class SignupController extends BaseController
         return $this->response->withView('startseite/signup-types', [
             'types' => $types,
             'step' => 1,
+            'auto' => $this->isAuto($request),
         ]);
     }
 
@@ -101,14 +117,14 @@ class SignupController extends BaseController
 
         if (!$selected) {
             $this->addNotification('startseite.signup.no_types', NotificationType::ERROR);
-            return $this->response->redirectTo(url('/startseite/eintragen'));
+            return $this->response->redirectTo($this->stepUrl('/startseite/eintragen', $this->isAuto($request)));
         }
 
         $choice = $this->choice($user);
         $choice->angel_types = $selected;
         $choice->save();
 
-        return $this->response->redirectTo(url('/startseite/eintragen/tage'));
+        return $this->response->redirectTo($this->stepUrl('/startseite/eintragen/tage', $this->isAuto($request)));
     }
 
     /**
@@ -129,7 +145,7 @@ class SignupController extends BaseController
                 $this->membership($user, $type) ? 'startseite.signup.type_pending' : 'startseite.signup.not_allowed',
                 NotificationType::ERROR
             );
-            return $this->response->redirectTo(url('/startseite/eintragen'));
+            return $this->response->redirectTo($this->stepUrl('/startseite/eintragen', $this->isAuto($request)));
         }
 
         $userAngelType = new UserAngelType();
@@ -146,18 +162,21 @@ class SignupController extends BaseController
         $this->notifier->notify($user, $type);
         $this->addNotification(__('startseite.signup.request.success', [$type->name]));
 
-        return $this->response->redirectTo(url('/startseite/eintragen') . '#type-' . $type->id);
+        return $this->response->redirectTo(
+            $this->stepUrl('/startseite/eintragen', $this->isAuto($request)) . '#type-' . $type->id
+        );
     }
 
     /**
      * Step 2: days
      */
-    public function days(): Response
+    public function days(Request $request): Response
     {
         $user = $this->auth->user();
         $choice = $this->choice($user);
+        $auto = $this->isAuto($request);
         if (!$choice->angel_types) {
-            return $this->response->redirectTo(url('/startseite/eintragen'));
+            return $this->response->redirectTo($this->stepUrl('/startseite/eintragen', $auto));
         }
 
         $chosen = $this->chosenDays($choice);
@@ -169,6 +188,7 @@ class SignupController extends BaseController
         return $this->response->withView('startseite/signup-days', [
             'days' => $days,
             'step' => 2,
+            'auto' => $auto,
         ]);
     }
 
@@ -189,13 +209,15 @@ class SignupController extends BaseController
 
         if (!$days) {
             $this->addNotification('startseite.signup.no_days', NotificationType::ERROR);
-            return $this->response->redirectTo(url('/startseite/eintragen/tage'));
+            return $this->response->redirectTo($this->stepUrl('/startseite/eintragen/tage', $this->isAuto($request)));
         }
 
         $choice->days = $days;
         $choice->save();
 
-        return $this->response->redirectTo(url('/startseite/eintragen/auswahl'));
+        return $this->response->redirectTo(url(
+            $this->isAuto($request) ? '/startseite/automatisch' : '/startseite/eintragen/auswahl'
+        ));
     }
 
     /**
@@ -255,6 +277,7 @@ class SignupController extends BaseController
         return $this->response->withView('startseite/signup-table', [
             'tables' => $tables,
             'categories' => $cells->pluck('category')->filter()->unique('name')->sortBy('name')->values()->all(),
+            'rebook' => $cells->contains(fn(array $cell) => $cell['rebook'] ?? false),
             'step' => 3,
         ]);
     }
@@ -280,6 +303,12 @@ class SignupController extends BaseController
      * Signs off from unticked own slots and signs up for the newly ticked ones
      */
     public function saveTable(Request $request): Response
+    {
+        // Under the lock of the automatic assignment, it may move helpers to make room
+        return $this->assigner->run(fn() => $this->saveTableLocked($request));
+    }
+
+    protected function saveTableLocked(Request $request): Response
     {
         $user = $this->auth->user();
         $choice = $this->choice($user);
@@ -314,11 +343,18 @@ class SignupController extends BaseController
             $shift = $cell['shift'];
             /** @var AngelType $type */
             $type = $cell['type'];
-            $state = $this->signupState($user, $cell, $userShifts);
-            $free = $cell['count'] - ShiftEntry::whereShiftId($shift->id)
+            $taken = ShiftEntry::whereShiftId($shift->id)
                 ->where('angel_type_id', $type->id)
                 ->whereNull('freeloaded_by')
                 ->count();
+            $free = $cell['count'] - $taken;
+
+            // A full slot is checked as if it had a free place, which is made by moving automatically assigned helpers
+            $state = $this->signupState($user, $free > 0 ? $cell : ['count' => $taken + 1] + $cell, $userShifts);
+            if ($free <= 0 && $state->isSignupAllowed() && !$user->isFreeloader()) {
+                $this->assigner->load();
+                $free = $this->assigner->makeRoom($cell['key'], $user->id, array_keys($ticked)) ? 1 : 0;
+            }
 
             if (!$state->isSignupAllowed() || $free <= 0 || $user->isFreeloader()) {
                 $errors[] = __('startseite.signup.failed', [
@@ -350,6 +386,12 @@ class SignupController extends BaseController
             $added++;
         }
 
+        // Freed places can fulfill wishes of the automatic assignment
+        if ($removed) {
+            $this->assigner->load();
+            $this->assigner->fillOpen();
+        }
+
         if ($added || $removed) {
             $this->addNotification(__('startseite.signup.saved', [$added, $removed]));
         } elseif (!$errors) {
@@ -368,62 +410,12 @@ class SignupController extends BaseController
     }
 
     /**
-     * Needed helper types of all shifts that have not ended yet
-     *
-     * Same sources as NeededAngelTypes_by_shift(), but loaded for all shifts at once
-     *
      * @param int[]|null $typeIds Only these helper types
-     * @return Collection|array[] [['key', 'shift', 'type', 'day', 'from', 'to', 'count', 'taken']]
+     * @return Collection|array[] See Slots::load()
      */
     protected function slots(?array $typeIds = null): Collection
     {
-        $shifts = Shift::with(['location', 'shiftType', 'schedule'])
-            ->where('end', '>', Carbon::now())
-            ->orderBy('start')
-            ->get();
-        if ($shifts->isEmpty()) {
-            return new Collection();
-        }
-
-        $byShift = NeededAngelType::whereIn('shift_id', $shifts->pluck('id'))->get()->groupBy('shift_id');
-        $byShiftType = NeededAngelType::whereNotNull('shift_type_id')->get()->groupBy('shift_type_id');
-        $byLocation = NeededAngelType::whereNotNull('location_id')->get()->groupBy('location_id');
-        $taken = ShiftEntry::whereIn('shift_id', $shifts->pluck('id'))
-            ->whereNull('freeloaded_by')
-            ->get()
-            ->countBy(fn(ShiftEntry $entry) => $entry->shift_id . ':' . $entry->angel_type_id);
-        $types = AngelType::all()->keyBy('id');
-
-        $slots = [];
-        foreach ($shifts as $shift) {
-            $needs = match (true) {
-                !$shift->schedule => $byShift[$shift->id] ?? null,
-                (bool) $shift->schedule->needed_from_shift_type => $byShiftType[$shift->shift_type_id] ?? null,
-                default => $byLocation[$shift->location_id] ?? null,
-            };
-
-            $dayStart = $shift->start->copy()->startOfDay();
-            foreach (($needs ?? new Collection())->groupBy('angel_type_id') as $typeId => $typeNeeds) {
-                $key = $shift->id . ':' . $typeId;
-                $count = (int) $typeNeeds->max('count');
-                if (($typeIds !== null && !in_array($typeId, $typeIds)) || (!$count && !isset($taken[$key]))) {
-                    continue;
-                }
-
-                $slots[] = [
-                    'key' => $key,
-                    'shift' => $shift,
-                    'type' => $types[$typeId],
-                    'day' => $shift->start->format('Y-m-d'),
-                    'from' => intdiv($shift->start->timestamp - $dayStart->timestamp, 60),
-                    'to' => intdiv($shift->end->timestamp - $dayStart->timestamp, 60),
-                    'count' => $count,
-                    'taken' => $taken[$key] ?? 0,
-                ];
-            }
-        }
-
-        return new Collection($slots);
+        return Slots::load($typeIds);
     }
 
     /**
@@ -469,11 +461,14 @@ class SignupController extends BaseController
                 }
 
                 $reason = null;
+                $rebook = false;
                 if ($entry && !in_array($entry->shift_id, $releasable)) {
                     $reason = __('startseite.signup.other_type');
                 } elseif ($free <= 0) {
-                    // Full slots are greyed out for everybody, also for admins
-                    $reason = __('startseite.signup.full');
+                    // Full slots can only be chosen if automatically assigned helpers can move to make room,
+                    // else they are greyed out for everybody, also for admins
+                    $rebook = $this->canRebook($user, $slot, $userShifts);
+                    $reason = $rebook ? null : __('startseite.signup.full');
                 } else {
                     $state = $this->signupState($user, $slot, $userShifts);
                     $reason = $state->isSignupAllowed() ? null : $this->stateMessage($state);
@@ -485,8 +480,28 @@ class SignupController extends BaseController
                     'disabled' => (bool) $reason,
                     'free' => $free,
                     'reason' => $reason,
+                    'rebook' => $rebook,
                 ];
             });
+    }
+
+    /**
+     * The user could sign up for the full slot if it had a free place, and automatically assigned helpers
+     * can be moved to make one
+     */
+    protected function canRebook(User $user, array $slot, Collection $userShifts): bool
+    {
+        $state = $this->signupState($user, ['count' => $slot['taken'] + 1] + $slot, $userShifts);
+        if (!$state->isSignupAllowed()) {
+            return false;
+        }
+
+        if (!$this->assignerLoaded) {
+            $this->assigner->load();
+            $this->assignerLoaded = true;
+        }
+
+        return $this->assigner->canFree($slot['key'], $user->id);
     }
 
     /**

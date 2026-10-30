@@ -64,7 +64,24 @@
                         }) }}
                     </form>
                 {% endif %}
+                {% if can('startseite.send_shifts') and open_wishes %}
+                    <form method="post" action="{{ url('/startseite/automatisch/offene') }}">
+                        {{ csrf() }}
+                        {{ f.button(__('startseite.auto.fill') ~ ' (' ~ open_wishes ~ ')', {
+                            'type': 'submit',
+                            'size': 'sm',
+                            'btn_type': 'outline-primary',
+                            'icon_left': 'arrow-repeat',
+                            'title': __('startseite.auto.fill.info'),
+                        }) }}
+                    </form>
+                {% endif %}
                 {% if can('startseite.signup') %}
+                    {{ m.button(
+                        wish ? __('startseite.auto.adjust') : __('startseite.auto.start'),
+                        wish ? url('/startseite/automatisch') : url('/startseite/eintragen', {'modus': 'auto'}),
+                        {'icon_left': 'stars', 'size': 'sm'}
+                    ) }}
                     {% if has_choice %}
                         {{ m.button(__('startseite.signup.table'), url('/startseite/eintragen/auswahl'), {'icon_left': 'table', 'size': 'sm'}) }}
                     {% endif %}
@@ -77,12 +94,19 @@
             </div>
         </div>
 
+        {% if wish and upcoming_count < wish.count %}
+            <div class="alert alert-info rounded-0 border-0 border-bottom mb-0 small">
+                {{ m.icon('hourglass-split') }} {{ __('startseite.auto.status', [upcoming_count, wish.count]) }}
+            </div>
+        {% endif %}
+
         {% if shift_days is empty %}
             <div class="card-body">
                 <p class="mb-0">{{ __('startseite.shifts.none') }}</p>
                 {% if can('startseite.signup') %}
                     <p class="mb-0 mt-3">
                         {{ m.button(__('startseite.signup.start'), url('/startseite/eintragen'), {'type': 'primary', 'icon_left': 'magic'}) }}
+                        {{ m.button(__('startseite.auto.start'), url('/startseite/eintragen', {'modus': 'auto'}), {'icon_left': 'stars'}) }}
                     </p>
                 {% endif %}
             </div>

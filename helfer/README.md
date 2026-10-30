@@ -92,6 +92,32 @@ Plugin-Middleware, die die Route `NewsController@index` auf `HomeController@inde
   Kollisionsregel). In der Tabelle graut ein Skript beim Anhaken sofort alle Slots aus, die sich nach dieser Regel
   überschneiden; abwählbare eigene Einträge sperrt deshalb nicht der Server, sondern das Skript (beim Speichern prüft
   der Server alles nochmals). Die Zeitspalte bleibt beim seitlichen Scrollen stehen.
+- **Automatisch einteilen lassen** (`/startseite/eintragen?modus=auto`, gleiche Schritte 1 und 2, dann
+  `/startseite/automatisch`):
+  - Der Helfer gibt pro Tag ein Zeitfenster von–bis an (Auswahl aus den Slot-Grenzen) und die Anzahl Dienste
+    insgesamt. Eigene, schon eingetragene Dienste zählen dazu. Gespeichert wird in `startseite_auto_wishes`.
+  - `AutoAssigner` teilt sofort ein. Bevorzugt werden Slots direkt vor oder nach eigenen Diensten am gleichen Ort,
+    dann die leersten, dann die frühesten.
+  - Ist kein passender Platz frei, sucht `AutoAssigner` einen Umbuchungspfad: Ein automatisch eingeteilter Helfer
+    wechselt auf einen freien Slot innerhalb seiner eigenen Wünsche, Ketten bis 3 Umbuchungen.
+  - Verschoben werden nur Einträge aus `startseite_auto_entries`, also vom System vergebene. Für einen Eintrag müssen
+    bis Schichtbeginn noch mehr als `last_unsubscribe` Stunden bleiben.
+  - Umgebuchte Helfer bekommen eine Mail mit der Änderung und dem aktuellen Dienstplan als PDF.
+  - Die Prüfungen (bestätigte Mitgliedschaft, Freeloader, Ankunft, `signup_advance_hours`, Kollisionsregel) macht
+    `AutoAssigner` selbst. Die Kern-Funktionen gehen vom angemeldeten Benutzer aus, beim Umbuchen werden aber andere
+    Helfer eingetragen.
+  - Alles läuft in einer Transaktion unter der MySQL-Sperre `startseite_auto`, gleichzeitige Anmeldungen überbuchen
+    also nicht.
+  - Ändert ein Helfer seine Wünsche, gibt er zuerst automatische Einträge ab, die nicht mehr passen oder über der
+    Anzahl liegen. Danach teilt das System neu ein.
+  - Freie Plätze nach dem Austragen im geführten Eintragen gehen an offene Wünsche. Austragen über die Kern-Seiten
+    bemerkt das System nicht. Dafür gibt es für Schichteinteiler (`startseite.send_shifts`) auf der Startseite
+    „Offene Wünsche einteilen“.
+  - „Automatische Einteilung beenden“ löscht den Wunsch. Die Dienste bleiben, werden aber nicht mehr verschoben.
+- **Festes Eintragen mit Umbuchung:**
+  - In der Auswahltabelle ist eine volle Schicht anwählbar, wenn dort ein automatisch eingeteilter Helfer umgebucht
+    werden kann. Sie ist dann gestrichelt umrandet mit „Umbuchung“. Sonst bleibt sie gesperrt.
+  - Beim Speichern bucht das System um und trägt fest ein. Fest eingetragene Dienste werden nie verschoben.
 
 Auf einer neuen Installation unter **Admin → Plugins** installieren und aktivieren.
 

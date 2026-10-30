@@ -2,11 +2,12 @@
 {% import 'macros/base.twig' as m %}
 {% import 'macros/form.twig' as f %}
 
-{% block title %}{{ __('startseite.signup.title') }}{% endblock %}
+{% block title %}{{ auto|default(false) ? __('startseite.auto.title') : __('startseite.signup.title') }}{% endblock %}
 
 {% block content %}
     <div class="container">
-        <h1>{{ m.back(url('/startseite/eintragen')) }} {{ block('title') }}</h1>
+        {% set back = auto ? url('/startseite/eintragen', {'modus': 'auto'}) : url('/startseite/eintragen') %}
+        <h1>{{ m.back(back) }} {{ block('title') }}</h1>
         {% include 'startseite/_steps.twig' %}
         {% include 'layouts/parts/messages.twig' %}
 
@@ -14,6 +15,7 @@
 
         <form method="post" action="{{ url('/startseite/eintragen/tage/speichern') }}" id="startseite-days">
             {{ csrf() }}
+            {% if auto %}<input type="hidden" name="modus" value="auto">{% endif %}
             <div class="list-group mb-4">
                 <label class="list-group-item d-flex gap-3 align-items-center fw-semibold">
                     <input class="form-check-input flex-shrink-0 mt-0" type="checkbox" id="startseite-all">
@@ -36,7 +38,7 @@
             </div>
 
             <div class="d-flex gap-2">
-                {{ m.button(__('startseite.signup.back'), url('/startseite/eintragen'), {'icon_left': 'chevron-left'}) }}
+                {{ m.button(__('startseite.signup.back'), back, {'icon_left': 'chevron-left'}) }}
                 {{ f.submit(__('startseite.signup.confirm'), {'icon_right': 'chevron-right'}) }}
             </div>
         </form>

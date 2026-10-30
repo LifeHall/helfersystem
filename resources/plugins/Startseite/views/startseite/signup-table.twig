@@ -16,6 +16,8 @@
         .startseite-slots td.startseite-open { background-color: var(--ss-open); }
         .startseite-slots td.startseite-full { background-color: var(--ss-full); color: var(--bs-secondary-color); opacity: .6; }
         .startseite-slots td.startseite-own { background-color: rgba(var(--bs-success-rgb), .2); }
+        {# Full, but automatically assigned helpers can move to make room #}
+        .startseite-slots td.startseite-rebook, .startseite-legend-rebook { outline: 2px dashed var(--bs-warning); outline-offset: -3px; }
         .startseite-slots td.startseite-changed { box-shadow: inset 0 0 0 2px var(--bs-primary); }
         .startseite-slots label { cursor: pointer; white-space: nowrap; }
         {# Times stay visible when scrolling sideways #}
@@ -51,6 +53,9 @@
                     </div>
                     <span><span class="badge text-bg-success">&nbsp;</span> {{ __('startseite.signup.legend.own') }}</span>
                     <span><span class="badge startseite-legend-full">&nbsp;</span> {{ __('startseite.signup.legend.full') }}</span>
+                    {% if rebook %}
+                        <span><span class="badge startseite-legend-rebook">&nbsp;</span> {{ __('startseite.signup.legend.rebook') }}</span>
+                    {% endif %}
                     {% if categories %}
                         <span>{{ __('startseite.signup.legend.events') }}:
                             {% for category in categories %}{{ _self.category(category) }}{% endfor %}
@@ -86,7 +91,8 @@
                                             {% else %}
                                                 {% set own = cells|filter(cell => cell.checked)|length > 0 %}
                                                 {% set open = cells|filter(cell => not cell.disabled)|length > 0 %}
-                                                <td class="{{ own ? 'startseite-own' : (open ? 'startseite-open' : 'startseite-full') }}">
+                                                {% set rebook_only = open and cells|filter(cell => not cell.disabled and not cell.rebook|default(false))|length == 0 %}
+                                                <td class="{{ own ? 'startseite-own' : (open ? 'startseite-open' : 'startseite-full') }}{{ not own and rebook_only ? ' startseite-rebook' }}">
                                                     {% for cell in cells %}
                                                         {% if cell.disabled and not cell.checked %}
                                                             {# Full or not possible: no checkbox, only the reason #}
@@ -106,6 +112,8 @@
                                                                     {%- if cell.disabled %} disabled{% endif %}>
                                                                 {% if cell.disabled %}
                                                                     {{ m.icon('lock') }}
+                                                                {% elseif not cell.checked and cell.rebook|default(false) %}
+                                                                    <span class="small text-muted startseite-free" title="{{ __('startseite.signup.rebook.info') }}">{{ __('startseite.signup.rebook') }}</span>
                                                                 {% elseif not cell.checked %}
                                                                     <span class="small text-muted startseite-free">{{ __('startseite.signup.free', [cell.free]) }}</span>
                                                                 {% endif %}

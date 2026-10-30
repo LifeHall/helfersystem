@@ -1,0 +1,16 @@
+{% extends "emails/mail.text.twig" %}
+
+{% block introduction %}
+{{ __('startseite.rebooked.introduction', [config('app_name')]) }}
+{% endblock %}
+
+{% block message %}
+{% for move in moves %}
+- {{ __('startseite.rebooked.move', [
+    move.from.date ~ ' ' ~ move.from.time ~ ', ' ~ move.from.location ~ ' (' ~ move.from.angel_type ~ ')',
+    move.to.date ~ ' ' ~ move.to.time ~ ', ' ~ move.to.location ~ ' (' ~ move.to.angel_type ~ ')'
+]) }}
+{% endfor %}
+
+{{ __('startseite.rebooked.text', [count, hours, url('/news')]) }}
+{% endblock %}
