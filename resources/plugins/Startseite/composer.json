@@ -2,7 +2,7 @@
   "type": "engelsystem-plugin",
   "name": "helfersystem/startseite",
   "description": "Startseite: angepinnte News, eigene Dienste mit PDF-Download, geführtes Eintragen",
-  "version": "1.9.0",
+  "version": "1.9.1",
   "license": "GPL-2.0-or-later",
   "authors": [
     {

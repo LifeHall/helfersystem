@@ -31,9 +31,12 @@ class ShiftPlanMailer
     ) {
     }
 
+    /**
+     * Older cores have no isEnabled() and always send
+     */
     public function isEnabled(): bool
     {
-        return $this->engelsystemMailer->isEnabled();
+        return !method_exists($this->engelsystemMailer, 'isEnabled') || $this->engelsystemMailer->isEnabled();
     }
 
     /**
