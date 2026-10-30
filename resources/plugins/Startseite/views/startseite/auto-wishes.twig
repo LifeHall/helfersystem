@@ -5,6 +5,19 @@
 {% block title %}{{ __('startseite.auto.title') }}{% endblock %}
 
 {% block content %}
+    <style>
+        #startseite-auto { --ss-none: #e9ecef; }
+        body[data-theme_type="dark"] #startseite-auto { --ss-none: #16191c; }
+        .startseite-slots th, .startseite-slots td { padding: .25rem .6rem; }
+        .startseite-slots td { min-width: 5.5rem; }
+        .startseite-slots td.startseite-none { background-color: var(--ss-none); }
+        .startseite-slots label { cursor: pointer; white-space: nowrap; }
+        .startseite-slots tr > :first-child { position: sticky; left: 0; z-index: 1; background-color: var(--bs-body-bg); box-shadow: inset -1px 0 0 var(--bs-border-color); }
+        .startseite-slots .form-check-input { margin-top: 0; vertical-align: middle; }
+        .startseite-dot { display: inline-block; width: .6rem; height: .6rem; border-radius: 50%; margin-left: .25rem; vertical-align: middle; cursor: help; }
+        .startseite-category { display: inline-block; font-size: .7em; font-weight: 600; color: #fff; border-radius: .25rem; padding: 0 .3rem; margin-left: .25rem; vertical-align: middle; white-space: nowrap; }
+    </style>
+
     <div class="container">
         <h1>{{ m.back(url('/startseite/eintragen/tage', {'modus': 'auto'})) }} {{ block('title') }}</h1>
         {% include 'startseite/_steps.twig' %}
@@ -12,31 +25,62 @@
 
         <p>{{ __('startseite.auto.info') }}</p>
 
-        <form method="post" action="{{ url('/startseite/automatisch/speichern') }}">
+        <form method="post" action="{{ url('/startseite/automatisch/speichern') }}" id="startseite-auto">
             {{ csrf() }}
 
+            {% if categories %}
+                <div class="small mb-3">{{ __('startseite.signup.legend.events') }}:
+                    {% for category in categories %}{{ _self.category(category) }}{% endfor %}
+                </div>
+            {% endif %}
+
             <div class="card mb-4">
-                <div class="card-header">{{ __('startseite.auto.windows') }}</div>
-                <ul class="list-group list-group-flush">
-                    {% for day, row in rows %}
-                        <li class="list-group-item d-flex flex-wrap align-items-center gap-2">
-                            <span class="flex-grow-1 fw-semibold">{{ row.label }}</span>
-                            <label class="visually-hidden" for="from-{{ day }}">{{ __('startseite.auto.from') }}</label>
-                            <select class="form-select form-select-sm w-auto" name="from[{{ day }}]" id="from-{{ day }}">
-                                {% for minutes in row.starts %}
-                                    <option value="{{ minutes }}"{% if minutes == row.from %} selected{% endif %}>{{ row.start_labels[loop.index0] }}</option>
+                <div class="card-header d-flex flex-wrap align-items-center gap-2">
+                    <span class="flex-grow-1">{{ __('startseite.auto.times') }}</span>
+                    <div class="form-check mb-0">
+                        <input class="form-check-input" type="checkbox" id="startseite-auto-all">
+                        <label class="form-check-label small" for="startseite-auto-all">{{ __('startseite.auto.all_times') }}</label>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-sm table-bordered mb-0 w-auto text-center align-middle startseite-slots">
+                        <thead>
+                            <tr>
+                                <th class="text-start">{{ __('startseite.column.time') }}</th>
+                                {% for label in columns %}
+                                    <th class="text-nowrap">{{ label }}</th>
                                 {% endfor %}
-                            </select>
-                            <span>–</span>
-                            <label class="visually-hidden" for="to-{{ day }}">{{ __('startseite.auto.to') }}</label>
-                            <select class="form-select form-select-sm w-auto" name="to[{{ day }}]" id="to-{{ day }}">
-                                {% for minutes in row.ends %}
-                                    <option value="{{ minutes }}"{% if minutes == row.to %} selected{% endif %}>{{ row.end_labels[loop.index0] }}</option>
-                                {% endfor %}
-                            </select>
-                        </li>
-                    {% endfor %}
-                </ul>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in rows %}
+                                <tr>
+                                    <th class="text-start text-nowrap">{{ row.label }}</th>
+                                    {% for day in columns|keys %}
+                                        {% set cell = row.cells[day]|default(null) %}
+                                        {% if cell is null %}
+                                            <td class="startseite-none"></td>
+                                        {% else %}
+                                            <td>
+                                                <label class="d-block" title="{{ cell.types|join(', ') }}">
+                                                    <input class="form-check-input startseite-auto-time" type="checkbox"
+                                                        name="times[{{ day }}][]" value="{{ cell.value }}"
+                                                        aria-label="{{ columns[day] }}, {{ row.label }}{% for category in cell.categories %}, {{ category.name }}{% endfor %}"
+                                                        {%- if cell.checked %} checked{% endif %}>
+                                                    <span class="small text-muted">
+                                                        {{- cell.free > 0 ? __('startseite.signup.free', [cell.free]) : __('startseite.signup.full_short') -}}
+                                                    </span>
+                                                    {%- for category in cell.categories %}{{ _self.dot(category) }}{% endfor %}
+                                                </label>
+                                            </td>
+                                        {% endif %}
+                                    {% endfor %}
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="card-footer small text-muted">{{ __('startseite.auto.times.info') }}</div>
             </div>
 
             <div class="mb-4" style="max-width: 20rem">
@@ -67,3 +111,18 @@
         {% endif %}
     </div>
 {% endblock %}
+
+{% block scripts %}
+    {{ parent() }}
+    <script src="{{ url('/startseite/startseite.js') }}"></script>
+{% endblock %}
+
+{# Same badges as the table of the guided sign up #}
+{% macro category(category) -%}
+    <span class="startseite-category" style="background-color: {{ category.color }}" title="{{ category.name }}">{{ category.name }}</span>
+{%- endmacro %}
+
+{% macro dot(category) -%}
+    <span class="startseite-dot" style="background-color: {{ category.color }}" role="img" aria-label="{{ category.name }}"
+        data-bs-toggle="tooltip" data-bs-title="{{ category.name }}" data-bs-delay='{"show": 200, "hide": 0}'></span>
+{%- endmacro %}

@@ -12,10 +12,11 @@ use Engelsystem\Helpers\Carbon;
 use Engelsystem\Http\Request;
 use Engelsystem\Http\Response;
 use Engelsystem\Models\User\User;
+use Illuminate\Support\Collection;
 
 /**
  * Automatic assignment: after the helper types (step 1) and days (step 2) of the guided sign up,
- * the helper sets a time window per day and the number of shifts, the system assigns them
+ * the helper ticks the shift times per day and sets the number of shifts, the system assigns them
  */
 class AutoController extends BaseController
 {
@@ -34,7 +35,7 @@ class AutoController extends BaseController
     }
 
     /**
-     * Step 3: time window per day and number of shifts
+     * Step 3: shift times per day (a row per time, a column per day) and number of shifts
      */
     public function wishes(): Response
     {
@@ -46,27 +47,51 @@ class AutoController extends BaseController
         }
 
         $wish = AutoWish::find($user->id);
-        $options = $this->windowOptions($choice->angel_types, $days);
+        $slots = $this->slots($choice->angel_types, $days);
         $locale = (string) session()->get('locale', 'de_DE');
+        $mainShiftType = Slots::mainShiftType();
 
+        $columns = [];
         $rows = [];
-        foreach ($options as $day => $option) {
-            $saved = $wish?->windows[$day] ?? null;
-            $rows[$day] = $option + [
-                'label' => Carbon::createFromFormat('Y-m-d', $day)->locale($locale)->isoFormat('dddd, DD.MM.YYYY'),
-                'from' => $saved && in_array($saved['from'], $option['starts']) ? $saved['from'] : $option['starts'][0],
-                'to' => $saved && in_array($saved['to'], $option['ends']) ? $saved['to'] : end($option['ends']),
-            ];
-        }
+        foreach ($slots->sortBy(fn(array $slot) => sprintf('%05d-%05d', $slot['from'], $slot['to'])) as $slot) {
+            $day = $slot['day'];
+            $time = AutoWish::timeKey($slot);
+            $columns[$day] = Carbon::createFromFormat('Y-m-d', $day)->locale($locale)->isoFormat('dd, DD.MM.');
 
-        $max = Slots::load($choice->angel_types)
-            ->filter(fn(array $slot) => in_array($slot['day'], $days, true))
-            ->count();
+            $cell = $rows[$time]['cells'][$day] ?? [
+                'value' => $time,
+                // Before the first save all times are ticked
+                'checked' => !$wish || $wish->matches($slot),
+                'free' => 0,
+                'types' => [],
+                'categories' => [],
+            ];
+            $cell['checked'] = $cell['checked'] || ($wish && $wish->matches($slot));
+            $cell['free'] += max(0, $slot['count'] - $slot['taken']);
+            $cell['types'][$slot['type']->id] = $slot['type']->name;
+            if ($category = Slots::category($slot['shift'], $mainShiftType)) {
+                $cell['categories'][$category['name']] = $category;
+            }
+
+            $rows[$time]['label'] = $this->time($slot['from']) . ' – ' . $this->time($slot['to']);
+            $rows[$time]['cells'][$day] = $cell;
+        }
+        ksort($columns);
+
+        $categories = [];
+        foreach ($rows as $row) {
+            foreach ($row['cells'] as $cell) {
+                $categories += $cell['categories'];
+            }
+        }
+        ksort($categories);
 
         return $this->response->withView('startseite/auto-wishes', [
+            'columns' => $columns,
             'rows' => $rows,
-            'count' => min($wish->count ?? 1, max(1, $max)),
-            'max' => max(1, $max),
+            'categories' => array_values($categories),
+            'count' => min($wish->count ?? 1, max(1, $slots->count())),
+            'max' => max(1, $slots->count()),
             'has_wish' => (bool) $wish,
             'step' => 3,
             'auto' => true,
@@ -85,18 +110,21 @@ class AutoController extends BaseController
             return $this->response->redirectTo(url('/startseite/eintragen', ['modus' => 'auto']));
         }
 
-        $from = $request->request->all('from');
-        $to = $request->request->all('to');
+        // Only times that exist on the day
+        $ticked = $request->request->all('times');
         $windows = [];
-        foreach ($this->windowOptions($choice->angel_types, $days) as $day => $option) {
-            $start = (int) ($from[$day] ?? -1);
-            $end = (int) ($to[$day] ?? -1);
-            if (!in_array($start, $option['starts'], true) || !in_array($end, $option['ends'], true) || $start >= $end) {
-                $this->addNotification(__('startseite.auto.invalid_window', [$day]), NotificationType::ERROR);
-                return $this->response->redirectTo(url('/startseite/automatisch'));
+        foreach ($this->slots($choice->angel_types, $days) as $slot) {
+            $time = AutoWish::timeKey($slot);
+            if (in_array($time, (array) ($ticked[$slot['day']] ?? []), true)) {
+                $windows[$slot['day']][$time] = $time;
             }
-            $windows[$day] = ['from' => $start, 'to' => $end];
         }
+        if (!$windows) {
+            $this->addNotification('startseite.auto.no_times', NotificationType::ERROR);
+            return $this->response->redirectTo(url('/startseite/automatisch'));
+        }
+        ksort($windows);
+        $windows = array_map(fn(array $times) => array_values($times), $windows);
 
         $wish = AutoWish::findOrNew($user->id);
         $wish->user_id = $user->id;
@@ -179,30 +207,15 @@ class AutoController extends BaseController
     }
 
     /**
-     * Possible starts and ends of the time window per chosen day, from the slots of the chosen helper types
+     * Slots of the chosen helper types on the chosen days
      *
-     * @return array[] [Y-m-d => ['starts' => int[], 'ends' => int[]]] in minutes, sorted
+     * @return Collection|array[] See Slots::load()
      */
-    protected function windowOptions(array $typeIds, array $days): array
+    protected function slots(array $typeIds, array $days): Collection
     {
-        $options = [];
-        foreach (Slots::load($typeIds)->groupBy('day') as $day => $slots) {
-            if (!in_array($day, $days, true)) {
-                continue;
-            }
-
-            $starts = $slots->pluck('from')->unique()->sort()->values()->all();
-            $ends = $slots->pluck('to')->unique()->sort()->values()->all();
-            $options[$day] = [
-                'starts' => $starts,
-                'ends' => $ends,
-                'start_labels' => array_map($this->time(...), $starts),
-                'end_labels' => array_map($this->time(...), $ends),
-            ];
-        }
-        ksort($options);
-
-        return $options;
+        return Slots::load($typeIds)
+            ->filter(fn(array $slot) => in_array($slot['day'], $days, true))
+            ->values();
     }
 
     /**

@@ -34,9 +34,6 @@ class SignupController extends BaseController
         'startseite.signup',
     ];
 
-    // Badge colors of the shift types (events), same as in the day plan
-    protected const CATEGORY_COLORS = ['#6f42c1', '#d63384', '#fd7e14', '#198754', '#0d6efd', '#795548'];
-
     /** @var Collection|UserAngelType[]|null Memberships of the user by angel type id */
     protected ?Collection $memberships = null;
 
@@ -234,14 +231,8 @@ class SignupController extends BaseController
         $cells = $this->cells($user, $choice);
         $locale = (string) session()->get('locale', 'de_DE');
 
-        // Shift type of most shifts, it is not marked
-        $mainShiftType = Shift::query()
-            ->toBase()
-            ->select('shift_type_id')
-            ->groupBy('shift_type_id')
-            ->orderByRaw('COUNT(*) DESC')
-            ->value('shift_type_id');
-        $cells = $cells->map(fn(array $cell) => $cell + ['category' => $this->category($cell['shift'], $mainShiftType)]);
+        $mainShiftType = Slots::mainShiftType();
+        $cells = $cells->map(fn(array $cell) => $cell + ['category' => Slots::category($cell['shift'], $mainShiftType)]);
 
         $tables = [];
         foreach ($cells->groupBy(fn(array $cell) => $cell['type']->id) as $typeCells) {
@@ -278,25 +269,9 @@ class SignupController extends BaseController
             'tables' => $tables,
             'categories' => $cells->pluck('category')->filter()->unique('name')->sortBy('name')->values()->all(),
             'rebook' => $cells->contains(fn(array $cell) => $cell['rebook'] ?? false),
+            'auto_entries' => $cells->contains(fn(array $cell) => $cell['auto'] ?? false),
             'step' => 3,
         ]);
-    }
-
-    /**
-     * Shift type (event) to mark the slot with, null for the main shift type
-     *
-     * @return array|null ['name' => string, 'color' => string]
-     */
-    protected function category(Shift $shift, ?int $mainShiftType): ?array
-    {
-        if ($shift->shift_type_id == $mainShiftType) {
-            return null;
-        }
-
-        return [
-            'name' => $shift->shiftType->name,
-            'color' => self::CATEGORY_COLORS[$shift->shift_type_id % count(self::CATEGORY_COLORS)],
-        ];
     }
 
     /**
@@ -426,6 +401,8 @@ class SignupController extends BaseController
     protected function cells(User $user, SignupChoice $choice): Collection
     {
         $own = ShiftEntry::where('user_id', $user->id)->get()->keyBy('shift_id');
+        // Automatically assigned entries can only be changed with the wishes
+        $auto = AutoEntry::whereUserId($user->id)->pluck('shift_entry_id')->all();
         $days = $this->chosenDays($choice);
         $slots = $this->slots($choice->angel_types)
             ->filter(fn(array $slot) => in_array($slot['day'], $days, true))
@@ -435,6 +412,7 @@ class SignupController extends BaseController
         // so they are released again when the entry is unticked. Saving checks all own entries again
         $releasable = $slots
             ->filter(fn(array $slot) => ($own[$slot['shift']->id] ?? null)?->angel_type_id == $slot['type']->id
+                && !in_array($own[$slot['shift']->id]->id, $auto)
                 && Shift_signout_allowed($slot['shift'], $slot['type'], $user->id))
             ->map(fn(array $slot) => $slot['shift']->id)
             ->all();
@@ -443,7 +421,7 @@ class SignupController extends BaseController
             ->values();
 
         return $slots
-            ->map(function (array $slot) use ($user, $own, $userShifts, $releasable) {
+            ->map(function (array $slot) use ($user, $own, $auto, $userShifts, $releasable) {
                 /** @var ShiftEntry|null $entry */
                 $entry = $own[$slot['shift']->id] ?? null;
                 $free = max(0, $slot['count'] - $slot['taken']);
@@ -451,12 +429,18 @@ class SignupController extends BaseController
 
                 if ($entry && $entry->angel_type_id == $slot['type']->id) {
                     $canSignoff = in_array($slot['shift']->id, $releasable);
+                    $isAuto = in_array($entry->id, $auto);
                     return $slot + [
                         'own' => $entry,
                         'checked' => true,
                         'disabled' => !$canSignoff,
                         'free' => $free,
-                        'reason' => $canSignoff ? null : __('startseite.signup.no_signoff'),
+                        'reason' => match (true) {
+                            $isAuto => __('startseite.signup.auto_entry'),
+                            !$canSignoff => __('startseite.signup.no_signoff'),
+                            default => null,
+                        },
+                        'auto' => $isAuto,
                     ];
                 }
 

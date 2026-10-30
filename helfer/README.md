@@ -94,8 +94,12 @@ Plugin-Middleware, die die Route `NewsController@index` auf `HomeController@inde
   der Server alles nochmals). Die Zeitspalte bleibt beim seitlichen Scrollen stehen.
 - **Automatisch einteilen lassen** (`/startseite/eintragen?modus=auto`, gleiche Schritte 1 und 2, dann
   `/startseite/automatisch`):
-  - Der Helfer gibt pro Tag ein Zeitfenster von–bis an (Auswahl aus den Slot-Grenzen) und die Anzahl Dienste
-    insgesamt. Eigene, schon eingetragene Dienste zählen dazu. Gespeichert wird in `startseite_auto_wishes`.
+  - Der Helfer kreuzt in einer Tabelle (Zeile pro Schichtzeit, Spalte pro Tag, mit freien Plätzen und den Punkten für
+    Raclette-Plausch, Private Events usw.) die Schichtzeiten an, zu denen er Zeit hat, und gibt die Anzahl Dienste
+    insgesamt an. Eigene, schon eingetragene Dienste zählen dazu. Gespeichert wird in `startseite_auto_wishes`
+    (`windows`: pro Tag die Zeiten als `von-bis` in Minuten).
+  - In der Tabelle des geführten Eintragens erscheinen automatisch eingeteilte Dienste blau mit Haken und können
+    nicht abgewählt werden, nur über „Wünsche anpassen“ oder „Automatische Einteilung beenden“.
   - `AutoAssigner` teilt sofort ein. Bevorzugt werden Slots direkt vor oder nach eigenen Diensten am gleichen Ort,
     dann die leersten, dann die frühesten.
   - Ist kein passender Platz frei, sucht `AutoAssigner` einen Umbuchungspfad: Ein automatisch eingeteilter Helfer

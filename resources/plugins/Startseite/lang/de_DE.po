@@ -256,16 +256,7 @@ msgid "startseite.auto.step.wishes"
 msgstr "Zeiten und Anzahl"
 
 msgid "startseite.auto.info"
-msgstr "Gib pro Tag an, von wann bis wann du Zeit hast, und wie viele Dienste du insgesamt übernehmen möchtest. Das System teilt dich in passende Dienste ein. Damit möglichst viele Helfer ihre Wünsche erfüllt bekommen, kann ein automatisch eingeteilter Dienst später innerhalb deiner Angaben verschoben werden – du bekommst dann eine Mail."
-
-msgid "startseite.auto.windows"
-msgstr "Zeitfenster pro Tag"
-
-msgid "startseite.auto.from"
-msgstr "Von"
-
-msgid "startseite.auto.to"
-msgstr "Bis"
+msgstr "Kreuze an, zu welchen Schichtzeiten du an den gewählten Tagen Zeit hast, und wie viele Dienste du insgesamt übernehmen möchtest. Das System teilt dich in passende Dienste ein. Damit möglichst viele Helfer ihre Wünsche erfüllt bekommen, kann ein automatisch eingeteilter Dienst später auf eine andere angekreuzte Zeit verschoben werden – du bekommst dann eine Mail."
 
 msgid "startseite.auto.count"
 msgstr "Anzahl Dienste insgesamt"
@@ -276,14 +267,11 @@ msgstr "Dienste, für die du schon eingetragen bist, zählen dazu."
 msgid "startseite.auto.submit"
 msgstr "Einteilen"
 
-msgid "startseite.auto.invalid_window"
-msgstr "Das Zeitfenster für %s ist ungültig: „Bis“ muss nach „Von“ liegen."
-
 msgid "startseite.auto.result"
 msgstr "Du bist für %1$s von %2$s gewünschten Diensten eingeteilt."
 
 msgid "startseite.auto.open_info"
-msgstr "Sobald ein passender Platz frei wird, teilt dich das System automatisch ein. Du kannst auch dein Zeitfenster oder deine Helferdienste erweitern."
+msgstr "Sobald ein passender Platz frei wird, teilt dich das System automatisch ein. Du kannst auch weitere Zeiten oder Helferdienste wählen."
 
 msgid "startseite.auto.status"
 msgstr "Automatische Einteilung: %1$s von %2$s gewünschten Diensten. Sobald ein passender Platz frei wird, wirst du eingeteilt."
@@ -326,3 +314,21 @@ msgstr "%1$s → neu: %2$s"
 
 msgid "startseite.rebooked.text"
 msgstr "Du bist jetzt für %1$s Dienste mit insgesamt %2$s Stunden eingetragen, dein aktueller Dienstplan ist im Anhang.\n\nDeine Dienste kannst du jederzeit hier ansehen:\n%3$s"
+
+msgid "startseite.auto.times"
+msgstr "Schichtzeiten, zu denen du Zeit hast"
+
+msgid "startseite.auto.all_times"
+msgstr "Alle Zeiten"
+
+msgid "startseite.auto.times.info"
+msgstr "Je mehr Zeiten du ankreuzt, desto besser kann das System dich einteilen. Auch volle Zeiten können angekreuzt werden: wird dort ein Platz frei, wirst du eingeteilt."
+
+msgid "startseite.auto.no_times"
+msgstr "Bitte kreuze mindestens eine Schichtzeit an."
+
+msgid "startseite.signup.auto_entry"
+msgstr "Automatisch eingeteilt. Ändern kannst du diesen Dienst über „Wünsche anpassen“."
+
+msgid "startseite.signup.legend.auto"
+msgstr "Automatisch eingeteilt"

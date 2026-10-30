@@ -256,16 +256,7 @@ msgid "startseite.auto.step.wishes"
 msgstr "Times and number"
 
 msgid "startseite.auto.info"
-msgstr "For each day, choose when you are available and how many shifts you want to do in total. The system assigns you to matching shifts. So that as many helpers as possible get their wishes, an automatically assigned shift may later be moved within your choices – you will get a mail then."
-
-msgid "startseite.auto.windows"
-msgstr "Time window per day"
-
-msgid "startseite.auto.from"
-msgstr "From"
-
-msgid "startseite.auto.to"
-msgstr "To"
+msgstr "Tick the shift times on the chosen days when you are available, and how many shifts you want to do in total. The system assigns you to matching shifts. So that as many helpers as possible get their wishes, an automatically assigned shift may later be moved to another ticked time – you will get a mail then."
 
 msgid "startseite.auto.count"
 msgstr "Number of shifts in total"
@@ -276,14 +267,11 @@ msgstr "Shifts you are already signed up for count too."
 msgid "startseite.auto.submit"
 msgstr "Assign"
 
-msgid "startseite.auto.invalid_window"
-msgstr "The time window for %s is invalid: \"To\" must be after \"From\"."
-
 msgid "startseite.auto.result"
 msgstr "You are assigned to %1$s of %2$s wanted shifts."
 
 msgid "startseite.auto.open_info"
-msgstr "As soon as a matching place becomes free, the system assigns you automatically. You can also widen your time windows or helper types."
+msgstr "As soon as a matching place becomes free, the system assigns you automatically. You can also choose more times or helper types."
 
 msgid "startseite.auto.status"
 msgstr "Automatic assignment: %1$s of %2$s wanted shifts. You will be assigned as soon as a matching place becomes free."
@@ -326,3 +314,21 @@ msgstr "%1$s → new: %2$s"
 
 msgid "startseite.rebooked.text"
 msgstr "You are now signed up for %1$s shifts with %2$s hours in total, your current shift plan is attached.\n\nYou can see your shifts here at any time:\n%3$s"
+
+msgid "startseite.auto.times"
+msgstr "Shift times when you are available"
+
+msgid "startseite.auto.all_times"
+msgstr "All times"
+
+msgid "startseite.auto.times.info"
+msgstr "The more times you tick, the better the system can assign you. Full times can be ticked too: if a place becomes free there, you are assigned."
+
+msgid "startseite.auto.no_times"
+msgstr "Please tick at least one shift time."
+
+msgid "startseite.signup.auto_entry"
+msgstr "Assigned automatically. You can change this shift with \"Adjust wishes\"."
+
+msgid "startseite.signup.legend.auto"
+msgstr "Assigned automatically"

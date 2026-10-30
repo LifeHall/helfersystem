@@ -16,6 +16,9 @@ use Illuminate\Support\Collection;
  */
 class Slots
 {
+    // Badge colors of the shift types (events), same as in the day plan
+    protected const CATEGORY_COLORS = ['#6f42c1', '#d63384', '#fd7e14', '#198754', '#0d6efd', '#795548'];
+
     /**
      * Needed helper types of all shifts that have not ended yet
      *
@@ -94,5 +97,37 @@ class Slots
             && $typeId == $otherTypeId
             && !($shift->start->timestamp == $other->start->timestamp && $shift->end->timestamp == $other->end->timestamp)
         );
+    }
+
+    /**
+     * Shift type of most shifts, it is not marked
+     */
+    public static function mainShiftType(): ?int
+    {
+        $id = Shift::query()
+            ->toBase()
+            ->select('shift_type_id')
+            ->groupBy('shift_type_id')
+            ->orderByRaw('COUNT(*) DESC')
+            ->value('shift_type_id');
+
+        return $id === null ? null : (int) $id;
+    }
+
+    /**
+     * Shift type (event) to mark the slot with, null for the main shift type
+     *
+     * @return array|null ['name' => string, 'color' => string]
+     */
+    public static function category(Shift $shift, ?int $mainShiftType): ?array
+    {
+        if ($shift->shift_type_id == $mainShiftType) {
+            return null;
+        }
+
+        return [
+            'name' => $shift->shiftType->name,
+            'color' => self::CATEGORY_COLORS[$shift->shift_type_id % count(self::CATEGORY_COLORS)],
+        ];
     }
 }

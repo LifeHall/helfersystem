@@ -13,7 +13,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  *
  * @property int $user_id
  * @property int[] $angel_types
- * @property array[] $windows [Y-m-d => ['from' => int, 'to' => int]] in minutes since midnight
+ * @property array[] $windows [Y-m-d => string[]] chosen shift times per day, see timeKey(),
+ *                            before version 1.10.1 a time window [Y-m-d => ['from' => int, 'to' => int]]
  * @property int $count Wanted number of shifts
  * @property-read User $user
  */
@@ -50,15 +51,27 @@ class AutoWish extends BaseModel
     }
 
     /**
-     * The slot is one of the wished helper types and lies completely in the time window of its day
+     * The slot is one of the wished helper types at one of the chosen times of its day
      */
     public function matches(array $slot): bool
     {
-        $window = $this->windows[$slot['day']] ?? null;
+        $times = $this->windows[$slot['day']] ?? [];
+        if (!$times || !in_array($slot['type']->id, $this->angel_types)) {
+            return false;
+        }
 
-        return $window
-            && in_array($slot['type']->id, $this->angel_types)
-            && $slot['from'] >= $window['from']
-            && $slot['to'] <= $window['to'];
+        if (isset($times['from'])) {
+            return $slot['from'] >= $times['from'] && $slot['to'] <= $times['to'];
+        }
+
+        return in_array(self::timeKey($slot), $times, true);
+    }
+
+    /**
+     * Shift time of a slot: start and end in minutes since midnight
+     */
+    public static function timeKey(array $slot): string
+    {
+        return $slot['from'] . '-' . $slot['to'];
     }
 }

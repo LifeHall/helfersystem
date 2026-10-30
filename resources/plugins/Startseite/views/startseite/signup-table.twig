@@ -16,6 +16,12 @@
         .startseite-slots td.startseite-open { background-color: var(--ss-open); }
         .startseite-slots td.startseite-full { background-color: var(--ss-full); color: var(--bs-secondary-color); opacity: .6; }
         .startseite-slots td.startseite-own { background-color: rgba(var(--bs-success-rgb), .2); }
+        {# Automatically assigned: blue, can only be changed with the wishes #}
+        #startseite-table { --ss-auto: 13, 110, 253; }
+        .startseite-slots td.startseite-auto { background-color: rgba(var(--ss-auto), .2); }
+        .startseite-slots td.startseite-auto label { cursor: help; }
+        .startseite-slots .startseite-auto-entry:checked { background-color: rgb(var(--ss-auto)); border-color: rgb(var(--ss-auto)); opacity: 1; }
+        .startseite-legend-auto { background-color: rgb(var(--ss-auto)); }
         {# Full, but automatically assigned helpers can move to make room #}
         .startseite-slots td.startseite-rebook, .startseite-legend-rebook { outline: 2px dashed var(--bs-warning); outline-offset: -3px; }
         .startseite-slots td.startseite-changed { box-shadow: inset 0 0 0 2px var(--bs-primary); }
@@ -52,6 +58,9 @@
                         <label class="form-check-label" for="startseite-only-free">{{ __('startseite.signup.only_free') }}</label>
                     </div>
                     <span><span class="badge text-bg-success">&nbsp;</span> {{ __('startseite.signup.legend.own') }}</span>
+                    {% if auto_entries %}
+                        <span><span class="badge startseite-legend-auto">&nbsp;</span> {{ __('startseite.signup.legend.auto') }}</span>
+                    {% endif %}
                     <span><span class="badge startseite-legend-full">&nbsp;</span> {{ __('startseite.signup.legend.full') }}</span>
                     {% if rebook %}
                         <span><span class="badge startseite-legend-rebook">&nbsp;</span> {{ __('startseite.signup.legend.rebook') }}</span>
@@ -90,9 +99,10 @@
                                                 <td class="startseite-none"></td>
                                             {% else %}
                                                 {% set own = cells|filter(cell => cell.checked)|length > 0 %}
+                                                {% set auto_own = cells|filter(cell => cell.checked and cell.auto|default(false))|length > 0 %}
                                                 {% set open = cells|filter(cell => not cell.disabled)|length > 0 %}
                                                 {% set rebook_only = open and cells|filter(cell => not cell.disabled and not cell.rebook|default(false))|length == 0 %}
-                                                <td class="{{ own ? 'startseite-own' : (open ? 'startseite-open' : 'startseite-full') }}{{ not own and rebook_only ? ' startseite-rebook' }}">
+                                                <td class="{{ auto_own ? 'startseite-auto' : (own ? 'startseite-own' : (open ? 'startseite-open' : 'startseite-full')) }}{{ not own and rebook_only ? ' startseite-rebook' }}">
                                                     {% for cell in cells %}
                                                         {% if cell.disabled and not cell.checked %}
                                                             {# Full or not possible: no checkbox, only the reason #}
@@ -102,7 +112,7 @@
                                                             </span>
                                                         {% else %}
                                                             <label class="d-block"{% if cell.reason %} title="{{ cell.reason }}"{% endif %}>
-                                                                <input class="form-check-input" type="checkbox" name="slots[]" value="{{ cell.key }}"
+                                                                <input class="form-check-input{{ cell.auto|default(false) ? ' startseite-auto-entry' }}" type="checkbox" name="slots[]" value="{{ cell.key }}"
                                                                     aria-label="{{ table.type.name }}, {{ table.days[day] }}, {{ label }}{{ cell.category ? ', ' ~ cell.category.name }}"
                                                                     data-shift="{{ cell.shift.id }}" data-type="{{ cell.type.id }}"
                                                                     data-location="{{ cell.shift.location_id }}"
@@ -110,7 +120,9 @@
                                                                     {%- if cell.manage %} data-manage="1"{% endif %}
                                                                     {%- if cell.checked %} checked data-own="1"{% endif %}
                                                                     {%- if cell.disabled %} disabled{% endif %}>
-                                                                {% if cell.disabled %}
+                                                                {% if cell.auto|default(false) %}
+                                                                    {# Blue tick, no lock #}
+                                                                {% elseif cell.disabled %}
                                                                     {{ m.icon('lock') }}
                                                                 {% elseif not cell.checked and cell.rebook|default(false) %}
                                                                     <span class="small text-muted startseite-free" title="{{ __('startseite.signup.rebook.info') }}">{{ __('startseite.signup.rebook') }}</span>

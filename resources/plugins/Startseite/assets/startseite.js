@@ -18,6 +18,24 @@
         update();
     }
 
+    // Step 3 of the automatic assignment: "all times" ticks or unticks all shift times
+    const autoForm = document.getElementById('startseite-auto');
+    if (autoForm) {
+        const times = [...autoForm.querySelectorAll('.startseite-auto-time')];
+        const all = document.getElementById('startseite-auto-all');
+        const update = () => {
+            all.checked = times.length > 0 && times.every((time) => time.checked);
+        };
+        times.forEach((time) => time.addEventListener('change', update));
+        all.addEventListener('change', () => {
+            times.forEach((time) => {
+                time.checked = all.checked;
+            });
+            update();
+        });
+        update();
+    }
+
     // Step 3: table of the time slots
     const tableForm = document.getElementById('startseite-table');
     if (tableForm) {
