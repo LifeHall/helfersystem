@@ -116,9 +116,21 @@
             </form>
         {% endif %}
 
-        {% if groups is empty %}
+        {% if own_only and groups is empty %}
+            <div class="alert alert-info">
+                {{ __('tagesplan.no_own_shifts') }}
+                {% if can('startseite.signup') %}
+                    <a href="{{ url('/startseite/eintragen') }}" class="alert-link">{{ __('tagesplan.signup_link') }}</a>
+                {% endif %}
+            </div>
+        {% elseif groups is empty %}
             <div class="alert alert-info">{{ __('tagesplan.no_shifts') }}</div>
         {% else %}
+            {% if own_only %}
+                <p class="small text-muted mb-2 d-print-none">
+                    {{ config('tagesplan_show_colleagues') ? __('tagesplan.own_only.colleagues') : __('tagesplan.own_only') }}
+                </p>
+            {% endif %}
             <div class="table-responsive">
                 <table class="tagesplan mb-2">
                     <thead>

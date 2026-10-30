@@ -32,6 +32,10 @@ die Farbe ergibt sich aus der Position in dieser Liste.
 Eigene Berechtigung `tagesplan.view` (Plugin-Migration, bekommt alle Gruppen mit `user_shifts`).
 Unter **Admin → Konfiguration → Tagesplan** lässt er sich mit „Tagesplan für Helfer sichtbar“ ausblenden; dann sehen ihn
 nur noch Benutzer mit `tagesplan.manage` (Plugin-Migration, alle Gruppen mit `user_shifts_admin`: Admins, Schichteinteiler).
+Helfer (ohne `tagesplan.manage`) sehen nur die Tage und Plätze ihrer eigenen Einträge, ohne offene Plätze; eingetragen
+wird über das geführte Eintragen der Startseite. Mit „Helfer sehen Personen am gleichen Ort zur gleichen Zeit“ (gleiche
+Konfigurationsseite) sehen sie zusätzlich alle Belegten in Schichten am selben Ort, die sich zeitlich mit einer eigenen
+überschneiden (`OwnShifts`, gilt auch für das Popup: fremde Schichten liefern 404).
 Klick auf ein Feld öffnet ein Popup mit Orts- und Schichtinfos zum Ein-/Austragen
 (gleiche Rechteprüfung wie im Kern: `Shift_signup_allowed()`, `Shift_signout_allowed()`).
 Abweichung: Überlappende Schichten am gleichen Ort mit gleichem Helfertyp dürfen beide belegt

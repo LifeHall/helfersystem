@@ -126,3 +126,21 @@ msgstr "Day plan visible for helpers"
 
 msgid "config.tagesplan_helpers_visible.info"
 msgstr "If switched off, only admins and shift coordinators (privilege \"tagesplan.manage\") can see the day plan."
+
+msgid "config.tagesplan_show_colleagues"
+msgstr "Helpers see the people at the same location at the same time"
+
+msgid "config.tagesplan_show_colleagues.info"
+msgstr "Helpers only see their own shifts in the day plan. If enabled, they also see who works at the same location at the same time. Admins and shift coordinators (privilege \"tagesplan.manage\") always see everything."
+
+msgid "tagesplan.own_only"
+msgstr "You only see your own shifts."
+
+msgid "tagesplan.own_only.colleagues"
+msgstr "You see your own shifts and who works at the same location at the same time."
+
+msgid "tagesplan.no_own_shifts"
+msgstr "You have not signed up for any shift yet."
+
+msgid "tagesplan.signup_link"
+msgstr "Sign up now"

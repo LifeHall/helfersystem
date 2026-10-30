@@ -8,6 +8,7 @@ use Engelsystem\Controllers\BaseController;
 use Engelsystem\Controllers\HasUserNotifications;
 use Engelsystem\Controllers\NotificationType;
 use Engelsystem\Helpers\Authenticator;
+use Engelsystem\Http\Exceptions\HttpNotFound;
 use Engelsystem\Http\Request;
 use Engelsystem\Http\Response;
 use Engelsystem\Mail\EngelsystemMailer;
@@ -55,12 +56,37 @@ class ShiftPopupController extends BaseController
         // Only the clicked angel type is shown, the others can be expanded
         $selectedType = (int) $request->input('angel_type_id');
 
+        // Helpers only see their own entries (and colleagues), like in the day plan, and sign up elsewhere
+        $visible = null;
+        if (OwnShifts::restricted()) {
+            $needs = [];
+            foreach (NeededAngelTypes_by_shift($shift) as $need) {
+                $needs[(int) $need['angel_type_id']] = [
+                    'count' => (int) $need['count'],
+                    'entries' => $need['shift_entries'],
+                ];
+            }
+            $visible = (new OwnShifts($user))->filter($shift, $needs);
+            if (!$visible) {
+                throw new HttpNotFound();
+            }
+        }
+
         $types = [];
         foreach (NeededAngelTypes_by_shift($shift) as $need) {
+            if ($visible !== null) {
+                $typeVisible = $visible[(int) $need['angel_type_id']] ?? null;
+                if (!$typeVisible) {
+                    continue;
+                }
+                $need['count'] = $typeVisible['count'];
+                $need['shift_entries'] = $typeVisible['entries'];
+            }
+
             $angelType = AngelType::findOrFail($need['angel_type_id']);
             $entries = collect($need['shift_entries'])->sortBy('id')->values();
             $selfSignedUp = $entries->contains(fn(ShiftEntry $entry) => $entry->user_id == $user->id);
-            $state = $selfSignedUp ? null : $this->selfSignupState($user, $shift, $angelType);
+            $state = $selfSignedUp || $visible !== null ? null : $this->selfSignupState($user, $shift, $angelType);
 
             // Angel types requiring confirmation: offer to request it or show that it is pending
             $membership = null;
@@ -84,7 +110,9 @@ class ShiftPopupController extends BaseController
                 'self_allowed' => $state?->isSignupAllowed() ?? false,
                 'self_reason' => $state && !$state->isSignupAllowed() ? $this->stateMessage($state) : null,
                 'membership' => $membership,
-                'users' => $this->selectableUsers($angelType, $entries->pluck('user_id')->all()),
+                'users' => $visible !== null
+                    ? []
+                    : $this->selectableUsers($angelType, $entries->pluck('user_id')->all()),
             ];
         }
 
@@ -101,6 +129,7 @@ class ShiftPopupController extends BaseController
             'time_label' => $shift->start->format('H:i') . ' – ' . $shift->end->format('H:i'),
             'types' => $types,
             'hidden_types' => count(array_filter($types, fn($type) => $type['hidden'])),
+            'own_only' => $visible !== null,
         ]);
     }
 

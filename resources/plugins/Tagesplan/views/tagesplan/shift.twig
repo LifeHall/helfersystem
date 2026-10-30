@@ -49,9 +49,11 @@
         <div class="tp-type{{ type.hidden ? ' d-none' }}">
         <h6>
             {{ type.angel_type.name }}
-            <span class="badge {{ type.free > 0 ? 'bg-warning text-dark' : 'bg-success' }}">
-                {{ type.entries|length }} / {{ type.count }}
-            </span>
+            {% if not own_only %}
+                <span class="badge {{ type.free > 0 ? 'bg-warning text-dark' : 'bg-success' }}">
+                    {{ type.entries|length }} / {{ type.count }}
+                </span>
+            {% endif %}
         </h6>
         {% if type.self_signed_up %}
             <p class="text-success small">{{ m.icon('check-lg') }} {{ __('tagesplan.self_signed_up') }}</p>

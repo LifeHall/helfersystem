@@ -52,6 +52,12 @@ class Controller extends BaseController
             ->map(fn($day) => (string) $day)
             ->all();
 
+        // Helpers only see the days with their own shifts
+        $own = OwnShifts::restricted() ? new OwnShifts(auth()->user()) : null;
+        if ($own) {
+            $days = array_values(array_intersect($days, $own->days()));
+        }
+
         $day = $request->input('day');
         if (!in_array($day, $days, true)) {
             $day = $this->defaultDay($days);
@@ -76,8 +82,16 @@ class Controller extends BaseController
                 ->orderBy('start')
                 ->get();
 
+            $needs = [];
+            foreach ($shifts as $shift) {
+                $needs[$shift->id] = $own ? $own->filter($shift, $this->needs($shift)) : $this->needs($shift);
+            }
+            if ($own) {
+                $shifts = $shifts->filter(fn(Shift $shift) => $needs[$shift->id])->values();
+            }
+
             $columns = $this->columns($shifts);
-            $groups = $this->groups($shifts, $columns);
+            $groups = $this->groups($shifts, $columns, $needs);
             $categories = $shifts
                 ->map(fn(Shift $shift) => $this->category($shift))
                 ->filter()
@@ -105,6 +119,7 @@ class Controller extends BaseController
             'columns' => $columns,
             'groups' => $groups,
             'categories' => $categories,
+            'own_only' => (bool) $own,
             // Shift popup to re-open after signing up / off
             'open_shift' => (int) $request->input('shift') ?: null,
             'open_type' => (int) $request->input('type') ?: null,
@@ -166,14 +181,10 @@ class Controller extends BaseController
     /**
      * @param Collection|Shift[] $shifts
      * @param array[] $columns Handover columns get marked
+     * @param array[] $needs Needed angel types by shift id, see needs()
      */
-    protected function groups(Collection $shifts, array &$columns): array
+    protected function groups(Collection $shifts, array &$columns, array $needs): array
     {
-        $needs = [];
-        foreach ($shifts as $shift) {
-            $needs[$shift->id] = $this->needs($shift);
-        }
-
         // Fixed position per location across all days, used for sorting and colors
         $positions = $this->location->newQuery()
             ->get()
