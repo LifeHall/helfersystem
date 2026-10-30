@@ -31,7 +31,9 @@
                                     <input type="number" name="tage" id="si-days" value="364" step="1" class="form-control" style="width: 8rem">
                                 </div>
                                 <div class="col-auto">
-                                    <button type="submit" class="btn btn-secondary">
+                                    {# Without type attribute: the core disables all button[type="submit"] when a form is sent,
+                                       the download keeps the page open, so the other buttons have to stay usable #}
+                                    <button class="btn btn-secondary">
                                         {{ m.icon('file-earmark-arrow-down') }} {{ __('schichtimport.template.download_existing') }}
                                     </button>
                                 </div>
@@ -65,7 +67,7 @@
                                 <input type="checkbox" name="anlegen" value="1" id="si-create" class="form-check-input">
                                 <label for="si-create" class="form-check-label">{{ __('schichtimport.create_missing') }}</label>
                             </div>
-                            <button type="submit" class="btn btn-primary">{{ m.icon('search') }} {{ __('schichtimport.check') }}</button>
+                            <button class="btn btn-primary">{{ m.icon('search') }} {{ __('schichtimport.check') }}</button>
                             <div class="form-text">{{ __('schichtimport.check.info') }}</div>
                         </form>
                     </div>

@@ -73,7 +73,7 @@ class Import
 
         $rows = [];
         foreach ($lines as $number => $line) {
-            $cells = array_map('trim', str_getcsv($line, $separator, '"', ''));
+            $cells = array_map(fn($value) => trim((string) $value), str_getcsv($line, $separator, '"', ''));
             $cells = array_filter($cells, fn($value) => $value !== '');
             if ($cells) {
                 // Columns start at 1 like in Excel
