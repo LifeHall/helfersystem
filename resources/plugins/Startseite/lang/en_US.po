@@ -238,3 +238,7 @@ msgstr "No account yet?"
 msgid "startseite.signup.legend.events"
 msgstr "Events"
 
+
+# Link on the login page, the key exists in the core only since 2026-10
+msgid "angeltype.about"
+msgstr "Team/Task description"

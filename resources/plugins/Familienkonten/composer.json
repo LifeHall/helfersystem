@@ -2,7 +2,7 @@
   "type": "engelsystem-plugin",
   "name": "helfersystem/familienkonten",
   "description": "Familienkonten: mehrere Konten mit der gleichen Mailadresse",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "license": "GPL-2.0-or-later",
   "authors": [
     {

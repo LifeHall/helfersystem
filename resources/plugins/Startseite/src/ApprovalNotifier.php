@@ -26,9 +26,10 @@ class ApprovalNotifier
      */
     public function notify(User $requester, AngelType $type): void
     {
+        // admin_user_angeltypes: name before the rename in the core (2026-10)
         $editors = User::whereHas(
             'groups.privileges',
-            fn($query) => $query->where('name', 'user.angeltypes.edit')
+            fn($query) => $query->whereIn('name', ['user.angeltypes.edit', 'admin_user_angeltypes'])
         )->get();
         $supporters = $type->userAngelTypes()->wherePivot('supporter', true)->get();
 

@@ -1,2 +1,2 @@
-msgid "familienkonten.password.message"
-msgstr "There are several accounts with this mail address. This mail is for the account \"%1$s\".\nTo reset the password of this account, visit %2$s\nThis link is valid for 30 minutes."
+msgid "familienkonten.password.account"
+msgstr "There are several accounts with this mail address. This mail is for the account \"%1$s\"."

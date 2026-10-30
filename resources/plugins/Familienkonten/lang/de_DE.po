@@ -1,2 +1,2 @@
-msgid "familienkonten.password.message"
-msgstr "Mit dieser Mailadresse gibt es mehrere Konten. Diese Mail gilt für das Konto „%1$s“.\nUm das Passwort dieses Kontos zurückzusetzen, besuche %2$s\nDieser Link ist für 30 Minuten gültig."
+msgid "familienkonten.password.account"
+msgstr "Mit dieser Mailadresse gibt es mehrere Konten. Diese Mail gilt für das Konto „%1$s“."

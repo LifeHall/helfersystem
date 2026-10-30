@@ -334,6 +334,8 @@ class ShiftPopupController extends BaseController
     {
         return $this->auth->can('user_shifts_admin')
             || $this->auth->can('user.angeltypes.edit')
+            // Name before the rename in the core (2026-10)
+            || $this->auth->can('admin_user_angeltypes')
             || $this->auth->user()->isAngelTypeSupporter($angelType);
     }
 
@@ -365,9 +367,10 @@ class ShiftPopupController extends BaseController
      */
     protected function notifyApprovers(User $requester, AngelType $angelType): void
     {
+        // admin_user_angeltypes: name before the rename in the core (2026-10)
         $editors = User::whereHas(
             'groups.privileges',
-            fn($query) => $query->where('name', 'user.angeltypes.edit')
+            fn($query) => $query->whereIn('name', ['user.angeltypes.edit', 'admin_user_angeltypes'])
         )->get();
         $supporters = $angelType->userAngelTypes()->wherePivot('supporter', true)->get();
 

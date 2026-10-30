@@ -658,6 +658,8 @@ class SignupController extends BaseController
     {
         return $this->manage[$type->id] ??= $this->auth->can('user_shifts_admin')
             || $this->auth->can('user.angeltypes.edit')
+            // Name before the rename in the core (2026-10)
+            || $this->auth->can('admin_user_angeltypes')
             || $this->auth->user()->isAngelTypeSupporter($type);
     }
 
