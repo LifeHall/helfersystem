@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Erzeugt lang/<locale>.po dieses Plugins, das alle Texte mit "Engel"/"angel"
-durch "Helfer"/"helper" ersetzt. Plugin-Übersetzungen werden nach denen des
+durch "Helfer"/"helper" und "Himmel"/"Heaven" durch "Infostand"/"Info Desk" ersetzt. Plugin-Übersetzungen werden nach denen des
 Originals geladen und überschreiben sie, ohne dass Dateien des Originals
 (upstream) verändert werden müssen.
 
@@ -29,12 +29,21 @@ NOT_LETTER = r'(?<![A-Za-zÄÖÜäöüß])'
 
 RULES = {
     'de_DE': [
+        # "im Himmel" wird "am Infostand", sonst passt der Artikel ("zum", "den", "vom") auch für den Infostand
+        (re.compile(NOT_LETTER + r'im Himmel'), 'am Infostand'),
+        (re.compile(NOT_LETTER + r'Himmel'), 'Infostand'),
         (re.compile(NOT_LETTER + r'Engel'), 'Helfer'),
         (re.compile(NOT_LETTER + r'engelsystem'), 'helfersystem'),
     ],
     'en_US': [
+        # "ask Heaven" becomes "ask the Info Desk"
+        (re.compile(NOT_LETTER + r'(ask|Ask|contact|to|by|or) [Hh]eaven'), r'\1 the Info Desk'),
+        (re.compile(NOT_LETTER + r'[Hh]eaven'), 'Info Desk'),
+        # "an" before a vowel only, the capitalization of the original stays
         (re.compile(NOT_LETTER + r'An angel'), 'A helper'),
         (re.compile(NOT_LETTER + r'an angel'), 'a helper'),
+        (re.compile(NOT_LETTER + r'An Angel'), 'A Helper'),
+        (re.compile(NOT_LETTER + r'an Angel'), 'a Helper'),
         (re.compile(NOT_LETTER + r'ANGEL'), 'HELPER'),
         (re.compile(NOT_LETTER + r'Angel'), 'Helper'),
         (re.compile(NOT_LETTER + r'angel'), 'helper'),

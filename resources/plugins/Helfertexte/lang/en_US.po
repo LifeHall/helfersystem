@@ -182,8 +182,11 @@ msgstr "You are not allowed to delete all users for this helper type."
 msgid "You are not allowed to delete this users angel type."
 msgstr "You are not allowed to delete this users helper type."
 
+msgid "You are not allowed to remove this shift entry. If necessary, ask your supporter or heaven to do so."
+msgstr "You are not allowed to remove this shift entry. If necessary, ask your supporter or the Info Desk to do so."
+
 msgid "You are not marked as arrived. Please go to heaven, get your angel badge and/or tell them that you arrived already."
-msgstr "You are not marked as arrived. Please go to heaven, get your helper badge and/or tell them that you arrived already."
+msgstr "You are not marked as arrived. Please go to the Info Desk, get your helper badge and/or tell them that you arrived already."
 
 msgid "You are unconfirmed for this angel type. Please go to the introduction for %s to get confirmed."
 msgstr "You are unconfirmed for this helper type. Please go to the introduction for %s to get confirmed."
@@ -193,6 +196,9 @@ msgstr "You cannot edit helpers with more rights."
 
 msgid "You need be accepted member of the angel type."
 msgstr "You need be accepted member of the helper type."
+
+msgid "Your %s account has been deleted. If you have any questions regarding your account deletion, please contact heaven."
+msgstr "Your %s account has been deleted. If you have any questions regarding your account deletion, please contact the Info Desk."
 
 msgid "admin_shifts.no_angeltypes"
 msgstr "No helper type has been created yet. Shifts cannot be created without one."
@@ -251,11 +257,17 @@ msgstr "Helper types that require introduction can only be joined by Helpers aft
 msgid "angeltype.shift.self_signup.info"
 msgstr "Helper types with shift self-signup enabled allow Helpers to sign up for their own shifts. If shift self-signup is disabled, only supporters and admins can assign Helpers to shifts for these helper types."
 
+msgid "auth.not-found"
+msgstr "No user was found or password is wrong. Please try again. If you are still having problems, ask the Info Desk."
+
 msgid "config.api_key.info"
 msgstr "The API key is used to protect access to the Helfersystem /metrics endpoint. It has no restrictions on length or character classes and must be included in the HTTP request as the request parameter api_key."
 
 msgid "config.app_key.info"
 msgstr "Random, long (at least 32 characters) alphanumeric or base64 encoded key, used for signing i.e. JWT tokens to join helper types by link."
+
+msgid "config.contact_options.info"
+msgstr "Other ways to ask the Info Desk, see config/app.php for examples"
 
 msgid "config.enable_dect.info"
 msgstr "Enables DECT numbers for users, locations and helper types"
@@ -272,11 +284,23 @@ msgstr "If enabled it takes the Helfersystem offline for maintenance and shows a
 msgid "config.supporters_can_promote.info"
 msgstr "Supporters of a helper type (team) can promote other users of the helper type to supporter"
 
+msgid "faq.questions_link"
+msgstr "If you don't find an answer, you can <a href=\"%s\">ask the Info Desk</a>."
+
 msgid "freeload.freeloaded.info"
 msgstr "The Helper was not present for a shift. If %s shifts are freeloaded, shift registration is blocked for the Helper."
 
 msgid "freeload.freeloaded.info.goodie"
-msgstr "If an Helper was not present for a shift, double the shift length is deducted from the %s. If %s shifts are freeloaded, shift registration is blocked for the Helper."
+msgstr "If a Helper was not present for a shift, double the shift length is deducted from the %s. If %s shifts are freeloaded, shift registration is blocked for the Helper."
+
+msgid "freeload.freeloader.info"
+msgstr "You were not present for at least %s shifts. Therefore, shift registration is blocked. Please go to the Info Desk to be unlocked again."
+
+msgid "freeload.info"
+msgstr "You were not present for this shift. Please contact the Info Desk if you have questions."
+
+msgid "freeload.info.goodie"
+msgstr "You were not present for this shift. The double length of the shift was deducted from your %s. Please contact the Info Desk if you have questions."
 
 msgid "general.angel"
 msgstr "Helper"
@@ -286,6 +310,9 @@ msgstr "Required helpers (on schedule import or copy)"
 
 msgid "message.choose_angel"
 msgstr "Choose a helper"
+
+msgid "question.menu"
+msgstr "Ask the Info Desk"
 
 msgid "registration.title"
 msgstr "Helper registration"
@@ -297,13 +324,16 @@ msgid "settings.profile.angeltypes.info"
 msgstr "You can manage your helper types <a href=\"%s\">here</a>."
 
 msgid "settings.profile.email_by_human_allowed"
-msgstr "Allow Heaven Helpers to contact me by e-mail."
+msgstr "Allow Info Desk Helpers to contact me by e-mail."
 
 msgid "settings.profile.pronoun.info"
 msgstr "Will be shown on your profile page and in helper lists."
 
 msgid "shift.angeltype_source"
 msgstr "Needed helpers from: %s"
+
+msgid "shift.sign_out.hint"
+msgstr "You can sign yourself out up to %s hours before the start of the shift. If you can't attend your shift, ask the Info Desk to sign you out."
 
 msgid "shifttype.required_angels"
 msgstr "Required helpers (on schedule import or copy)"
@@ -312,7 +342,10 @@ msgid "user.goodie.reserved"
 msgstr "A goodie is reserved for this helper."
 
 msgid "user.info.hint"
-msgstr "Is displayed for shift coordinators and admins in the user view. If an Helper is not marked as arrived, a user info removes the not-arrived notification in the Helper's system menu."
+msgstr "Is displayed for shift coordinators and admins in the user view. If a Helper is not marked as arrived, a user info removes the not-arrived notification in the Helper's system menu."
+
+msgid "user_info.not_arrived_hint"
+msgstr "If you want to sign up for shifts, feel free to drop by the Info Desk."
 
 msgid "voucher.eligible"
 msgstr "Helper can receive another %d vouchers."
@@ -322,12 +355,6 @@ msgstr "Helper can receive <s>&thinsp;%d&thinsp;</s> unlimited vouchers."
 
 # --- Manuelle Ergänzungen aus manual/en_US.po ---
 # Manual text overrides (English) – take precedence over the automatic replacements
-
-msgid "question.menu"
-msgstr "Ask the admin"
-
-msgid "faq.questions_link"
-msgstr "If you don't find an answer, you can <a href=\"%s\">ask the admin</a>."
 
 # Missing in the original translations (code uses spaces around "/")
 msgid "Other angel type needed / collides with my shifts"

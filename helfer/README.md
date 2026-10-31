@@ -4,13 +4,14 @@ Dieser Fork basiert auf [engelsystem/engelsystem](https://github.com/engelsystem
 Eigene Anpassungen liegen möglichst ausserhalb der Original-Dateien, damit Updates
 von upstream ohne Merge-Konflikte übernommen werden können.
 
-## Plugin „Helfertexte“ (Engel → Helfer)
+## Plugin „Helfertexte“ (Engel → Helfer, Himmel → Infostand)
 
 `resources/plugins/Helfertexte/` – überschreibt alle sichtbaren Texte über die Übersetzungen
 des Plugins (`lang/<locale>.po`), die nach denen des Originals geladen werden.
 
 - `build-translations.py` erzeugt `lang/*.po` automatisch aus `resources/lang/`
-  (Engel → Helfer, angel → helper). Nach jedem upstream-Merge neu ausführen
+  (Engel → Helfer, angel → helper, Himmel → Infostand, Heaven → Info Desk; „im Himmel“ → „am Infostand“,
+  „ask Heaven“ → „ask the Info Desk“, „an Angel“ → „a Helper“). Nach jedem upstream-Merge neu ausführen
   (macht `update-from-upstream.sh` automatisch).
 - Eigene Formulierungen in `manual/de_DE.po` bzw. `manual/en_US.po`; sie haben Vorrang.
 - `resources/plugins/*` steht in der `.gitignore` des Originals, darum mit `git add -f` committen.
@@ -119,7 +120,7 @@ Auf einer neuen Installation unter **Admin → Plugins** installieren und aktivi
 
 ## Rechte (Datenbank, nicht im Repo)
 
-Helfer (Gruppe „Angel“) sehen im Menü nur News, Frag den Admin und Tagesplan. Dafür wurden
+Helfer (Gruppe „Angel“) sehen im Menü nur News, Frag den Infostand und Tagesplan. Dafür wurden
 `user_shifts`, `user_meetings`, `angeltypes.view` und `locations.view` der Gruppe „Angel“ entzogen
 und den Gruppen „Shift Coordinator“ und „Bureaucrat“ gegeben (Admin → Gruppen).
 Hinweis: `/angeltypes` und `/locations` sind im Original „freie Seiten“ und per direkter URL
