@@ -1,11 +1,5 @@
 # Manual text overrides (English) – take precedence over the automatic replacements
 
-msgid "question.menu"
-msgstr "Ask the admin"
-
-msgid "faq.questions_link"
-msgstr "If you don't find an answer, you can <a href=\"%s\">ask the admin</a>."
-
 # Missing in the original translations (code uses spaces around "/")
 msgid "Other angel type needed / collides with my shifts"
 msgstr "Other helper type needed / collides with my shifts"

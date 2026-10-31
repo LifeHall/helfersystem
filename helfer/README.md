@@ -4,13 +4,14 @@ Dieser Fork basiert auf [engelsystem/engelsystem](https://github.com/engelsystem
 Eigene Anpassungen liegen möglichst ausserhalb der Original-Dateien, damit Updates
 von upstream ohne Merge-Konflikte übernommen werden können.
 
-## Plugin „Helfertexte“ (Engel → Helfer)
+## Plugin „Helfertexte“ (Engel → Helfer, Himmel → Infostand)
 
 `resources/plugins/Helfertexte/` – überschreibt alle sichtbaren Texte über die Übersetzungen
 des Plugins (`lang/<locale>.po`), die nach denen des Originals geladen werden.
 
 - `build-translations.py` erzeugt `lang/*.po` automatisch aus `resources/lang/`
-  (Engel → Helfer, angel → helper). Nach jedem upstream-Merge neu ausführen
+  (Engel → Helfer, angel → helper, Himmel → Infostand, Heaven → Info Desk; „im Himmel“ → „am Infostand“,
+  „ask Heaven“ → „ask the Info Desk“, „an Angel“ → „a Helper“). Nach jedem upstream-Merge neu ausführen
   (macht `update-from-upstream.sh` automatisch).
 - Eigene Formulierungen in `manual/de_DE.po` bzw. `manual/en_US.po`; sie haben Vorrang.
 - `resources/plugins/*` steht in der `.gitignore` des Originals, darum mit `git add -f` committen.
@@ -149,7 +150,7 @@ Auf einer neuen Installation unter **Admin → Plugins** installieren und aktivi
 
 ## Rechte (Datenbank, nicht im Repo)
 
-Helfer (Gruppe „Angel“) sehen im Menü nur News, Frag den Admin und Tagesplan. Dafür wurden
+Helfer (Gruppe „Angel“) sehen im Menü nur News, Frag den Infostand und Tagesplan. Dafür wurden
 `user_shifts`, `user_meetings`, `angeltypes.view` und `locations.view` der Gruppe „Angel“ entzogen
 und den Gruppen „Shift Coordinator“ und „Bureaucrat“ gegeben (Admin → Gruppen).
 Hinweis: `/angeltypes` und `/locations` sind im Original „freie Seiten“ und per direkter URL
@@ -168,3 +169,20 @@ auf 8 Orte mit mehreren Helfertypen (Atelier, Aussenbereich, Bistro, Kasse, Kerz
 Parkplatz, Wachsküche, Wachsschalen). Gleichzeitige Schichten eines Ortes werden zu einer Schicht
 mit mehreren Helfertypen zusammengelegt; setzt auch die Reihenfolge im Tagesplan.
 Aufruf siehe Kopf des Skripts (`--dry-run` für einen Testlauf).
+
+## Plugin „Schichtimport“
+
+`resources/plugins/Schichtimport/` – Menüpunkt „Schichtimport“ (`/schichtimport`, Recht `admin_shifts`,
+also Schichteinteiler): Schichten und benötigte Personen aus einer Excel-Vorlage anlegen.
+
+- Vorlage herunterladen: leer oder mit den bestehenden Schichten, Datum um n Tage verschoben
+  (364 = gleicher Wochentag im Folgejahr). Blätter „Schichten“, „Listen“ (Auswahllisten) und „Anleitung“.
+- Eine Zeile pro benötigtem Helfertyp; gleiche Zeit + Ort + Schichttyp + Titel = eine Schicht.
+- Hochladen (xlsx oder CSV) → Prüfung mit Fehlern/Hinweisen und Übersicht pro Tag → „Jetzt importieren“.
+- Bereits vorhandene gleiche Schichten werden übersprungen; fehlende Orte/Helfertypen/Schichttypen
+  werden nur auf Wunsch angelegt.
+- Jeder Import bekommt eine eigene `transaction_id` (Tabelle `schichtimport_imports`) und kann rückgängig
+  gemacht werden, solange niemand eingetragen ist.
+- „Schichten löschen“: alle Schichten eines Tages oder ganzen Jahres an einem Ort (oder allen Orten) mit Vorschau löschen;
+  Eingetragene werden wie im Kern informiert (Ereignis `shift.deleting`), dafür ist ein Häkchen nötig.
+- Kein Zip-Modul im Container: xlsx wird mit eigenem Leser/Schreiber über zlib verarbeitet.

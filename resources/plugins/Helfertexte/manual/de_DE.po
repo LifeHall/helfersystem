@@ -1,11 +1,5 @@
 # Manuelle Text-Anpassungen (Deutsch) – haben Vorrang vor den automatischen Ersetzungen
 
-msgid "question.menu"
-msgstr "Frag den Admin"
-
-msgid "faq.questions_link"
-msgstr "Wenn deine Frage hier nicht beantwortet wurde, <a href=\"%s\">frag den Admin</a>."
-
 # Im Original fehlt die Übersetzung (Code hat Leerzeichen um "/")
 msgid "Other angel type needed / collides with my shifts"
 msgstr "Anderer Helfertyp benötigt / kollidiert mit meinen Schichten"

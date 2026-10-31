@@ -1,0 +1,247 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "schichtimport.menu"
+msgstr "Schichtimport"
+
+msgid "schichtimport.title"
+msgstr "Schichtimport"
+
+msgid "schichtimport.intro"
+msgstr "Schichten und die benötigten Personen aus einer Excel-Datei anlegen, z. B. für das nächste Jahr. Die Datei wird zuerst geprüft, erst danach werden die Schichten angelegt."
+
+msgid "schichtimport.step.template"
+msgstr "Vorlage herunterladen und ausfüllen"
+
+msgid "schichtimport.template.text"
+msgstr "Pro Zeile ein benötigter Helfertyp einer Schicht. Das Blatt „Anleitung“ in der Vorlage erklärt die Spalten."
+
+msgid "schichtimport.template.empty"
+msgstr "Leere Vorlage"
+
+msgid "schichtimport.template.existing"
+msgstr "Oder die bestehenden Schichten (%s – %s) als Vorlage verwenden und anpassen:"
+
+msgid "schichtimport.template.days"
+msgstr "Datum verschieben um (Tage)"
+
+msgid "schichtimport.template.days_info"
+msgstr "364 Tage = gleicher Wochentag ein Jahr später, 0 = Datum unverändert."
+
+msgid "schichtimport.template.download_existing"
+msgstr "Vorlage mit bestehenden Schichten"
+
+msgid "schichtimport.step.upload"
+msgstr "Datei prüfen und importieren"
+
+msgid "schichtimport.file"
+msgstr "Datei (Excel .xlsx oder CSV)"
+
+msgid "schichtimport.default_shift_type"
+msgstr "Standard-Schichttyp"
+
+msgid "schichtimport.default_shift_type.info"
+msgstr "Für Zeilen ohne Schichttyp."
+
+msgid "schichtimport.create_missing"
+msgstr "Fehlende Orte, Helfertypen und Schichttypen anlegen"
+
+msgid "schichtimport.check"
+msgstr "Prüfen"
+
+msgid "schichtimport.check.info"
+msgstr "Es wird noch nichts angelegt."
+
+msgid "schichtimport.imports"
+msgstr "Bisherige Importe"
+
+msgid "schichtimport.imports.none"
+msgstr "Noch keine Importe."
+
+msgid "schichtimport.imports.date"
+msgstr "Importiert"
+
+msgid "schichtimport.imports.period"
+msgstr "Zeitraum"
+
+msgid "schichtimport.imports.shifts"
+msgstr "Schichten"
+
+msgid "schichtimport.imports.entries"
+msgstr "Eintragungen"
+
+msgid "schichtimport.undo"
+msgstr "Rückgängig"
+
+msgid "schichtimport.undo.confirm"
+msgstr "Die %s Schichten dieses Imports werden gelöscht."
+
+msgid "schichtimport.undo.not_possible"
+msgstr "Personen eingetragen"
+
+msgid "schichtimport.undone"
+msgstr "%s Schichten gelöscht."
+
+msgid "schichtimport.imported"
+msgstr "%s Schichten importiert."
+
+msgid "schichtimport.check.title"
+msgstr "Import prüfen"
+
+msgid "schichtimport.check.errors"
+msgstr "%s Fehler – bitte die Datei korrigieren und erneut prüfen:"
+
+msgid "schichtimport.check.warnings"
+msgstr "%s Hinweise:"
+
+msgid "schichtimport.check.new"
+msgstr "Wird neu angelegt:"
+
+msgid "schichtimport.check.new.locations"
+msgstr "Orte"
+
+msgid "schichtimport.check.new.angel_types"
+msgstr "Helfertypen (ohne Freigabe-Pflicht)"
+
+msgid "schichtimport.check.new.shift_types"
+msgstr "Schichttypen"
+
+msgid "schichtimport.check.ready"
+msgstr "Bereit: %s Schichten mit insgesamt %s Plätzen werden angelegt."
+
+msgid "schichtimport.import"
+msgstr "Jetzt importieren"
+
+msgid "schichtimport.cancel"
+msgstr "Abbrechen"
+
+msgid "schichtimport.back"
+msgstr "Zurück"
+
+msgid "schichtimport.check.days"
+msgstr "Übersicht pro Tag"
+
+msgid "schichtimport.check.day"
+msgstr "Tag"
+
+msgid "schichtimport.check.positions"
+msgstr "Plätze"
+
+msgid "schichtimport.check.locations"
+msgstr "Orte"
+
+msgid "schichtimport.check.existing"
+msgstr "Schon vorhanden"
+
+msgid "schichtimport.check.all_shifts"
+msgstr "Alle %s Schichten anzeigen"
+
+msgid "schichtimport.check.time"
+msgstr "Zeit"
+
+msgid "schichtimport.check.needs"
+msgstr "Benötigt"
+
+msgid "schichtimport.check.lines"
+msgstr "Zeilen"
+
+msgid "schichtimport.error.upload"
+msgstr "Bitte eine Datei auswählen."
+
+msgid "schichtimport.error.file"
+msgstr "Die Datei konnte nicht gelesen werden. Bitte als Excel (.xlsx) oder CSV speichern."
+
+msgid "schichtimport.error.empty"
+msgstr "Die Datei enthält keine Schichten."
+
+msgid "schichtimport.error.expired"
+msgstr "Die geprüfte Datei ist nicht mehr vorhanden. Bitte erneut prüfen."
+
+msgid "schichtimport.error.import"
+msgstr "Import fehlgeschlagen, es wurde nichts angelegt: %s"
+
+msgid "schichtimport.error.not_found"
+msgstr "Import nicht gefunden."
+
+msgid "schichtimport.error.has_entries"
+msgstr "Für diese Schichten sind schon Personen eingetragen, der Import kann nicht rückgängig gemacht werden."
+
+msgid "schichtimport.error.header"
+msgstr "Keine Kopfzeile gefunden. Erwartet werden die Spalten: %s"
+
+msgid "schichtimport.error.columns"
+msgstr "Es fehlen die Spalten: %s"
+
+msgid "schichtimport.error.missing"
+msgstr "Zeile %s: %s fehlt."
+
+msgid "schichtimport.error.value"
+msgstr "Zeile %s: %s „%s“ ist ungültig."
+
+msgid "schichtimport.error.duplicate"
+msgstr "Zeile %s: Helfertyp „%s“ ist für diese Schicht schon in einer anderen Zeile erfasst."
+
+msgid "schichtimport.error.unknown.locations"
+msgstr "Zeile %s: Ort „%s“ gibt es nicht."
+
+msgid "schichtimport.error.unknown.angel_types"
+msgstr "Zeile %s: Helfertyp „%s“ gibt es nicht."
+
+msgid "schichtimport.error.unknown.shift_types"
+msgstr "Zeile %s: Schichttyp „%s“ gibt es nicht."
+
+msgid "schichtimport.warning.zero"
+msgstr "Zeile %s: Anzahl 0 bei „%s“, Zeile wird ignoriert."
+
+msgid "schichtimport.warning.exists"
+msgstr "Zeile %s: Die Schicht gibt es schon, sie wird übersprungen."
+
+msgid "schichtimport.delete.title"
+msgstr "Schichten löschen"
+
+msgid "schichtimport.delete.intro"
+msgstr "Alle Schichten eines Tages oder eines ganzen Jahres an einem Ort (oder an allen Orten) löschen. Eingetragene Personen werden wie beim Löschen im System per Mail informiert."
+
+msgid "schichtimport.delete.location"
+msgstr "Ort"
+
+msgid "schichtimport.delete.all_locations"
+msgstr "Alle Orte"
+
+msgid "schichtimport.delete.show"
+msgstr "Schichten anzeigen"
+
+msgid "schichtimport.delete.none"
+msgstr "Im gewählten Zeitraum gibt es dort keine Schichten."
+
+msgid "schichtimport.delete.summary"
+msgstr "%s Schichten mit %s Eintragungen werden gelöscht."
+
+msgid "schichtimport.delete.with_entries"
+msgstr "Auch die %s Eintragungen löschen (die Personen werden informiert)"
+
+msgid "schichtimport.delete.button"
+msgstr "%s Schichten löschen"
+
+msgid "schichtimport.delete.confirm"
+msgstr "%s Schichten werden endgültig gelöscht."
+
+msgid "schichtimport.delete.done"
+msgstr "%s Schichten gelöscht."
+
+msgid "schichtimport.delete.choose_day"
+msgstr "Tag oder Jahr wählen"
+
+msgid "schichtimport.delete.period"
+msgstr "Zeitraum"
+
+msgid "schichtimport.delete.years"
+msgstr "Ganzes Jahr"
+
+msgid "schichtimport.delete.days"
+msgstr "Einzelner Tag"
+
+msgid "schichtimport.delete.whole_year"
+msgstr "Ganzes Jahr %s"
+

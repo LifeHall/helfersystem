@@ -188,6 +188,12 @@ msgstr "Du darfst nicht alle Benutzer von diesem Helfertyp entfernen."
 msgid "You are not allowed to delete this users angel type."
 msgstr "Du darfst diesen Benutzer nicht von diesem Helfertyp entfernen."
 
+msgid "You are not allowed to remove this shift entry. If necessary, ask your supporter or heaven to do so."
+msgstr "Du darfst diesen Schichteintrag nicht entfernen. Falls notwendig, frage deinen Supporter oder am Infostand danach."
+
+msgid "You are not marked as arrived. Please go to heaven, get your angel badge and/or tell them that you arrived already."
+msgstr "Du bist nicht als angekommen markiert. Geh bitte zum Infostand, hole Dein Badge ab und/oder melde dich als angekommen."
+
 msgid "You are unconfirmed for this angel type. Please go to the introduction for %s to get confirmed."
 msgstr "Du bist noch nicht für diesen Helfertyp bestätigt. Bitte gehe zur Einführung für %s um bestätigt zu werden."
 
@@ -196,6 +202,9 @@ msgstr "Du kannst keine Helfer mit mehr Rechten bearbeiten."
 
 msgid "You need be accepted member of the angel type."
 msgstr "Du musst bestätigtes Mitglied des Helfertyps sein."
+
+msgid "Your %s account has been deleted. If you have any questions regarding your account deletion, please contact heaven."
+msgstr "Dein %s-Konto wurde gelöscht. Wenn Du dazu Fragen hast, kontaktiere bitte den Infostand."
 
 msgid "admin_shifts.no_angeltypes"
 msgstr "Es wurde noch kein Helfertyp erstellt. Ohne können keine Schichten erstellt werden."
@@ -251,6 +260,9 @@ msgstr "Helfertypen, welche eine Einführung benötigen, müssen von einem Suppo
 msgid "angeltype.shift.self_signup.info"
 msgstr "Helfertypen, welche Schichten selbst eintragen erlaubt haben, erlauben Helfern sich selbst in ihre Schichten einzutragen, ist Schichten selbst eintragen nicht erlaubt können nur Supporter oder Admins Helfer in die Schichten des Helfertyps eintragen."
 
+msgid "auth.not-found"
+msgstr "Es wurde kein User gefunden oder das Passwort ist falsch. Probiere es bitte noch einmal. Wenn das Problem weiterhin besteht, melde dich am Infostand."
+
 msgid "config.app_key.info"
 msgstr "Zufälliger, langer (min. 32 Zeichen) Alphanumerischer oder base64 enkodierter Schlüssel,u.a. zum Signieren von JWT Tokens beim Beitreten von Helfertypen via Link benutzt."
 
@@ -269,11 +281,23 @@ msgstr "Anzahl an Minuten nach denen ein JWT abläuft, bspw für max. Zeit zum H
 msgid "config.supporters_can_promote.info"
 msgstr "Supporter eines Helfertyps (Team) können andere Benutzer des Helfertyps zu Supportern befördern"
 
+msgid "faq.questions_link"
+msgstr "Wenn deine Frage hier nicht beantwortet wurde, <a href=\"%s\">frag den Infostand</a>."
+
 msgid "freeload.freeloaded.info"
 msgstr "Der Helfer war bei einer Schicht nicht anwesend. Bei %s geschwänzten Schichten wird die Schicht-Registration für den Helfer gesperrt."
 
 msgid "freeload.freeloaded.info.goodie"
 msgstr "War ein Helfer bei einer Schicht nicht anwesend, wird die doppelte Länge der Schicht von dem %s abgezogen. Bei %s geschwänzten Schichten wird die Schicht-Registration für den Helfer gesperrt."
+
+msgid "freeload.freeloader.info"
+msgstr "Du warst bei mindestens %s Schichten nicht anwesend. Deshalb ist die Schicht-Registrierung gesperrt. Bitte gehe zum Infostand um wieder entsperrt zu werden."
+
+msgid "freeload.info"
+msgstr "Du warst bei dieser Schicht nicht anwesend. Bitte wende dich bei Fragen an den Infostand."
+
+msgid "freeload.info.goodie"
+msgstr "Du warst bei dieser Schicht nicht anwesend. Die doppelte Länge der Schicht wurde von deinem %s abgezogen. Bitte wende dich bei Fragen an den Infostand."
 
 msgid "general.angel"
 msgstr "Helfer"
@@ -287,6 +311,9 @@ msgstr "Wähle einen Helfer"
 msgid "oauth.already-connected"
 msgstr "Dieser Account wurde bereits mit einem anderen Helfersystem-User verbunden!"
 
+msgid "question.menu"
+msgstr "Frag den Infostand"
+
 msgid "registration.title"
 msgstr "Helfer-Registrierung"
 
@@ -297,13 +324,16 @@ msgid "settings.profile.angeltypes.info"
 msgstr "Du kannst deine Helfertypen <a href=\"%s\">auf der Helfertypen-Seite</a> verwalten."
 
 msgid "settings.profile.email_by_human_allowed"
-msgstr "Erlaube Himmel-Helfern mich per E-Mail zu kontaktieren."
+msgstr "Erlaube Infostand-Helfern mich per E-Mail zu kontaktieren."
 
 msgid "settings.profile.pronoun.info"
 msgstr "Wird auf deiner Profilseite und in Helferlisten angezeigt."
 
 msgid "shift.angeltype_source"
 msgstr "Benötigte Helfer von: %s"
+
+msgid "shift.sign_out.hint"
+msgstr "Du kannst dich bis %s Stunden vor dem Start der Schicht austragen. Wenn du nicht zu deiner Schicht kommen kannst, lass dich vom Infostand austragen."
 
 msgid "shifttype.required_angels"
 msgstr "Benötigte Helfer (bei Programmimport/-kopie)"
@@ -314,6 +344,9 @@ msgstr "Für diesen Helfer wurde ein Goodie reserviert."
 msgid "user.info.hint"
 msgstr "Wird auf der Benutzer Seite für Schichtkoordinatoren und Admins angezeigt. Wenn ein Helfer nicht als angekommen markiert ist, entfernt eine Benutzer Info die nicht-angekommen Nachricht im Systemmenü des Helfers."
 
+msgid "user_info.not_arrived_hint"
+msgstr "Wenn du dich für Schichten eintragen willst, komm gerne am Infostand vorbei."
+
 msgid "voucher.eligible"
 msgstr "Helfer kann noch %d Gutscheine bekommen."
 
@@ -322,12 +355,6 @@ msgstr "Helfer kann <s>&thinsp;%d&thinsp;</s> unbegrenzt Gutscheine bekommen."
 
 # --- Manuelle Ergänzungen aus manual/de_DE.po ---
 # Manuelle Text-Anpassungen (Deutsch) – haben Vorrang vor den automatischen Ersetzungen
-
-msgid "question.menu"
-msgstr "Frag den Admin"
-
-msgid "faq.questions_link"
-msgstr "Wenn deine Frage hier nicht beantwortet wurde, <a href=\"%s\">frag den Admin</a>."
 
 # Im Original fehlt die Übersetzung (Code hat Leerzeichen um "/")
 msgid "Other angel type needed / collides with my shifts"
