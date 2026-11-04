@@ -93,6 +93,7 @@ class Controller extends BaseController
             'groups' => $groups,
             'categories' => $categories,
             'own_only' => (bool) $own,
+            'supported_types' => $own ? $own->supported()->pluck('name')->all() : [],
             // Shift popup to re-open after signing up / off
             'open_shift' => (int) $request->input('shift') ?: null,
             'open_type' => (int) $request->input('type') ?: null,

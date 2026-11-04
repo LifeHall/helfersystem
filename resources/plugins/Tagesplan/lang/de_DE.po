@@ -160,6 +160,9 @@ msgstr "Helfer sehen im Tagesplan nur ihre eigenen Schichten. Eingeschaltet sehe
 msgid "tagesplan.own_only"
 msgstr "Du siehst nur deine eigenen Schichten."
 
+msgid "tagesplan.own_only.supporter"
+msgstr "Als Supporter siehst du ausserdem alle Schichten von: %s."
+
 msgid "tagesplan.own_only.colleagues"
 msgstr "Du siehst deine eigenen Schichten und wer zur gleichen Zeit am gleichen Ort arbeitet."
 

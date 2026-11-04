@@ -160,6 +160,9 @@ msgstr "Helpers only see their own shifts in the day plan. If enabled, they also
 msgid "tagesplan.own_only"
 msgstr "You only see your own shifts."
 
+msgid "tagesplan.own_only.supporter"
+msgstr "As supporter you also see all shifts of: %s."
+
 msgid "tagesplan.own_only.colleagues"
 msgstr "You see your own shifts and who works at the same location at the same time."
 
