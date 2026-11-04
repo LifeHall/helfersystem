@@ -254,6 +254,10 @@ class Controller extends BaseController
                     $types[$typeId] = $need['name'];
                 }
             }
+            // Shifts without needed angel types have no places to show
+            if (!$types) {
+                continue;
+            }
             uasort($types, fn($a, $b) => strnatcasecmp(
                 static::sortKey($a, $location->name),
                 static::sortKey($b, $location->name)
