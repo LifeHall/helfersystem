@@ -74,11 +74,14 @@ class ShiftPopupController extends BaseController
 
         $types = [];
         foreach (NeededAngelTypes_by_shift($shift) as $need) {
+            // Everything visible: managers, and supporters for their angel types
+            $full = true;
             if ($visible !== null) {
                 $typeVisible = $visible[(int) $need['angel_type_id']] ?? null;
                 if (!$typeVisible) {
                     continue;
                 }
+                $full = $typeVisible['full'] ?? false;
                 $need['count'] = $typeVisible['count'];
                 $need['shift_entries'] = $typeVisible['entries'];
             }
@@ -86,7 +89,7 @@ class ShiftPopupController extends BaseController
             $angelType = AngelType::findOrFail($need['angel_type_id']);
             $entries = collect($need['shift_entries'])->sortBy('id')->values();
             $selfSignedUp = $entries->contains(fn(ShiftEntry $entry) => $entry->user_id == $user->id);
-            $state = $selfSignedUp || $visible !== null ? null : $this->selfSignupState($user, $shift, $angelType);
+            $state = $selfSignedUp || !$full ? null : $this->selfSignupState($user, $shift, $angelType);
 
             // Angel types requiring confirmation: offer to request it or show that it is pending
             $membership = null;
@@ -100,6 +103,7 @@ class ShiftPopupController extends BaseController
             $types[] = [
                 'angel_type' => $angelType,
                 'hidden' => $selectedType && $selectedType != $angelType->id,
+                'full' => $full,
                 'count' => (int) $need['count'],
                 'free' => max(0, (int) $need['count'] - $entries->count()),
                 'entries' => $entries->map(fn(ShiftEntry $entry) => [
@@ -110,7 +114,7 @@ class ShiftPopupController extends BaseController
                 'self_allowed' => $state?->isSignupAllowed() ?? false,
                 'self_reason' => $state && !$state->isSignupAllowed() ? $this->stateMessage($state) : null,
                 'membership' => $membership,
-                'users' => $visible !== null
+                'users' => !$full
                     ? []
                     : $this->selectableUsers($angelType, $entries->pluck('user_id')->all()),
             ];

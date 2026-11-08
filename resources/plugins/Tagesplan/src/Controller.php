@@ -93,6 +93,7 @@ class Controller extends BaseController
             'groups' => $groups,
             'categories' => $categories,
             'own_only' => (bool) $own,
+            'supported_types' => $own ? $own->supported()->pluck('name')->all() : [],
             // Shift popup to re-open after signing up / off
             'open_shift' => (int) $request->input('shift') ?: null,
             'open_type' => (int) $request->input('type') ?: null,
@@ -252,6 +253,10 @@ class Controller extends BaseController
                 foreach ($needs[$shift->id] as $typeId => $need) {
                     $types[$typeId] = $need['name'];
                 }
+            }
+            // Shifts without needed angel types have no places to show
+            if (!$types) {
+                continue;
             }
             uasort($types, fn($a, $b) => strnatcasecmp(
                 static::sortKey($a, $location->name),

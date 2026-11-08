@@ -31,6 +31,9 @@ Pro Ort eine Kopfzeile, darunter die Helfertypen (je eigene Zeilen). Reihenfolge
 Helfertypen unter **Admin → Einstellungen → Tagesplan** (ein Name pro Zeile, Einrückung egal);
 die Farbe ergibt sich aus der Position in dieser Liste.
 Eigene Berechtigung `tagesplan.view` (Plugin-Migration, bekommt alle Gruppen mit `user_shifts`).
+Helfer ohne `tagesplan.manage` sehen nur ihre eigenen Schichten (optional die Personen am gleichen Ort zur
+gleichen Zeit); Supporter eines Helfertyps sehen zusätzlich alle Schichten dieses Helfertyps mit freien Plätzen
+und können dort sich und Mitglieder ein- und austragen (`OwnShifts`).
 Unter **Admin → Konfiguration → Tagesplan** lässt er sich mit „Tagesplan für Helfer sichtbar“ ausblenden; dann sehen ihn
 nur noch Benutzer mit `tagesplan.manage` (Plugin-Migration, alle Gruppen mit `user_shifts_admin`: Admins, Schichteinteiler).
 Helfer (ohne `tagesplan.manage`) sehen nur die Tage und Plätze ihrer eigenen Einträge, ohne offene Plätze; eingetragen

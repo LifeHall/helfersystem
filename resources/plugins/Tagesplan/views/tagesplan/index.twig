@@ -164,6 +164,9 @@
             {% if own_only %}
                 <p class="small text-muted mb-2 d-print-none">
                     {{ config('tagesplan_show_colleagues') ? __('tagesplan.own_only.colleagues') : __('tagesplan.own_only') }}
+                    {% if supported_types %}
+                        {{ __('tagesplan.own_only.supporter', [supported_types|join(', ')]) }}
+                    {% endif %}
                 </p>
             {% endif %}
             <div class="table-responsive">

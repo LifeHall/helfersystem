@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Helfersystem\Tagesplan;
 
+use Engelsystem\Models\AngelType;
 use Engelsystem\Models\Shifts\Shift;
 use Engelsystem\Models\Shifts\ShiftEntry;
 use Engelsystem\Models\User\User;
@@ -11,12 +12,16 @@ use Illuminate\Support\Collection;
 
 /**
  * Helpers (without tagesplan.manage) only see their own shift entries in the day plan,
- * with config tagesplan_show_colleagues also the people at the same location at the same time
+ * with config tagesplan_show_colleagues also the people at the same location at the same time.
+ * Supporters of an angel type see all shifts of it, including the open places
  */
 class OwnShifts
 {
     /** @var Collection|Shift[] Shifts of the user */
     protected Collection $shifts;
+
+    /** @var Collection|AngelType[] Angel types the user supports */
+    protected Collection $supported;
 
     public function __construct(protected User $user)
     {
@@ -26,6 +31,24 @@ class OwnShifts
             ->map(fn(ShiftEntry $entry) => $entry->shift)
             ->unique('id')
             ->values();
+
+        $this->supported = $user->userAngelTypes()
+            ->wherePivot('supporter', true)
+            ->orderBy('name')
+            ->get();
+    }
+
+    /**
+     * @return Collection|AngelType[]
+     */
+    public function supported(): Collection
+    {
+        return $this->supported;
+    }
+
+    public function supports(int $angelTypeId): bool
+    {
+        return $this->supported->contains('id', $angelTypeId);
     }
 
     /**
@@ -48,7 +71,19 @@ class OwnShifts
      */
     public function days(): array
     {
-        return $this->shifts
+        $shifts = $this->shifts;
+        if ($this->supported->isNotEmpty()) {
+            // Days of the supported angel types, needed by the shift itself or its location
+            $typeIds = $this->supported->pluck('id')->all();
+            $needs = fn($query) => $query->whereIn('angel_type_id', $typeIds);
+            $shifts = $shifts->concat(
+                Shift::whereHas('neededAngelTypes', $needs)
+                    ->orWhereHas('location.neededAngelTypes', $needs)
+                    ->get(['id', 'start'])
+            );
+        }
+
+        return $shifts
             ->map(fn(Shift $shift) => $shift->start->format('Y-m-d'))
             ->unique()
             ->sort()
@@ -57,7 +92,8 @@ class OwnShifts
     }
 
     /**
-     * Visible part of the needed angel types of a shift: only filled places, no open ones
+     * Visible part of the needed angel types of a shift: only filled places, no open ones,
+     * supported angel types completely (marked with 'full')
      *
      * @param array[] $needs [angel_type_id => ['count' => int, 'entries' => ShiftEntry[], ...]]
      * @return array[] Same format, without the hidden angel types and entries
@@ -72,6 +108,11 @@ class OwnShifts
 
         $visible = [];
         foreach ($needs as $typeId => $need) {
+            if ($this->supports((int) $typeId)) {
+                $visible[$typeId] = ['full' => true] + $need;
+                continue;
+            }
+
             $entries = array_values(array_filter(
                 $need['entries'],
                 fn(ShiftEntry $entry) => $colleagues || $entry->user_id == $this->user->id
