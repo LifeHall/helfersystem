@@ -1,0 +1,53 @@
+{% extends 'layouts/app.twig' %}
+{% import 'macros/base.twig' as m %}
+{% import 'macros/form.twig' as f %}
+
+{% block title %}{{ __('tagesplan.mail_all.title') }}{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <h1 class="h3 mb-3">
+            {{ m.back(url('/tagesplan')) }}
+            {{ block('title') }}
+        </h1>
+
+        {% include 'layouts/parts/messages.twig' %}
+
+        {% if not enabled %}
+            <div class="alert alert-danger">{{ __('tagesplan.mail_all.disabled') }}</div>
+        {% endif %}
+
+        <form method="post" action="{{ url('/tagesplan/rundmail/senden') }}">
+            {{ csrf() }}
+
+            {{ f.select('recipients', __('tagesplan.mail_all.recipients'), {
+                'shifts': __('tagesplan.mail_all.recipients.shifts', [counts.shifts]),
+                'all': __('tagesplan.mail_all.recipients.all', [counts.all]),
+            }, {'selected': 'shifts', 'class': 'form-select'}) }}
+
+            {{ f.input('subject', __('tagesplan.mail_all.subject'), {'required': true, 'required_icon': true, 'max_length': 200}) }}
+
+            <div class="mb-3">
+                <label class="form-label" for="message">
+                    {{ __('tagesplan.mail_all.message') }} {{ f.entry_required() }}
+                </label>
+                {# The greeting is set for every recipient #}
+                <div class="form-control bg-body-secondary text-muted rounded-bottom-0 border-bottom-0">
+                    {{ __('email.greeting', [__('tagesplan.mail_all.greeting_name')]) }}
+                </div>
+                <textarea class="form-control rounded-top-0" id="message" name="message" rows="12" required></textarea>
+                <div class="form-text">{{ __('tagesplan.mail_all.message.info') }}</div>
+            </div>
+
+            {{ f.button(__('tagesplan.mail_all.button'), {
+                'type': 'submit',
+                'btn_type': 'primary',
+                'icon_left': 'envelope',
+                'disabled': not enabled,
+                'confirm_title': __('tagesplan.mail_all.confirm_title'),
+                'confirm_text': __('tagesplan.mail_all.confirm_text'),
+                'confirm_button_text': __('tagesplan.mail_all.button'),
+            }) }}
+        </form>
+    </div>
+{% endblock %}

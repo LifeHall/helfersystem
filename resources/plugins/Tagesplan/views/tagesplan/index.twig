@@ -118,7 +118,7 @@
                 </form>
 
                 {# Admins and shift coordinators #}
-                {% if can('tagesplan.manage') or send_users %}
+                {% if can('tagesplan.manage') or can('tagesplan.mail_all') or send_users %}
                     <div class="tp-tools ms-auto d-flex flex-wrap align-items-center gap-2">
                         {% if send_users %}
                             <form method="post" action="{{ url('/startseite/dienste/versenden/person') }}" class="d-flex align-items-center gap-2">
@@ -141,6 +141,9 @@
                                     'confirm_button_text': __('tagesplan.send.button'),
                                 }) }}
                             </form>
+                        {% endif %}
+                        {% if can('tagesplan.mail_all') %}
+                            {{ m.button(__('tagesplan.mail_all.title'), url('/tagesplan/rundmail'), {'icon_left': 'envelope', 'size': 'sm'}) }}
                         {% endif %}
                         {% if can('tagesplan.manage') %}
                             {{ m.button(__('tagesplan.excel'), url('/tagesplan/einsatzplan.xlsx'), {'icon_left': 'file-earmark-spreadsheet', 'size': 'sm'}) }}

@@ -171,3 +171,48 @@ msgstr "Du bist noch für keine Schicht eingetragen."
 
 msgid "tagesplan.signup_link"
 msgstr "Jetzt geführt eintragen"
+
+msgid "tagesplan.mail_all.title"
+msgstr "Mail an alle"
+
+msgid "tagesplan.mail_all.recipients"
+msgstr "Empfänger"
+
+msgid "tagesplan.mail_all.recipients.shifts"
+msgstr "Alle Personen mit eingetragenen Diensten (%s)"
+
+msgid "tagesplan.mail_all.recipients.all"
+msgstr "Alle registrierten Personen (%s)"
+
+msgid "tagesplan.mail_all.subject"
+msgstr "Betreff"
+
+msgid "tagesplan.mail_all.message"
+msgstr "Nachricht"
+
+msgid "tagesplan.mail_all.greeting_name"
+msgstr "Vorname Nachname"
+
+msgid "tagesplan.mail_all.message.info"
+msgstr "Die erste Zeile mit der Anrede wird für jede Person automatisch mit ihrem Namen ergänzt."
+
+msgid "tagesplan.mail_all.button"
+msgstr "Mail versenden"
+
+msgid "tagesplan.mail_all.confirm_title"
+msgstr "Mail an alle ausgewählten Empfänger versenden?"
+
+msgid "tagesplan.mail_all.confirm_text"
+msgstr "Jede Person erhält eine eigene Mail mit persönlicher Anrede."
+
+msgid "tagesplan.mail_all.missing"
+msgstr "Bitte Betreff und Nachricht ausfüllen."
+
+msgid "tagesplan.mail_all.success"
+msgstr "Mail an %s Personen versendet."
+
+msgid "tagesplan.mail_all.failed"
+msgstr "%s Mails konnten nicht versendet werden, Details im Log."
+
+msgid "tagesplan.mail_all.disabled"
+msgstr "Der Mailversand ist nicht eingerichtet (Application URL in Config → System fehlt)."

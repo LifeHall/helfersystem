@@ -171,3 +171,48 @@ msgstr "You have not signed up for any shift yet."
 
 msgid "tagesplan.signup_link"
 msgstr "Sign up now"
+
+msgid "tagesplan.mail_all.title"
+msgstr "Mail to everybody"
+
+msgid "tagesplan.mail_all.recipients"
+msgstr "Recipients"
+
+msgid "tagesplan.mail_all.recipients.shifts"
+msgstr "Everybody with shift entries (%s)"
+
+msgid "tagesplan.mail_all.recipients.all"
+msgstr "Everybody registered (%s)"
+
+msgid "tagesplan.mail_all.subject"
+msgstr "Subject"
+
+msgid "tagesplan.mail_all.message"
+msgstr "Message"
+
+msgid "tagesplan.mail_all.greeting_name"
+msgstr "First name Last name"
+
+msgid "tagesplan.mail_all.message.info"
+msgstr "The first line with the greeting is completed with the name of each person."
+
+msgid "tagesplan.mail_all.button"
+msgstr "Send mail"
+
+msgid "tagesplan.mail_all.confirm_title"
+msgstr "Send the mail to all selected recipients?"
+
+msgid "tagesplan.mail_all.confirm_text"
+msgstr "Every person gets their own mail with a personal greeting."
+
+msgid "tagesplan.mail_all.missing"
+msgstr "Please fill in the subject and the message."
+
+msgid "tagesplan.mail_all.success"
+msgstr "Mail sent to %s people."
+
+msgid "tagesplan.mail_all.failed"
+msgstr "%s mails could not be sent, see the log for details."
+
+msgid "tagesplan.mail_all.disabled"
+msgstr "Sending mails is not set up (Application URL in Config → System is missing)."
