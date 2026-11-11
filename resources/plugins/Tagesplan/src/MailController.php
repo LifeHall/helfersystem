@@ -8,10 +8,12 @@ use Engelsystem\Config\Config;
 use Engelsystem\Controllers\BaseController;
 use Engelsystem\Controllers\HasUserNotifications;
 use Engelsystem\Controllers\NotificationType;
+use Engelsystem\Helpers\Carbon;
 use Engelsystem\Http\Redirector;
 use Engelsystem\Http\Request;
 use Engelsystem\Http\Response;
 use Engelsystem\Mail\EngelsystemMailer;
+use Engelsystem\Models\Shifts\ShiftEntry;
 use Engelsystem\Models\User\User;
 use Engelsystem\Renderer\Renderer;
 use Helfersystem\Startseite\ShiftDays;
@@ -152,7 +154,7 @@ class MailController extends BaseController
                 ]));
 
             // Only for people with shifts
-            $days = $attachShifts ? ShiftDays::forUser($user) : [];
+            $days = $attachShifts ? static::shiftDays($user) : [];
             if ($days) {
                 $message->attach(
                     (new ShiftPdf())->render($user->displayName, (string) $this->config->get('app_name'), $days),
@@ -189,11 +191,56 @@ class MailController extends BaseController
     }
 
     /**
-     * The shift plan PDF comes from the plugin Startseite
+     * The shift plan PDF comes from the plugin Startseite (also older versions without ShiftDays)
      */
     public static function hasShiftPdf(): bool
     {
-        return class_exists(ShiftDays::class) && class_exists(ShiftPdf::class);
+        return class_exists(ShiftPdf::class);
+    }
+
+    /**
+     * Shift entries of the user grouped by day, in the format of ShiftDays::forUser() of the plugin Startseite
+     *
+     * @return array[] [['label' => string, 'hours' => float, 'entries' => array[]]]
+     */
+    protected static function shiftDays(User $user): array
+    {
+        if (class_exists(ShiftDays::class)) {
+            return ShiftDays::forUser($user);
+        }
+
+        $locale = (string) session()->get('locale', 'de_DE');
+        $now = Carbon::now();
+
+        $entries = ShiftEntry::with(['shift.location', 'shift.shiftType', 'angelType'])
+            ->where('user_id', $user->id)
+            ->get()
+            ->sortBy(fn(ShiftEntry $entry) => $entry->shift->start->timestamp . '-' . $entry->shift->location->name);
+
+        $days = [];
+        foreach ($entries as $entry) {
+            $shift = $entry->shift;
+            $day = $shift->start->format('Y-m-d');
+            $hours = ($shift->end->timestamp - $shift->start->timestamp) / 3600;
+
+            $days[$day] ??= [
+                'label' => $shift->start->copy()->locale($locale)->isoFormat('dddd, DD.MM.YYYY'),
+                'hours' => 0,
+                'entries' => [],
+            ];
+            $days[$day]['hours'] += $hours;
+            $days[$day]['entries'][] = [
+                'time' => $shift->start->format('H:i') . ' – ' . $shift->end->format('H:i'),
+                'location' => $shift->location->name,
+                'angel_type' => $entry->angelType->name,
+                'title' => $shift->title,
+                'hours' => $hours,
+                'past' => $shift->end < $now,
+                'shift_id' => $shift->id,
+            ];
+        }
+
+        return array_values($days);
     }
 
     /**
