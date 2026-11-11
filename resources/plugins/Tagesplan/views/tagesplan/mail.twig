@@ -23,7 +23,16 @@
             {{ f.select('recipients', __('tagesplan.mail_all.recipients'), {
                 'shifts': __('tagesplan.mail_all.recipients.shifts', [counts.shifts]),
                 'all': __('tagesplan.mail_all.recipients.all', [counts.all]),
+                'one': __('tagesplan.mail_all.recipients.one'),
             }, {'selected': 'shifts', 'class': 'form-select'}) }}
+
+            {# Hidden by the script unless a single person is chosen #}
+            <div id="tp-mail-person">
+                {{ f.select('user_id', __('tagesplan.mail_all.person'), users, {
+                    'class': 'form-select',
+                    'default_option': __('tagesplan.send.person'),
+                }) }}
+            </div>
 
             {{ f.input('subject', __('tagesplan.mail_all.subject'), {'required': true, 'required_icon': true, 'max_length': 200}) }}
 
@@ -39,6 +48,17 @@
                 <div class="form-text">{{ __('tagesplan.mail_all.message.info') }}</div>
             </div>
 
+            <fieldset class="mb-3">
+                <legend class="form-label fs-6">{{ __('tagesplan.mail_all.attachments') }}</legend>
+                {% if shift_pdf %}
+                    {{ f.checkbox('attach_shifts', __('tagesplan.mail_all.attach_shifts'), {'class': 'mb-1'}) }}
+                {% endif %}
+                {{ f.checkbox('attach_dayplan', __('tagesplan.mail_all.attach_dayplan'), {
+                    'class': 'mb-1',
+                    'form_text': __('tagesplan.mail_all.attach_dayplan.info', [__('tagesplan.pdf.taken')]),
+                }) }}
+            </fieldset>
+
             {{ f.button(__('tagesplan.mail_all.button'), {
                 'type': 'submit',
                 'btn_type': 'primary',
@@ -50,4 +70,9 @@
             }) }}
         </form>
     </div>
+{% endblock %}
+
+{% block scripts %}
+    {{ parent() }}
+    <script src="{{ url('/tagesplan/tagesplan.js') }}"></script>
 {% endblock %}

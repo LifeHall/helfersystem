@@ -194,3 +194,23 @@
     bootstrap.Modal.getOrCreateInstance(modal).show(cell);
   }
 })();
+
+/**
+ * Mail to everybody: the person selection only for a single recipient
+ */
+(() => {
+  const recipients = document.getElementById('recipients');
+  const person = document.getElementById('tp-mail-person');
+  if (!recipients || !person) {
+    return;
+  }
+
+  const select = person.querySelector('select');
+  const toggle = () => {
+    const one = recipients.value === 'one';
+    person.hidden = !one;
+    select.required = one;
+  };
+  recipients.addEventListener('change', toggle);
+  toggle();
+})();

@@ -92,6 +92,34 @@ class OwnShifts
     }
 
     /**
+     * Managers (tagesplan.manage) see all names
+     */
+    public static function canManage(User $user): bool
+    {
+        return $user->privileges->contains('name', 'tagesplan.manage');
+    }
+
+    /**
+     * The user sees the name of the entry: their own, of a supported angel type or a colleague
+     */
+    public function sees(Shift $shift, int $angelTypeId, int $userId): bool
+    {
+        return $userId == $this->user->id || $this->supports($angelTypeId) || $this->isColleague($shift);
+    }
+
+    /**
+     * With config tagesplan_show_colleagues: the user works at the location of the shift at the same time
+     */
+    protected function isColleague(Shift $shift): bool
+    {
+        return static::showColleagues() && $this->shifts->contains(
+            fn(Shift $own) => $own->location_id == $shift->location_id
+                && $own->start < $shift->end
+                && $own->end > $shift->start
+        );
+    }
+
+    /**
      * Visible part of the needed angel types of a shift: only filled places, no open ones,
      * supported angel types completely (marked with 'full')
      *
@@ -100,11 +128,7 @@ class OwnShifts
      */
     public function filter(Shift $shift, array $needs): array
     {
-        $colleagues = static::showColleagues() && $this->shifts->contains(
-            fn(Shift $own) => $own->location_id == $shift->location_id
-                && $own->start < $shift->end
-                && $own->end > $shift->start
-        );
+        $colleagues = $this->isColleague($shift);
 
         $visible = [];
         foreach ($needs as $typeId => $need) {

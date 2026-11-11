@@ -6,6 +6,8 @@ namespace Helfersystem\Tagesplan;
 
 use Engelsystem\Helpers\Carbon;
 use Engelsystem\Http\Response;
+use Engelsystem\Models\Shifts\Shift;
+use Engelsystem\Models\User\User;
 use Illuminate\Support\Str;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -27,6 +29,15 @@ class ExportController extends Controller
     protected array $permissions = [
         'tagesplan.manage',
     ];
+
+    // Plans of all days, calculated once for several PDFs
+    protected ?array $plans = null;
+
+    /** @var Shift[] Shifts of the plans by id */
+    protected array $shifts = [];
+
+    // Person the PDF is made for, the other names are hidden; null: all names are shown
+    protected ?OwnShifts $viewer = null;
 
     /**
      * Only the usual check of tagesplan.manage (admins, shift coordinators), not the visibility for helpers
@@ -67,6 +78,30 @@ class ExportController extends Controller
      */
     public function pdf(): Response
     {
+        return $this->download($this->pdfContent(), $this->title() . '.pdf', 'application/pdf');
+    }
+
+    /**
+     * PDF with all shifts for a person (e.g. as mail attachment):
+     * only the names they could see in the day plan, else the place is marked as taken
+     */
+    public function pdfFor(User $user): string
+    {
+        $this->viewer = OwnShifts::canManage($user) ? null : new OwnShifts($user);
+        try {
+            return $this->pdfContent();
+        } finally {
+            $this->viewer = null;
+        }
+    }
+
+    public function filename(): string
+    {
+        return trim((string) preg_replace('/[^\w\- .]+/u', '', $this->title() . '.pdf'));
+    }
+
+    protected function pdfContent(): string
+    {
         $title = $this->title();
         $pdf = new Pdf($title);
         foreach ($this->plans() as $plan) {
@@ -79,7 +114,7 @@ class ExportController extends Controller
             $pdf->text(Pdf::WIDTH / 2, 70, __('tagesplan.no_shifts'), 11, false, 'center');
         }
 
-        return $this->download($pdf->output(), $title . '.pdf', 'application/pdf');
+        return $pdf->output();
     }
 
     protected function title(): string
@@ -94,12 +129,19 @@ class ExportController extends Controller
      */
     protected function plans(): array
     {
+        if ($this->plans !== null) {
+            return $this->plans;
+        }
+
         $this->loadMainShiftType();
         $locale = (string) session()->get('locale', 'de_DE');
 
         $plans = [];
         foreach ($this->days() as $day) {
-            [, $columns, $groups] = $this->dayPlan($day);
+            [$shifts, $columns, $groups] = $this->dayPlan($day);
+            foreach ($shifts as $shift) {
+                $this->shifts[$shift->id] = $shift;
+            }
             if (!$groups) {
                 continue;
             }
@@ -113,7 +155,7 @@ class ExportController extends Controller
             ];
         }
 
-        return $plans;
+        return $this->plans = $plans;
     }
 
     protected function download(string $content, string $filename, string $type): Response
@@ -326,14 +368,29 @@ class ExportController extends Controller
     protected function cellValue(array $cell): array
     {
         if ($cell['state'] != 'handover') {
-            return [$cell['name'] ?? null, $cell['state'] != 'none'];
+            return [$this->name($cell), $cell['state'] != 'none'];
         }
 
         // Handover: leaving / arriving person
         $parts = array_filter($cell['parts'], fn($part) => $part['state'] != 'none');
-        $names = array_filter(array_map(fn($part) => $part['name'], $cell['parts']));
+        $names = array_filter(array_map(fn($part) => $this->name($part), $cell['parts']));
 
         return [$names ? implode(' / ', $names) : null, (bool) $parts];
+    }
+
+    /**
+     * Name of the person in the place, if the viewer may see it
+     */
+    protected function name(array $cell): ?string
+    {
+        $name = $cell['name'] ?? null;
+        if ($name === null || !$this->viewer) {
+            return $name;
+        }
+
+        return $this->viewer->sees($this->shifts[$cell['shift_id']], $cell['type_id'], $cell['user_id'])
+            ? $name
+            : __('tagesplan.pdf.taken');
     }
 
     protected function time(int $timestamp): string

@@ -216,3 +216,30 @@ msgstr "%s mails could not be sent, see the log for details."
 
 msgid "tagesplan.mail_all.disabled"
 msgstr "Sending mails is not set up (Application URL in Config → System is missing)."
+
+msgid "tagesplan.mail_all.recipients.one"
+msgstr "Single person"
+
+msgid "tagesplan.mail_all.person"
+msgstr "Person"
+
+msgid "tagesplan.mail_all.attachments"
+msgstr "Attachments"
+
+msgid "tagesplan.mail_all.attach_shifts"
+msgstr "Attach own shift plan as PDF (only for people with shifts)"
+
+msgid "tagesplan.mail_all.attach_dayplan"
+msgstr "Attach the day plan of all days as PDF"
+
+msgid "tagesplan.mail_all.attach_dayplan.info"
+msgstr "All shifts are shown. Each person only sees the names they can see in the day plan (own shifts, supporters, maybe people at the same location). Other places show „%s“."
+
+msgid "tagesplan.mail_all.no_user"
+msgstr "Please choose a person."
+
+msgid "tagesplan.mail_all.success_one"
+msgstr "Mail sent to %s."
+
+msgid "tagesplan.pdf.taken"
+msgstr "already taken"

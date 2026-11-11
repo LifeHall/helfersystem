@@ -522,6 +522,7 @@ class Controller extends BaseController
         return [
             'state' => $entry ? 'filled' : ($value === 'open' ? 'open' : 'none'),
             'name' => $entry?->user->displayName,
+            'user_id' => $entry?->user_id,
             'shift_id' => $shift->id,
             'type_id' => $typeId,
             // Without JavaScript: reload the day plan with this shift's popup

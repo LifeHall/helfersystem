@@ -216,3 +216,30 @@ msgstr "%s Mails konnten nicht versendet werden, Details im Log."
 
 msgid "tagesplan.mail_all.disabled"
 msgstr "Der Mailversand ist nicht eingerichtet (Application URL in Config → System fehlt)."
+
+msgid "tagesplan.mail_all.recipients.one"
+msgstr "Einzelne Person"
+
+msgid "tagesplan.mail_all.person"
+msgstr "Person"
+
+msgid "tagesplan.mail_all.attachments"
+msgstr "Anhänge"
+
+msgid "tagesplan.mail_all.attach_shifts"
+msgstr "Eigenen Dienstplan als PDF anhängen (nur für Personen mit Diensten)"
+
+msgid "tagesplan.mail_all.attach_dayplan"
+msgstr "Tagesplan aller Tage als PDF anhängen"
+
+msgid "tagesplan.mail_all.attach_dayplan.info"
+msgstr "Alle Schichten sind sichtbar. Namen sieht jede Person nur, soweit sie sie auch im Tagesplan sehen darf (eigene Schichten, Supporter, ggf. Personen am gleichen Ort). Sonst steht dort „%s“."
+
+msgid "tagesplan.mail_all.no_user"
+msgstr "Bitte eine Person auswählen."
+
+msgid "tagesplan.mail_all.success_one"
+msgstr "Mail an %s versendet."
+
+msgid "tagesplan.pdf.taken"
+msgstr "bereits besetzt"
