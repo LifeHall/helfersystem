@@ -196,7 +196,7 @@
 })();
 
 /**
- * Mail to everybody: the person selection only for a single recipient
+ * Mail to everybody: the person selection only for a single recipient, the exclude list only for several
  */
 (() => {
   const recipients = document.getElementById('recipients');
@@ -206,10 +206,14 @@
   }
 
   const select = person.querySelector('select');
+  const exclude = document.getElementById('tp-mail-exclude');
   const toggle = () => {
     const one = recipients.value === 'one';
     person.hidden = !one;
     select.required = one;
+    if (exclude) {
+      exclude.hidden = one;
+    }
   };
   recipients.addEventListener('change', toggle);
   toggle();

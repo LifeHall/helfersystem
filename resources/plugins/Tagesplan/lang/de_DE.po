@@ -249,3 +249,12 @@ msgstr "Dein Name"
 
 msgid "tagesplan.mail_all.batches"
 msgstr "Bei mehreren Empfängern wird die Mail in Paketen versendet, mit Fortschrittsanzeige. Bei einem Unterbruch kann der Versand fortgesetzt werden, ohne dass jemand die Mail doppelt erhält."
+
+msgid "tagesplan.mail_all.exclude"
+msgstr "Diese Personen auslassen (z. B. haben die Mail schon erhalten)"
+
+msgid "tagesplan.mail_all.exclude.info"
+msgstr "Mailadressen oder Namen, eine Person pro Zeile oder mit Komma bzw. Strichpunkt getrennt. Auch „Name <adresse>“ aus einem Mailprogramm funktioniert. Kann ein Eintrag keiner Person zugeordnet werden, wird nichts versendet."
+
+msgid "tagesplan.mail_all.exclude.unknown"
+msgstr "Nichts versendet: Diese Einträge passen zu keiner oder zu mehreren Personen: %s. Bitte korrigieren oder entfernen."

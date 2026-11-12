@@ -249,3 +249,12 @@ msgstr "Your name"
 
 msgid "tagesplan.mail_all.batches"
 msgstr "For several recipients the mail is sent in batches, with a progress bar. If it is interrupted, the sending can be continued without anybody getting the mail twice."
+
+msgid "tagesplan.mail_all.exclude"
+msgstr "Leave out these people (e.g. they already got the mail)"
+
+msgid "tagesplan.mail_all.exclude.info"
+msgstr "Mail addresses or names, one person per line or separated by comma or semicolon. „Name <address>“ from a mail program works too. If an entry matches nobody, nothing is sent."
+
+msgid "tagesplan.mail_all.exclude.unknown"
+msgstr "Nothing sent: these entries match no person or several people: %s. Please correct or remove them."

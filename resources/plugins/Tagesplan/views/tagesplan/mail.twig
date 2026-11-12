@@ -19,6 +19,9 @@
             <div class="alert alert-danger">{{ __('tagesplan.mail_all.disabled') }}</div>
         {% endif %}
 
+        {# Entries after an error, e.g. names of the exclude list that were not found #}
+        {% set old = form ?? {} %}
+
         <form method="post" action="{{ url('/tagesplan/rundmail/senden') }}">
             {{ csrf() }}
 
@@ -26,17 +29,27 @@
                 'shifts': __('tagesplan.mail_all.recipients.shifts', [counts.shifts]),
                 'all': __('tagesplan.mail_all.recipients.all', [counts.all]),
                 'one': __('tagesplan.mail_all.recipients.one'),
-            }, {'selected': 'shifts', 'class': 'form-select'}) }}
+            }, {'selected': old.recipients ?? 'shifts', 'class': 'form-select'}) }}
 
             {# Hidden by the script unless a single person is chosen #}
             <div id="tp-mail-person">
                 {{ f.select('user_id', __('tagesplan.mail_all.person'), users, {
                     'class': 'form-select',
                     'default_option': __('tagesplan.send.person'),
+                    'selected': old.user_id ?? null,
                 }) }}
             </div>
 
-            {{ f.input('subject', __('tagesplan.mail_all.subject'), {'required': true, 'required_icon': true, 'max_length': 200}) }}
+            {# Hidden by the script for a single person #}
+            <div id="tp-mail-exclude">
+                {{ f.textarea('exclude', __('tagesplan.mail_all.exclude'), {
+                    'rows': 4,
+                    'value': old.exclude ?? '',
+                    'form_text': __('tagesplan.mail_all.exclude.info'),
+                }) }}
+            </div>
+
+            {{ f.input('subject', __('tagesplan.mail_all.subject'), {'required': true, 'required_icon': true, 'max_length': 200, 'value': old.subject ?? ''}) }}
 
             <div class="mb-3">
                 <label class="form-label" for="message">
@@ -46,15 +59,16 @@
                 <div class="form-control bg-body-secondary text-muted rounded-bottom-0 border-bottom-0">
                     {{ __('email.greeting', [__('tagesplan.mail_all.greeting_name')]) }}
                 </div>
-                <textarea class="form-control rounded-top-0" id="message" name="message" rows="12" required></textarea>
+                <textarea class="form-control rounded-top-0" id="message" name="message" rows="12" required>{{ old.message ?? '' }}</textarea>
                 <div class="form-text">{{ __('tagesplan.mail_all.message.info') }}</div>
             </div>
 
             <fieldset class="mb-3">
                 <legend class="form-label fs-6">{{ __('tagesplan.mail_all.attachments') }}</legend>
-                {{ f.checkbox('attach_shifts', __('tagesplan.mail_all.attach_shifts'), {'class': 'mb-1'}) }}
+                {{ f.checkbox('attach_shifts', __('tagesplan.mail_all.attach_shifts'), {'class': 'mb-1', 'checked': old.attach_shifts ?? false}) }}
                 {{ f.checkbox('attach_dayplan', __('tagesplan.mail_all.attach_dayplan'), {
                     'class': 'mb-1',
+                    'checked': old.attach_dayplan ?? false,
                     'form_text': __('tagesplan.mail_all.attach_dayplan.info', [__('tagesplan.taken')]),
                 }) }}
             </fieldset>
