@@ -119,3 +119,89 @@
         updateChanges();
     }
 })();
+
+// Mail job: sends one batch after the other and shows the progress
+(() => {
+    const page = document.getElementById('mail-job');
+    const form = document.getElementById('mail-job-form');
+    if (!page || !form) {
+        return;
+    }
+
+    const bar = document.getElementById('mail-job-bar');
+    const status = document.getElementById('mail-job-status');
+    const error = document.getElementById('mail-job-error');
+    const button = form.querySelector('button[type="submit"]');
+    const info = document.getElementById('mail-job-info');
+
+    const show = (progress) => {
+        bar.style.width = `${progress.total ? Math.round(100 * progress.position / progress.total) : 100}%`;
+        bar.parentElement.setAttribute('aria-valuenow', progress.position);
+        status.textContent = status.dataset.template
+            .replace('{position}', progress.position)
+            .replace('{total}', progress.total)
+            .replace('{sent}', progress.sent)
+            .replace('{failed}', progress.failed.length);
+        document.getElementById('mail-job-failed').classList.toggle('d-none', !progress.failed.length);
+        document.getElementById('mail-job-failed-names').textContent = progress.failed.join(', ');
+        if (progress.finished) {
+            bar.classList.remove('progress-bar-striped', 'progress-bar-animated');
+            bar.classList.add('bg-success');
+            document.getElementById('mail-job-finished').classList.remove('d-none');
+            form.classList.add('d-none');
+        }
+    };
+
+    const stop = (message) => {
+        bar.classList.remove('progress-bar-animated');
+        error.textContent = message;
+        error.classList.remove('d-none');
+        button.disabled = false;
+    };
+
+    const run = async () => {
+        button.disabled = true;
+        error.classList.add('d-none');
+        info?.classList.add('d-none');
+        bar.classList.add('progress-bar-striped', 'progress-bar-animated');
+
+        for (;;) {
+            let progress;
+            try {
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    body: new FormData(form),
+                    credentials: 'same-origin',
+                    headers: { 'X-Startseite': '1' },
+                });
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                progress = await response.json();
+            } catch (e) {
+                // E.g. the hosting ended the request: the sent mails are saved, continuing goes on with the next person
+                stop(`${page.dataset.error} (${e.message})`);
+                return;
+            }
+
+            show(progress);
+            if (progress.finished) {
+                return;
+            }
+            if (progress.busy) {
+                stop(page.dataset.busy);
+                return;
+            }
+        }
+    };
+
+    form.addEventListener('submit', (event) => {
+        event.preventDefault();
+        run();
+    });
+    if (page.dataset.autostart) {
+        // Reloading the page should not start it again
+        window.history.replaceState(null, '', window.location.href.replace(/[?&]start=1/, ''));
+        run();
+    }
+})();

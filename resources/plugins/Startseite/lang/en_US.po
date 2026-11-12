@@ -242,3 +242,42 @@ msgstr "Events"
 # Link on the login page, the key exists in the core only since 2026-10
 msgid "angeltype.about"
 msgstr "Team/Task description"
+
+msgid "startseite.mail_job.title"
+msgstr "Sending mails"
+
+msgid "startseite.mail_job.started"
+msgstr "Started on %s by %s"
+
+msgid "startseite.mail_job.status"
+msgstr "%s of %s people done · %s sent · %s failed"
+
+msgid "startseite.mail_job.finished"
+msgstr "All mails are sent."
+
+msgid "startseite.mail_job.failed"
+msgstr "Not sent (details in the log):"
+
+msgid "startseite.mail_job.running"
+msgstr "The sending is running in another window or was interrupted recently. It can be continued at the latest 3 minutes after the interruption."
+
+msgid "startseite.mail_job.paused"
+msgstr "The sending is interrupted. Continuing only sends the mail to the people who did not get it yet."
+
+msgid "startseite.mail_job.continue"
+msgstr "Continue sending"
+
+msgid "startseite.mail_job.error"
+msgstr "The sending was interrupted. The mails sent so far are saved, „Continue sending“ goes on with the next person."
+
+msgid "startseite.mail_job.busy"
+msgstr "The sending is running in another window. Please continue again in a few minutes."
+
+msgid "startseite.mail_job.info"
+msgstr "The mails are sent in batches of about 20 seconds. Please keep the page open until all mails are sent. If it is closed, the sending can be continued here later."
+
+msgid "startseite.mail_job.unfinished"
+msgstr "Incomplete sending of „%s“: %s of %s people done."
+
+msgid "startseite.mail_job.open"
+msgstr "Show / continue"

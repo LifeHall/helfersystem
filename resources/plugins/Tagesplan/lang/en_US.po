@@ -246,3 +246,6 @@ msgstr "already taken"
 
 msgid "tagesplan.legend.own"
 msgstr "Your name"
+
+msgid "tagesplan.mail_all.batches"
+msgstr "For several recipients the mail is sent in batches, with a progress bar. If it is interrupted, the sending can be continued without anybody getting the mail twice."

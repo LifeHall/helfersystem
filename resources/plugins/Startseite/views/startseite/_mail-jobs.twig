@@ -1,0 +1,10 @@
+{# Unfinished mail jobs (e.g. aborted), with a link to continue them #}
+{% for job in mail_jobs %}
+    <div class="alert alert-warning d-flex flex-wrap align-items-center gap-2">
+        <span>
+            {{ m.icon('exclamation-triangle') }}
+            {{ __('startseite.mail_job.unfinished', [job.title, job.position, job.total()]) }}
+        </span>
+        {{ m.button(__('startseite.mail_job.open'), url('/startseite/versand', {'id': job.id}), {'size': 'sm', 'type': 'warning', 'icon_left': 'send'}) }}
+    </div>
+{% endfor %}

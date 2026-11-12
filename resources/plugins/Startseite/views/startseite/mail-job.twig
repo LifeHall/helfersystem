@@ -1,0 +1,59 @@
+{% extends 'layouts/app.twig' %}
+{% import 'macros/base.twig' as m %}
+{% import 'macros/form.twig' as f %}
+
+{% block title %}{{ __('startseite.mail_job.title') }}{% endblock %}
+
+{% block content %}
+    {% set progress = job.progress() %}
+    <div class="container" id="mail-job" data-autostart="{{ autostart ? '1' : '' }}"
+        data-error="{{ __('startseite.mail_job.error') }}" data-busy="{{ __('startseite.mail_job.busy') }}">
+        <h1 class="h3 mb-3">{{ block('title') }}</h1>
+
+        {% include 'layouts/parts/messages.twig' %}
+
+        <p class="mb-1"><strong>{{ job.title }}</strong></p>
+        <p class="text-muted small">
+            {{ __('startseite.mail_job.started', [
+                job.created_at.format('d.m.Y H:i'),
+                job.user ? job.user.displayName : '-',
+            ]) }}
+        </p>
+
+        <div class="progress mb-2" role="progressbar" style="height: 1.5rem"
+            aria-valuemin="0" aria-valuemax="{{ progress.total }}" aria-valuenow="{{ progress.position }}">
+            <div class="progress-bar {{ progress.finished ? 'bg-success' : 'progress-bar-striped' }}" id="mail-job-bar"
+                style="width: {{ progress.total ? (100 * progress.position / progress.total)|round : 100 }}%"></div>
+        </div>
+        <p id="mail-job-status" data-template="{{ __('startseite.mail_job.status', ['{position}', '{total}', '{sent}', '{failed}']) }}">
+            {{ __('startseite.mail_job.status', [progress.position, progress.total, progress.sent, progress.failed|length]) }}
+        </p>
+
+        <div class="alert alert-success{{ progress.finished ? '' : ' d-none' }}" id="mail-job-finished">
+            {{ m.icon('check-lg') }} {{ __('startseite.mail_job.finished') }}
+        </div>
+        <div class="alert alert-danger{{ progress.failed ? '' : ' d-none' }}" id="mail-job-failed">
+            {{ __('startseite.mail_job.failed') }}
+            <span id="mail-job-failed-names">{{ progress.failed|join(', ') }}</span>
+        </div>
+        <div class="alert alert-warning d-none" id="mail-job-error"></div>
+
+        {% if not progress.finished %}
+            <form method="post" action="{{ url('/startseite/versand/weiter') }}" id="mail-job-form" class="mb-3">
+                {{ csrf() }}
+                <input type="hidden" name="id" value="{{ job.id }}">
+                <p class="small text-muted" id="mail-job-info">
+                    {{ job.isRunning() ? __('startseite.mail_job.running') : __('startseite.mail_job.paused') }}
+                </p>
+                {{ f.button(__('startseite.mail_job.continue'), {'type': 'submit', 'btn_type': 'primary', 'icon_left': 'send'}) }}
+            </form>
+        {% endif %}
+
+        <p class="small text-muted">{{ __('startseite.mail_job.info') }}</p>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    {{ parent() }}
+    <script src="{{ url('/startseite/startseite.js') }}"></script>
+{% endblock %}

@@ -246,3 +246,6 @@ msgstr "bereits besetzt"
 
 msgid "tagesplan.legend.own"
 msgstr "Dein Name"
+
+msgid "tagesplan.mail_all.batches"
+msgstr "Bei mehreren Empfängern wird die Mail in Paketen versendet, mit Fortschrittsanzeige. Bei einem Unterbruch kann der Versand fortgesetzt werden, ohne dass jemand die Mail doppelt erhält."

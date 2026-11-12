@@ -242,3 +242,42 @@ msgstr "Events"
 # Link on the login page, the key exists in the core only since 2026-10
 msgid "angeltype.about"
 msgstr "Teams-/Aufgabenbeschreibung"
+
+msgid "startseite.mail_job.title"
+msgstr "Mailversand"
+
+msgid "startseite.mail_job.started"
+msgstr "Gestartet am %s von %s"
+
+msgid "startseite.mail_job.status"
+msgstr "%s von %s Personen bearbeitet · %s versendet · %s fehlgeschlagen"
+
+msgid "startseite.mail_job.finished"
+msgstr "Der Versand ist abgeschlossen."
+
+msgid "startseite.mail_job.failed"
+msgstr "Nicht versendet (Details im Log):"
+
+msgid "startseite.mail_job.running"
+msgstr "Der Versand läuft gerade in einem anderen Fenster oder wurde vor Kurzem unterbrochen. Fortsetzen ist spätestens 3 Minuten nach der Unterbrechung möglich."
+
+msgid "startseite.mail_job.paused"
+msgstr "Der Versand ist unterbrochen. Fortsetzen schickt die Mail nur an die Personen, die sie noch nicht erhalten haben."
+
+msgid "startseite.mail_job.continue"
+msgstr "Versand fortsetzen"
+
+msgid "startseite.mail_job.error"
+msgstr "Der Versand wurde unterbrochen. Die bisher versendeten Mails sind gespeichert, „Versand fortsetzen“ macht bei der nächsten Person weiter."
+
+msgid "startseite.mail_job.busy"
+msgstr "Der Versand läuft gerade in einem anderen Fenster. Bitte in ein paar Minuten nochmals fortsetzen."
+
+msgid "startseite.mail_job.info"
+msgstr "Die Mails werden in Paketen von etwa 20 Sekunden versendet. Bitte die Seite offen lassen, bis der Versand abgeschlossen ist. Wird sie geschlossen, kann der Versand später hier fortgesetzt werden."
+
+msgid "startseite.mail_job.unfinished"
+msgstr "Unvollständiger Mailversand „%s“: %s von %s Personen bearbeitet."
+
+msgid "startseite.mail_job.open"
+msgstr "Anzeigen / fortsetzen"

@@ -4,33 +4,22 @@ declare(strict_types=1);
 
 namespace Helfersystem\Tagesplan;
 
-use Engelsystem\Config\Config;
 use Engelsystem\Controllers\BaseController;
 use Engelsystem\Controllers\HasUserNotifications;
 use Engelsystem\Controllers\NotificationType;
-use Engelsystem\Helpers\Carbon;
 use Engelsystem\Http\Redirector;
 use Engelsystem\Http\Request;
 use Engelsystem\Http\Response;
 use Engelsystem\Mail\EngelsystemMailer;
-use Engelsystem\Models\Shifts\ShiftEntry;
 use Engelsystem\Models\User\User;
-use Engelsystem\Renderer\Renderer;
-use Helfersystem\Startseite\ShiftDays;
-use Helfersystem\Startseite\ShiftPdf;
+use Helfersystem\Startseite\MailJob;
 use Illuminate\Database\Eloquent\Builder;
-use Psr\Log\LoggerInterface;
-use Symfony\Component\Mailer\MailerInterface;
-use Symfony\Component\Mime\Address;
-use Symfony\Component\Mime\Email;
-use Throwable;
-use TypeError;
 
 /**
  * Mail with a free subject and text to all helpers or one person, each one greeted with their name,
  * optionally with their shift plan and the day plan as PDF
  *
- * The mailer of the core can not attach files, so the mail is built here with its sender and subject prefix
+ * Mails to many people are sent in batches by a mail job of the plugin Startseite
  */
 class MailController extends BaseController
 {
@@ -43,11 +32,7 @@ class MailController extends BaseController
     public function __construct(
         protected Response $response,
         protected EngelsystemMailer $engelsystemMailer,
-        protected MailerInterface $mailer,
-        protected Renderer $view,
-        protected Config $config,
-        protected Redirector $redirect,
-        protected LoggerInterface $log
+        protected Redirector $redirect
     ) {
     }
 
@@ -55,7 +40,7 @@ class MailController extends BaseController
     {
         $users = User::with('personalData')
             ->get()
-            ->mapWithKeys(fn(User $user) => [$user->id => static::fullName($user)])
+            ->mapWithKeys(fn(User $user) => [$user->id => MessageJob::fullName($user)])
             ->all();
         natcasesort($users);
 
@@ -65,8 +50,8 @@ class MailController extends BaseController
                 'all' => $this->recipients('all')->count(),
             ],
             'users' => $users,
-            'shift_pdf' => static::hasShiftPdf(),
-            'enabled' => $this->isEnabled(),
+            'enabled' => $this->isEnabled() && static::hasMailJobs(),
+            'mail_jobs' => static::hasMailJobs() ? MailJob::unfinished() : [],
         ]);
     }
 
@@ -74,183 +59,57 @@ class MailController extends BaseController
     {
         $group = $request->postData('recipients');
         $group = in_array($group, ['all', 'one'], true) ? $group : 'shifts';
-        $subject = trim((string) $request->postData('subject'));
-        $text = trim(str_replace("\r\n", "\n", (string) $request->postData('message')));
-        $attachShifts = $request->postData('attach_shifts') && static::hasShiftPdf();
-        $attachDayPlan = (bool) $request->postData('attach_dayplan');
+        $payload = [
+            'subject' => trim((string) $request->postData('subject')),
+            'text' => trim(str_replace("\r\n", "\n", (string) $request->postData('message'))),
+            'attach_shifts' => (bool) $request->postData('attach_shifts'),
+            'attach_dayplan' => (bool) $request->postData('attach_dayplan'),
+        ];
+        $recipients = $this->recipients($group, (int) $request->postData('user_id'));
 
-        $recipients = $this->recipients($group, (int) $request->postData('user_id'))
-            ->with(['contact', 'personalData'])
-            ->get();
-
-        if (!$this->isEnabled()) {
+        if (!$this->isEnabled() || !static::hasMailJobs()) {
             $this->addNotification('tagesplan.mail_all.disabled', NotificationType::ERROR);
             return $this->redirect->back();
         }
-        if ($subject === '' || $text === '') {
+        if ($payload['subject'] === '' || $payload['text'] === '') {
             $this->addNotification('tagesplan.mail_all.missing', NotificationType::ERROR);
             return $this->redirect->back();
         }
-        if ($recipients->isEmpty()) {
+        if (!$recipients->exists()) {
             $this->addNotification('tagesplan.mail_all.no_user', NotificationType::ERROR);
             return $this->redirect->back();
         }
 
-        // Many recipients can take a while, also if the browser or a proxy gives up waiting
-        set_time_limit(0);
-        ignore_user_abort(true);
-
-        // If the summary at the end is missing, the sending was aborted
-        engelsystem_log(sprintf('Sending the mail "%s" to %d people ...', $subject, $recipients->count()));
-
-        // The day plans are calculated once for all recipients
-        $export = $attachDayPlan ? app()->make(ExportController::class) : null;
-
-        $sent = 0;
-        $failed = [];
-        foreach ($recipients as $user) {
-            if ($this->sendTo($user, $subject, $text, $attachShifts, $export)) {
-                $sent++;
-            } else {
-                $failed[] = User_Nick_render($user, true);
-            }
+        if ($group != 'one') {
+            $job = MailJob::start(MessageJob::class, 'tagesplan.mail_all', $payload['subject'], $payload, $recipients);
+            return $this->response->redirectTo(url('/startseite/versand', ['id' => $job->id, 'start' => 1]));
         }
 
-        // The failed recipients are named, the error of each one is logged by sendTo()
+        // A single mail is sent right away
+        $user = $recipients->with(['contact', 'personalData'])->first();
+        $sent = app()->make(MessageJob::class)->sendTo($user, $payload);
         engelsystem_log(sprintf(
-            'Sent the mail "%s" to %s%s: %d mails, %d failed%s',
-            $subject,
-            $group == 'one' ? User_Nick_render($recipients->first(), true) : 'all helpers (' . $group . ')',
-            ($attachShifts ? ', with shift plan' : '') . ($attachDayPlan ? ', with day plan' : ''),
-            $sent,
-            count($failed),
-            $failed ? ': ' . implode(', ', $failed) : ''
+            'Sent the mail "%s" to %s%s: %s',
+            $payload['subject'],
+            User_Nick_render($user, true),
+            ($payload['attach_shifts'] ? ', with shift plan' : '') . ($payload['attach_dayplan'] ? ', with day plan' : ''),
+            $sent ? 'sent' : 'failed'
         ));
-        if ($group == 'one' && $sent) {
-            $this->addNotification(__('tagesplan.mail_all.success_one', [static::fullName($recipients->first())]));
-        } elseif ($sent) {
-            $this->addNotification(__('tagesplan.mail_all.success', [$sent]));
-        }
-        if ($failed) {
-            $this->addNotification(__('tagesplan.mail_all.failed', [count($failed)]), NotificationType::ERROR);
+        if ($sent) {
+            $this->addNotification(__('tagesplan.mail_all.success_one', [MessageJob::fullName($user)]));
+        } else {
+            $this->addNotification(__('tagesplan.mail_all.failed', [1]), NotificationType::ERROR);
         }
 
         return $this->response->redirectTo(url('/tagesplan'));
     }
 
-    protected function sendTo(
-        User $user,
-        string $subject,
-        string $text,
-        bool $attachShifts,
-        ?ExportController $export
-    ): bool {
-        $to = $user->contact->email ?: $user->email;
-        if ($prefix = $this->optional(fn() => $this->engelsystemMailer->getSubjectPrefix())) {
-            $subject = sprintf('[%s] %s', $prefix, $subject);
-        }
-
-        try {
-            $message = (new Email())
-                ->to($to)
-                ->from(new Address(
-                    $this->engelsystemMailer->getFromAddress(),
-                    $this->optional(fn() => $this->engelsystemMailer->getFromName())
-                ))
-                ->subject($subject)
-                ->text($this->view->render('emails/tagesplan-message', [
-                    'username' => static::fullName($user),
-                    'text' => $text,
-                ]));
-
-            // Only for people with shifts
-            $days = $attachShifts ? static::shiftDays($user) : [];
-            if ($days) {
-                $message->attach(
-                    (new ShiftPdf())->render($user->displayName, (string) $this->config->get('app_name'), $days),
-                    ShiftPdf::filename($user->displayName),
-                    'application/pdf'
-                );
-            }
-            if ($export) {
-                $message->attach($export->pdfFor($user), $export->filename(), 'application/pdf');
-            }
-
-            $this->mailer->send($message);
-        } catch (Throwable $e) {
-            $this->log->error('Tagesplan: mail to {to} failed: {type}: {message}', [
-                'to' => $to,
-                'type' => get_class($e),
-                'message' => $e->getMessage(),
-            ]);
-
-            return false;
-        }
-
-        return true;
-    }
-
     /**
-     * First and last name for the greeting, the display name (nick) if both are empty
+     * Sending in batches and the shift plan PDF come from the plugin Startseite
      */
-    public static function fullName(User $user): string
+    public static function hasMailJobs(): bool
     {
-        $name = trim(trim((string) $user->personalData?->first_name) . ' ' . trim((string) $user->personalData?->last_name));
-
-        return $name !== '' ? $name : $user->displayName;
-    }
-
-    /**
-     * The shift plan PDF comes from the plugin Startseite (also older versions without ShiftDays)
-     */
-    public static function hasShiftPdf(): bool
-    {
-        return class_exists(ShiftPdf::class);
-    }
-
-    /**
-     * Shift entries of the user grouped by day, in the format of ShiftDays::forUser() of the plugin Startseite
-     *
-     * @return array[] [['label' => string, 'hours' => float, 'entries' => array[]]]
-     */
-    protected static function shiftDays(User $user): array
-    {
-        if (class_exists(ShiftDays::class)) {
-            return ShiftDays::forUser($user);
-        }
-
-        $locale = (string) session()->get('locale', 'de_DE');
-        $now = Carbon::now();
-
-        $entries = ShiftEntry::with(['shift.location', 'shift.shiftType', 'angelType'])
-            ->where('user_id', $user->id)
-            ->get()
-            ->sortBy(fn(ShiftEntry $entry) => $entry->shift->start->timestamp . '-' . $entry->shift->location->name);
-
-        $days = [];
-        foreach ($entries as $entry) {
-            $shift = $entry->shift;
-            $day = $shift->start->format('Y-m-d');
-            $hours = ($shift->end->timestamp - $shift->start->timestamp) / 3600;
-
-            $days[$day] ??= [
-                'label' => $shift->start->copy()->locale($locale)->isoFormat('dddd, DD.MM.YYYY'),
-                'hours' => 0,
-                'entries' => [],
-            ];
-            $days[$day]['hours'] += $hours;
-            $days[$day]['entries'][] = [
-                'time' => $shift->start->format('H:i') . ' – ' . $shift->end->format('H:i'),
-                'location' => $shift->location->name,
-                'angel_type' => $entry->angelType->name,
-                'title' => $shift->title,
-                'hours' => $hours,
-                'past' => $shift->end < $now,
-                'shift_id' => $shift->id,
-            ];
-        }
-
-        return array_values($days);
+        return class_exists(MailJob::class);
     }
 
     /**
@@ -271,17 +130,5 @@ class MailController extends BaseController
     protected function isEnabled(): bool
     {
         return !method_exists($this->engelsystemMailer, 'isEnabled') || $this->engelsystemMailer->isEnabled();
-    }
-
-    /**
-     * The getters of the core mailer fail if the value is not configured
-     */
-    protected function optional(callable $getter): string
-    {
-        try {
-            return (string) $getter();
-        } catch (TypeError) {
-            return '';
-        }
     }
 }

@@ -13,6 +13,8 @@
 
         {% include 'layouts/parts/messages.twig' %}
 
+        {% include 'startseite/_mail-jobs.twig' %}
+
         {% if not enabled %}
             <div class="alert alert-danger">{{ __('tagesplan.mail_all.disabled') }}</div>
         {% endif %}
@@ -50,14 +52,14 @@
 
             <fieldset class="mb-3">
                 <legend class="form-label fs-6">{{ __('tagesplan.mail_all.attachments') }}</legend>
-                {% if shift_pdf %}
-                    {{ f.checkbox('attach_shifts', __('tagesplan.mail_all.attach_shifts'), {'class': 'mb-1'}) }}
-                {% endif %}
+                {{ f.checkbox('attach_shifts', __('tagesplan.mail_all.attach_shifts'), {'class': 'mb-1'}) }}
                 {{ f.checkbox('attach_dayplan', __('tagesplan.mail_all.attach_dayplan'), {
                     'class': 'mb-1',
                     'form_text': __('tagesplan.mail_all.attach_dayplan.info', [__('tagesplan.taken')]),
                 }) }}
             </fieldset>
+
+            <p class="small text-muted">{{ __('tagesplan.mail_all.batches') }}</p>
 
             {{ f.button(__('tagesplan.mail_all.button'), {
                 'type': 'submit',
