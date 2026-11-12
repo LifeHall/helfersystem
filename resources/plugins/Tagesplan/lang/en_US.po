@@ -155,16 +155,16 @@ msgid "config.tagesplan_show_colleagues"
 msgstr "Helpers see the people at the same location at the same time"
 
 msgid "config.tagesplan_show_colleagues.info"
-msgstr "Helpers only see their own shifts in the day plan. If enabled, they also see who works at the same location at the same time. Admins and shift coordinators (privilege \"tagesplan.manage\") always see everything."
+msgstr "Helpers see all shifts in the day plan, but names only in their own shifts (else „already taken“). If enabled, they also see who works at the same location at the same time. Admins and shift coordinators (privilege \"tagesplan.manage\") always see everything."
 
 msgid "tagesplan.own_only"
-msgstr "You only see your own shifts."
+msgstr "You see all shifts, but names only in your own shifts. The other taken places show „already taken“."
 
 msgid "tagesplan.own_only.supporter"
-msgstr "As supporter you also see all shifts of: %s."
+msgstr "As supporter you also see all names of: %s."
 
 msgid "tagesplan.own_only.colleagues"
-msgstr "You see your own shifts and who works at the same location at the same time."
+msgstr "You see all shifts, but names only in your own shifts and of the people working at the same location at the same time. The other taken places show „already taken“."
 
 msgid "tagesplan.no_own_shifts"
 msgstr "You have not signed up for any shift yet."
@@ -241,5 +241,8 @@ msgstr "Please choose a person."
 msgid "tagesplan.mail_all.success_one"
 msgstr "Mail sent to %s."
 
-msgid "tagesplan.pdf.taken"
+msgid "tagesplan.taken"
 msgstr "already taken"
+
+msgid "tagesplan.legend.own"
+msgstr "Your name"

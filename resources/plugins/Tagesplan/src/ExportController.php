@@ -23,6 +23,9 @@ class ExportController extends Controller
     // Not needed positions
     protected const FILL_NONE = '7F7F7F';
 
+    // Own name in the PDF for a person, same as in the day plan (.tp-own)
+    protected const FILL_OWN = 'FFC107';
+
     // Rows of the column header and the first position
     protected const HEADER_ROW = 6;
 
@@ -309,11 +312,12 @@ class ExportController extends Controller
                 $column = 0;
                 foreach ($position['cells'] as $cell) {
                     [$value, $needed] = $this->cellValue($cell);
+                    $own = $this->isOwn($cell);
                     $x = $left + $column * $columnWidth;
                     $cellWidth = $cell['colspan'] * $columnWidth;
-                    $pdf->box($x, $y, $cellWidth, $rowHeight, $needed ? $fill : self::FILL_NONE);
+                    $pdf->box($x, $y, $cellWidth, $rowHeight, $own ? self::FILL_OWN : ($needed ? $fill : self::FILL_NONE));
                     if ($value) {
-                        $pdf->text($x + 3, $textY, $pdf->fit($value, $cellWidth - 6, $size), $size);
+                        $pdf->text($x + 3, $textY, $pdf->fit($value, $cellWidth - 6, $size, $own), $size, $own);
                     }
                     $lines[] = [$x, $y, $x, $y + $rowHeight, .5];
                     $column += $cell['colspan'];
@@ -379,6 +383,25 @@ class ExportController extends Controller
     }
 
     /**
+     * The place (or a part of the handover) is taken by the person the PDF is made for
+     */
+    protected function isOwn(array $cell): bool
+    {
+        if (!$this->viewer) {
+            return false;
+        }
+
+        $parts = $cell['state'] == 'handover' ? $cell['parts'] : [$cell];
+        foreach ($parts as $part) {
+            if (($part['user_id'] ?? null) !== null && $this->viewer->isUser($part['user_id'])) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Name of the person in the place, if the viewer may see it
      */
     protected function name(array $cell): ?string
@@ -390,7 +413,7 @@ class ExportController extends Controller
 
         return $this->viewer->sees($this->shifts[$cell['shift_id']], $cell['type_id'], $cell['user_id'])
             ? $name
-            : __('tagesplan.pdf.taken');
+            : __('tagesplan.taken');
     }
 
     protected function time(int $timestamp): string

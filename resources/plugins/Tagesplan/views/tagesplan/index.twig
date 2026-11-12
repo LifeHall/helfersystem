@@ -28,6 +28,9 @@
         .tagesplan .tp-open a { color: transparent; }
         .tagesplan .tp-open a:hover, .tagesplan .tp-open a:focus-visible { color: #212529; text-decoration: underline; }
         .tagesplan .tp-filled a:hover { text-decoration: underline; }
+        {# Own name #}
+        .tagesplan td.tp-own, .tagesplan .tp-part.tp-own, .tp-legend span.tp-own { background-color: #ffc107; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        .tagesplan .tp-own a, .tp-shift .tp-own { font-weight: 700; }
         {# Frame around a shift's cells, without the edges where cells of the same shift join (.tp-join-l / -r) #}
         .tagesplan .tp-hover, .tagesplan .tp-active { --tp-w: 2px; --tp-c: #0d6efd; }
         .tagesplan .tp-clicked { --tp-w: 4px; --tp-c: #dc3545; }
@@ -154,14 +157,15 @@
             </div>
         {% endif %}
 
-        {% if own_only and groups is empty %}
-            <div class="alert alert-info">
+        {% if not has_own_shifts %}
+            <div class="alert alert-info d-print-none">
                 {{ __('tagesplan.no_own_shifts') }}
                 {% if can('startseite.signup') %}
                     <a href="{{ url('/startseite/eintragen') }}" class="alert-link">{{ __('tagesplan.signup_link') }}</a>
                 {% endif %}
             </div>
-        {% elseif groups is empty %}
+        {% endif %}
+        {% if groups is empty %}
             <div class="alert alert-info">{{ __('tagesplan.no_shifts') }}</div>
         {% else %}
             {% if own_only %}
@@ -198,13 +202,13 @@
                             <tr class="tp-color-{{ group.color }}{{ row.type_start ? ' tp-type-start' }}">
                                 <th class="tp-label">{{ row.label }}</th>
                                 {% for cell in row.cells %}
-                                    <td class="tp-{{ cell.state }}" {% if cell.colspan > 1 %}colspan="{{ cell.colspan }}"{% endif %}>
+                                    <td class="tp-{{ cell.state }}{{ cell.own ?? false ? ' tp-own' }}" {% if cell.colspan > 1 %}colspan="{{ cell.colspan }}"{% endif %}>
                                         {% if cell.state == 'handover' %}
                                             {% set previous_shift = row.cells[loop.index0 - 1].shift_id ?? null %}
                                             {% set next_shift = row.cells[loop.index0 + 1].shift_id ?? null %}
                                             {% for part in cell.parts %}
                                                 {% set direction = loop.first ? 'leaving' : 'arriving' %}
-                                                <div class="tp-part tp-{{ part.state }}
+                                                <div class="tp-part tp-{{ part.state }}{{ part.own ? ' tp-own' }}
                                                     {{- previous_shift != part.shift_id ? ' tp-line-l' -}}
                                                     {{- next_shift != part.shift_id ? ' tp-line-r' }}">
                                                     {% if part.state == 'filled' or part.state == 'open' %}
@@ -243,6 +247,9 @@
             <p class="tp-legend small text-muted d-print-none">
                 <span style="background-color:#b4c6e7"></span>{{ __('tagesplan.legend.filled') }} / {{ __('tagesplan.legend.open') }}
                 <span style="background-color: #7f7f7f"></span>{{ __('tagesplan.legend.none') }}
+                {% if own_only %}
+                    <span class="tp-own"></span>{{ __('tagesplan.legend.own') }}
+                {% endif %}
                 {% if categories %}
                     <br>{{ __('tagesplan.legend.categories') }}:
                     {% for category in categories %}

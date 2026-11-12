@@ -30,6 +30,9 @@ class Controller extends BaseController
     // Overlaps up to this length (in seconds) are shown as a handover in the same row
     protected const HANDOVER_MAX = 3600;
 
+    // Helper viewing the day plan: all shifts, but only the names they may see; null: all names
+    protected ?OwnShifts $own = null;
+
     use ChecksVisibility;
 
     protected array $permissions = [
@@ -46,12 +49,7 @@ class Controller extends BaseController
     public function index(Request $request): Response
     {
         $days = $this->days();
-
-        // Helpers only see the days with their own shifts
-        $own = OwnShifts::restricted() ? new OwnShifts(auth()->user()) : null;
-        if ($own) {
-            $days = array_values(array_intersect($days, $own->days()));
-        }
+        $this->own = OwnShifts::restricted() ? new OwnShifts(auth()->user()) : null;
 
         $day = $request->input('day');
         if (!in_array($day, $days, true)) {
@@ -64,7 +62,7 @@ class Controller extends BaseController
         $groups = [];
         $categories = [];
         if ($day) {
-            [$shifts, $columns, $groups] = $this->dayPlan($day, $own);
+            [$shifts, $columns, $groups] = $this->dayPlan($day);
             $categories = $shifts
                 ->map(fn(Shift $shift) => $this->category($shift))
                 ->filter()
@@ -92,8 +90,9 @@ class Controller extends BaseController
             'columns' => $columns,
             'groups' => $groups,
             'categories' => $categories,
-            'own_only' => (bool) $own,
-            'supported_types' => $own ? $own->supported()->pluck('name')->all() : [],
+            'own_only' => (bool) $this->own,
+            'supported_types' => $this->own ? $this->own->supported()->pluck('name')->all() : [],
+            'has_own_shifts' => !$this->own || $this->own->hasShifts(),
             // Shift popup to re-open after signing up / off
             'open_shift' => (int) $request->input('shift') ?: null,
             'open_type' => (int) $request->input('type') ?: null,
@@ -150,7 +149,7 @@ class Controller extends BaseController
      *
      * @return array [Collection|Shift[] $shifts, array[] $columns, array[] $groups]
      */
-    protected function dayPlan(string $day, ?OwnShifts $own = null): array
+    protected function dayPlan(string $day): array
     {
         $start = Carbon::createFromFormat('Y-m-d H:i:s', $day . ' 00:00:00');
         $shifts = $this->shift->newQuery()
@@ -160,13 +159,9 @@ class Controller extends BaseController
             ->orderBy('start')
             ->get();
 
-        // Helpers only see their own places (and optionally the people next to them)
         $needs = [];
         foreach ($shifts as $shift) {
-            $needs[$shift->id] = $own ? $own->filter($shift, $this->needs($shift)) : $this->needs($shift);
-        }
-        if ($own) {
-            $shifts = $shifts->filter(fn(Shift $shift) => $needs[$shift->id])->values();
+            $needs[$shift->id] = $this->needs($shift);
         }
 
         $columns = $this->columns($shifts);
@@ -519,10 +514,17 @@ class Controller extends BaseController
         /** @var ShiftEntry|null $entry */
         $entry = $value instanceof ShiftEntry ? $value : null;
 
+        // Helpers only see the names of their own places, of supported angel types and maybe of colleagues
+        $name = $entry?->user->displayName;
+        if ($entry && $this->own && !$this->own->sees($shift, $typeId, $entry->user_id)) {
+            $name = __('tagesplan.taken');
+        }
+
         return [
             'state' => $entry ? 'filled' : ($value === 'open' ? 'open' : 'none'),
-            'name' => $entry?->user->displayName,
+            'name' => $name,
             'user_id' => $entry?->user_id,
+            'own' => $entry && $entry->user_id == auth()->user()?->id,
             'shift_id' => $shift->id,
             'type_id' => $typeId,
             // Without JavaScript: reload the day plan with this shift's popup

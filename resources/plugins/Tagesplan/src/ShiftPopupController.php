@@ -8,7 +8,6 @@ use Engelsystem\Controllers\BaseController;
 use Engelsystem\Controllers\HasUserNotifications;
 use Engelsystem\Controllers\NotificationType;
 use Engelsystem\Helpers\Authenticator;
-use Engelsystem\Http\Exceptions\HttpNotFound;
 use Engelsystem\Http\Request;
 use Engelsystem\Http\Response;
 use Engelsystem\Mail\EngelsystemMailer;
@@ -56,35 +55,13 @@ class ShiftPopupController extends BaseController
         // Only the clicked angel type is shown, the others can be expanded
         $selectedType = (int) $request->input('angel_type_id');
 
-        // Helpers only see their own entries (and colleagues), like in the day plan, and sign up elsewhere
-        $visible = null;
-        if (OwnShifts::restricted()) {
-            $needs = [];
-            foreach (NeededAngelTypes_by_shift($shift) as $need) {
-                $needs[(int) $need['angel_type_id']] = [
-                    'count' => (int) $need['count'],
-                    'entries' => $need['shift_entries'],
-                ];
-            }
-            $visible = (new OwnShifts($user))->filter($shift, $needs);
-            if (!$visible) {
-                throw new HttpNotFound();
-            }
-        }
+        // Helpers only see the names they may see, like in the day plan, and sign up elsewhere
+        $own = OwnShifts::restricted() ? new OwnShifts($user) : null;
 
         $types = [];
         foreach (NeededAngelTypes_by_shift($shift) as $need) {
-            // Everything visible: managers, and supporters for their angel types
-            $full = true;
-            if ($visible !== null) {
-                $typeVisible = $visible[(int) $need['angel_type_id']] ?? null;
-                if (!$typeVisible) {
-                    continue;
-                }
-                $full = $typeVisible['full'] ?? false;
-                $need['count'] = $typeVisible['count'];
-                $need['shift_entries'] = $typeVisible['entries'];
-            }
+            // Everything (names, sign up): managers, and supporters for their angel types
+            $full = !$own || $own->supports((int) $need['angel_type_id']);
 
             $angelType = AngelType::findOrFail($need['angel_type_id']);
             $entries = collect($need['shift_entries'])->sortBy('id')->values();
@@ -108,6 +85,10 @@ class ShiftPopupController extends BaseController
                 'free' => max(0, (int) $need['count'] - $entries->count()),
                 'entries' => $entries->map(fn(ShiftEntry $entry) => [
                     'entry' => $entry,
+                    'name' => !$own || $own->sees($shift, $angelType->id, $entry->user_id)
+                        ? $entry->user->displayName
+                        : __('tagesplan.taken'),
+                    'own' => $entry->user_id == $user->id,
                     'can_signoff' => Shift_signout_allowed($shift, $angelType, $entry->user_id),
                 ])->all(),
                 'self_signed_up' => $selfSignedUp,
@@ -133,7 +114,7 @@ class ShiftPopupController extends BaseController
             'time_label' => $shift->start->format('H:i') . ' – ' . $shift->end->format('H:i'),
             'types' => $types,
             'hidden_types' => count(array_filter($types, fn($type) => $type['hidden'])),
-            'own_only' => $visible !== null,
+            'own_only' => (bool) $own,
         ]);
     }
 

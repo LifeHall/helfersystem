@@ -155,16 +155,16 @@ msgid "config.tagesplan_show_colleagues"
 msgstr "Helfer sehen Personen am gleichen Ort zur gleichen Zeit"
 
 msgid "config.tagesplan_show_colleagues.info"
-msgstr "Helfer sehen im Tagesplan nur ihre eigenen Schichten. Eingeschaltet sehen sie zusätzlich, wer am gleichen Ort zur gleichen Zeit arbeitet. Admins und Schichteinteiler (Recht „tagesplan.manage“) sehen immer alles."
+msgstr "Helfer sehen im Tagesplan alle Schichten, Namen aber nur bei ihren eigenen Schichten (sonst „bereits besetzt“). Eingeschaltet sehen sie zusätzlich, wer am gleichen Ort zur gleichen Zeit arbeitet. Admins und Schichteinteiler (Recht „tagesplan.manage“) sehen immer alles."
 
 msgid "tagesplan.own_only"
-msgstr "Du siehst nur deine eigenen Schichten."
+msgstr "Du siehst alle Schichten, Namen aber nur bei deinen eigenen Schichten. Bei den übrigen besetzten Plätzen steht „bereits besetzt“."
 
 msgid "tagesplan.own_only.supporter"
-msgstr "Als Supporter siehst du ausserdem alle Schichten von: %s."
+msgstr "Als Supporter siehst du ausserdem alle Namen bei: %s."
 
 msgid "tagesplan.own_only.colleagues"
-msgstr "Du siehst deine eigenen Schichten und wer zur gleichen Zeit am gleichen Ort arbeitet."
+msgstr "Du siehst alle Schichten, Namen aber nur bei deinen eigenen Schichten und von Personen, die zur gleichen Zeit am gleichen Ort arbeiten. Bei den übrigen besetzten Plätzen steht „bereits besetzt“."
 
 msgid "tagesplan.no_own_shifts"
 msgstr "Du bist noch für keine Schicht eingetragen."
@@ -241,5 +241,8 @@ msgstr "Bitte eine Person auswählen."
 msgid "tagesplan.mail_all.success_one"
 msgstr "Mail an %s versendet."
 
-msgid "tagesplan.pdf.taken"
+msgid "tagesplan.taken"
 msgstr "bereits besetzt"
+
+msgid "tagesplan.legend.own"
+msgstr "Dein Name"
