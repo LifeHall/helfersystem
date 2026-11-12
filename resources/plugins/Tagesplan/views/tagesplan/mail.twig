@@ -15,7 +15,9 @@
 
         {% include 'startseite/_mail-jobs.twig' %}
 
-        {% if not enabled %}
+        {% if startseite_missing %}
+            <div class="alert alert-danger">{{ __('tagesplan.mail_all.startseite_missing') }}</div>
+        {% elseif not enabled %}
             <div class="alert alert-danger">{{ __('tagesplan.mail_all.disabled') }}</div>
         {% endif %}
 

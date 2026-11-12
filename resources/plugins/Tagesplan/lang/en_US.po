@@ -258,3 +258,6 @@ msgstr "Mail addresses or names, one person per line or separated by comma or se
 
 msgid "tagesplan.mail_all.exclude.unknown"
 msgstr "Nothing sent: these entries match no person or several people: %s. Please correct or remove them."
+
+msgid "tagesplan.mail_all.startseite_missing"
+msgstr "Sending mails needs the plugin „Startseite“ version 1.11.0 or newer. Please update the Startseite plugin (copy the files and click „Update“ in Admin → Plugins)."

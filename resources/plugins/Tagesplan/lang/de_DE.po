@@ -258,3 +258,6 @@ msgstr "Mailadressen oder Namen, eine Person pro Zeile oder mit Komma bzw. Stric
 
 msgid "tagesplan.mail_all.exclude.unknown"
 msgstr "Nichts versendet: Diese Einträge passen zu keiner oder zu mehreren Personen: %s. Bitte korrigieren oder entfernen."
+
+msgid "tagesplan.mail_all.startseite_missing"
+msgstr "Der Mailversand braucht das Plugin „Startseite“ ab Version 1.11.0. Bitte das Startseite-Plugin aktualisieren (Dateien einspielen und unter Admin → Plugins „Aktualisieren“)."

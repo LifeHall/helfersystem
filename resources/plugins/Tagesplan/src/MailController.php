@@ -13,6 +13,8 @@ use Engelsystem\Http\Response;
 use Engelsystem\Mail\EngelsystemMailer;
 use Engelsystem\Models\User\User;
 use Helfersystem\Startseite\MailJob;
+use Helfersystem\Startseite\MailJobHandler;
+use Helfersystem\Startseite\ShiftDays;
 use Illuminate\Database\Eloquent\Builder;
 
 /**
@@ -40,7 +42,7 @@ class MailController extends BaseController
     {
         $users = User::with('personalData')
             ->get()
-            ->mapWithKeys(fn(User $user) => [$user->id => MessageJob::fullName($user)])
+            ->mapWithKeys(fn(User $user) => [$user->id => static::fullName($user)])
             ->all();
         natcasesort($users);
 
@@ -51,6 +53,7 @@ class MailController extends BaseController
             ],
             'users' => $users,
             'enabled' => $this->isEnabled() && static::hasMailJobs(),
+            'startseite_missing' => !static::hasMailJobs(),
             // Entries after an error, so they need not be typed again
             'form' => $this->pullForm(),
             'mail_jobs' => static::hasMailJobs() ? MailJob::unfinished() : [],
@@ -69,7 +72,11 @@ class MailController extends BaseController
         ];
         $recipients = $this->recipients($group, (int) $request->postData('user_id'));
 
-        if (!$this->isEnabled() || !static::hasMailJobs()) {
+        if (!static::hasMailJobs()) {
+            $this->addNotification('tagesplan.mail_all.startseite_missing', NotificationType::ERROR);
+            return $this->redirect->back();
+        }
+        if (!$this->isEnabled()) {
             $this->addNotification('tagesplan.mail_all.disabled', NotificationType::ERROR);
             return $this->redirect->back();
         }
@@ -121,7 +128,7 @@ class MailController extends BaseController
             $sent ? 'sent' : 'failed'
         ));
         if ($sent) {
-            $this->addNotification(__('tagesplan.mail_all.success_one', [MessageJob::fullName($user)]));
+            $this->addNotification(__('tagesplan.mail_all.success_one', [static::fullName($user)]));
         } else {
             $this->addNotification(__('tagesplan.mail_all.failed', [1]), NotificationType::ERROR);
         }
@@ -144,7 +151,7 @@ class MailController extends BaseController
         // All addresses and names of every user, lower case
         $index = [];
         foreach (User::with(['contact', 'personalData'])->get() as $user) {
-            $keys = [$user->email, $user->contact->email, $user->name, $user->displayName, MessageJob::fullName($user)];
+            $keys = [$user->email, $user->contact->email, $user->name, $user->displayName, static::fullName($user)];
             foreach (array_unique(array_filter(array_map(fn($key) => mb_strtolower(trim((string) $key)), $keys))) as $key) {
                 $index[$key][$user->id] = $user;
             }
@@ -194,11 +201,21 @@ class MailController extends BaseController
     }
 
     /**
-     * Sending in batches and the shift plan PDF come from the plugin Startseite
+     * First and last name for the greeting, the display name (nick) if both are empty
+     */
+    public static function fullName(User $user): string
+    {
+        $name = trim(trim((string) $user->personalData?->first_name) . ' ' . trim((string) $user->personalData?->last_name));
+
+        return $name !== '' ? $name : $user->displayName;
+    }
+
+    /**
+     * Sending in batches and the shift plan PDF come from the plugin Startseite (version 1.11.0 or newer)
      */
     public static function hasMailJobs(): bool
     {
-        return class_exists(MailJob::class);
+        return class_exists(MailJob::class) && interface_exists(MailJobHandler::class) && class_exists(ShiftDays::class);
     }
 
     /**

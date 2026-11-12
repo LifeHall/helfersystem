@@ -55,7 +55,7 @@ class MessageJob implements MailJobHandler
                 ))
                 ->subject($subject)
                 ->text($this->view->render('emails/tagesplan-message', [
-                    'username' => static::fullName($user),
+                    'username' => MailController::fullName($user),
                     'text' => (string) $payload['text'],
                 ]));
 
@@ -85,16 +85,6 @@ class MessageJob implements MailJobHandler
         }
 
         return true;
-    }
-
-    /**
-     * First and last name for the greeting, the display name (nick) if both are empty
-     */
-    public static function fullName(User $user): string
-    {
-        $name = trim(trim((string) $user->personalData?->first_name) . ' ' . trim((string) $user->personalData?->last_name));
-
-        return $name !== '' ? $name : $user->displayName;
     }
 
     /**
