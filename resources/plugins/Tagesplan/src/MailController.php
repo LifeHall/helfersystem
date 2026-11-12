@@ -96,8 +96,12 @@ class MailController extends BaseController
             return $this->redirect->back();
         }
 
-        // Many recipients can take a while
+        // Many recipients can take a while, also if the browser or a proxy gives up waiting
         set_time_limit(0);
+        ignore_user_abort(true);
+
+        // If the summary at the end is missing, the sending was aborted
+        engelsystem_log(sprintf('Sending the mail "%s" to %d people ...', $subject, $recipients->count()));
 
         // The day plans are calculated once for all recipients
         $export = $attachDayPlan ? app()->make(ExportController::class) : null;
