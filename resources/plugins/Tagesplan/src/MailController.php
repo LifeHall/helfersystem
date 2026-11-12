@@ -103,18 +103,24 @@ class MailController extends BaseController
         $export = $attachDayPlan ? app()->make(ExportController::class) : null;
 
         $sent = 0;
-        $failed = 0;
+        $failed = [];
         foreach ($recipients as $user) {
-            $this->sendTo($user, $subject, $text, $attachShifts, $export) ? $sent++ : $failed++;
+            if ($this->sendTo($user, $subject, $text, $attachShifts, $export)) {
+                $sent++;
+            } else {
+                $failed[] = User_Nick_render($user, true);
+            }
         }
 
+        // The failed recipients are named, the error of each one is logged by sendTo()
         engelsystem_log(sprintf(
-            'Sent the mail "%s" to %s%s: %d mails, %d failed',
+            'Sent the mail "%s" to %s%s: %d mails, %d failed%s',
             $subject,
             $group == 'one' ? User_Nick_render($recipients->first(), true) : 'all helpers (' . $group . ')',
             ($attachShifts ? ', with shift plan' : '') . ($attachDayPlan ? ', with day plan' : ''),
             $sent,
-            $failed
+            count($failed),
+            $failed ? ': ' . implode(', ', $failed) : ''
         ));
         if ($group == 'one' && $sent) {
             $this->addNotification(__('tagesplan.mail_all.success_one', [static::fullName($recipients->first())]));
@@ -122,7 +128,7 @@ class MailController extends BaseController
             $this->addNotification(__('tagesplan.mail_all.success', [$sent]));
         }
         if ($failed) {
-            $this->addNotification(__('tagesplan.mail_all.failed', [$failed]), NotificationType::ERROR);
+            $this->addNotification(__('tagesplan.mail_all.failed', [count($failed)]), NotificationType::ERROR);
         }
 
         return $this->response->redirectTo(url('/tagesplan'));
