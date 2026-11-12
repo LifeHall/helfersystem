@@ -55,18 +55,18 @@ class ShiftPopupController extends BaseController
         // Only the clicked angel type is shown, the others can be expanded
         $selectedType = (int) $request->input('angel_type_id');
 
-        // Helpers only see the names they may see, like in the day plan, and sign up elsewhere
+        // Helpers only see the names they may see, like in the day plan
         $own = OwnShifts::restricted() ? new OwnShifts($user) : null;
 
         $types = [];
         foreach (NeededAngelTypes_by_shift($shift) as $need) {
-            // Everything (names, sign up): managers, and supporters for their angel types
+            // All names and signing up others: managers, and supporters for their angel types
             $full = !$own || $own->supports((int) $need['angel_type_id']);
 
             $angelType = AngelType::findOrFail($need['angel_type_id']);
             $entries = collect($need['shift_entries'])->sortBy('id')->values();
             $selfSignedUp = $entries->contains(fn(ShiftEntry $entry) => $entry->user_id == $user->id);
-            $state = $selfSignedUp || !$full ? null : $this->selfSignupState($user, $shift, $angelType);
+            $state = $selfSignedUp ? null : $this->selfSignupState($user, $shift, $angelType);
 
             // Angel types requiring confirmation: offer to request it or show that it is pending
             $membership = null;
